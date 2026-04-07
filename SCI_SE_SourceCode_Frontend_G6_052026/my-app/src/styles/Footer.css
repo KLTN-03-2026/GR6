@@ -1,0 +1,82 @@
+.footer-container {
+  background: #f8fbff;
+  border-top: 1px solid #e4ecf8;
+  padding: 3rem 2rem 1.5rem;
+  color: #20334b;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.footer-col h4 {
+  font-size: 1.03rem;
+  color: #1a2b4b;
+  margin-bottom: 0.8rem;
+  font-weight: 800;
+}
+
+.footer-col p,
+.footer-col li {
+  color: #5f6d85;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 0.55rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.footer-col ul li:hover {
+  color: #1b6fff;
+}
+
+.app-buttons {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.app-buttons button {
+  border: 1px solid #d1dcf7;
+  border-radius: 8px;
+  background: #fff;
+  color: #2951b8;
+  padding: 0.5rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.app-buttons button:hover {
+  background: #e7f0ff;
+  border-color: #aac4ff;
+}
+
+.footer-note {
+  margin-top: 1.4rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #7890a8;
+}
+
+@media (max-width: 1024px) {
+  .footer-content { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 680px) {
+  .footer-content { grid-template-columns: 1fr; text-align: center; }
+  .footer-col ul li { margin: 0.3rem 0; }
+}
