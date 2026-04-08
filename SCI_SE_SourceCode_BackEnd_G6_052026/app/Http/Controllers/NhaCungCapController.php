@@ -14,7 +14,31 @@ use Illuminate\Support\Str;
 
 class NhaCungCapController extends Controller
 {
-      public function checkLogin()
+    public function upDate(Request $request)
+    {
+        $NhaCungCap = $this->isUserNhaCungCap();
+        if ($NhaCungCap) {
+            $NhaCungCap->update([
+                'ten_nha_cung_cap' => $request->ten_nha_cung_cap,
+                'so_dien_thoai'  => $request->so_dien_thoai,
+                'email'          => $request->email,
+                'dia_chi'        => $request->dia_chi,
+                'avatar'         => $request->avatar,
+                'password'       => bcrypt($request->password),
+            ]);
+            $NhaCungCap->save();
+            return response()->json([
+                'message' => 'Cập nhật thông tin thành công!',
+                'status'  => true
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Không tìm thấy nhà cung cấp!',
+                'status'  => false
+            ]);
+        }
+    }
+    public function checkLogin()
     {
         $NhaCungCap = $this->isUserNhaCungCap();
         if ($NhaCungCap) {
@@ -30,7 +54,7 @@ class NhaCungCapController extends Controller
     }
     public function thongTinCaNhan()
     {
-        $NhaCungCap = $this->isUserNhaCungCap()->select('ten_nha_cung_cap', 'email', 'so_dien_thoai', 'avatar','dia_chi')->first();
+        $NhaCungCap = $this->isUserNhaCungCap()->select('ten_nha_cung_cap', 'email', 'so_dien_thoai', 'avatar', 'dia_chi')->first();
         return response()->json([
             'data' => $NhaCungCap
         ]);

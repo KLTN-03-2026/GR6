@@ -25,4 +25,13 @@ abstract class Controller
         }
         return false;
     }
+    public function isUserAdmin()
+    {
+        $user = Auth::guard('sanctum')->user();
+
+        if ($user instanceof \App\Models\Admin) {
+            return $user;
+        }
+        return false;
+    }
 }

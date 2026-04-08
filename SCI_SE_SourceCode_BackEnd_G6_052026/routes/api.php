@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
@@ -8,13 +9,15 @@ use Illuminate\Support\Facades\Route;
 
 
 //khách hàng
+Route::post('/khach-hang/check-login', [KhachHangController::class, 'checkLogin']); // gửi bearer +token
 Route::post('/khach-hang/dang-ky', [KhachHangController::class, 'create']);
 Route::post('/khach-hang/dang-nhap', [KhachHangController::class, 'dangNhap']);
 Route::post('/khach-hang/dang-xuat', [KhachHangController::class, 'dangXuat'])->middleware('auth:sanctum');
 Route::post('/khach-hang/quen-mat-khau', [KhachHangController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
 Route::get('/khach-hang/thong-tin-ca-nhan', [KhachHangController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
-Route::post('/khach-hang/check-login', [KhachHangController::class, 'checkLogin']); // gửi bearer +token
 Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
+
+
 
 
 
@@ -27,9 +30,39 @@ Route::post('/nha-cung-cap/dang-xuat', [NhaCungCapController::class, 'dangXuat']
 Route::post('/nha-cung-cap/quen-mat-khau', [NhaCungCapController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
 Route::get('/nha-cung-cap/thong-tin-ca-nhan', [NhaCungCapController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
 Route::post('/nha-cung-cap/check-login', [NhaCungCapController::class, 'checkLogin']); // gửi bearer +token
+Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
+
+
 
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 
 //mail kích hoạt
-Route::get('/nha-cung-cap/kich-hoat-tai-khoan/{hash_active}', [NhaCungCapController::class, 'kichHoat']);//nhà cung cấp
-Route::get('/khach-hang/kich-hoat-tai-khoan/{hash_active}', [KhachHangController::class, 'kichHoat']);//khách hàng
+Route::get('/nha-cung-cap/kich-hoat-tai-khoan/{hash_active}', [NhaCungCapController::class, 'kichHoat']); //nhà cung cấp
+Route::get('/khach-hang/kich-hoat-tai-khoan/{hash_active}', [KhachHangController::class, 'kichHoat']); //khách hàng
+
+
+
+//Admin
+Route::post('/admin/dang-nhap', [AdminController::class, 'dangNhap']);
+Route::post('/admin/dang-xuat', [AdminController::class, 'dangXuat'])->middleware('auth:sanctum');
+Route::post('/admin/check-login', [AdminController::class, 'checkLogin'])->middleware('auth:sanctum');
+
+Route::get('/admin/customers', [AdminController::class, 'getAllCustomers'])->middleware('auth:sanctum'); //lấy toàn bộ khách hàng
+Route::get('/admin/customers/block/{id}', [AdminController::class, 'blockCustomer'])->middleware('auth:sanctum'); //block/unblock khách hàng
+
+
+Route::get('/admin/providers', [AdminController::class, 'getAllProviders'])->middleware('auth:sanctum'); //lấy toàn bộ nhà cung cấp
+Route::get('/admin/providers/block/{id}', [AdminController::class, 'blockProvider'])->middleware('auth:sanctum'); //block/unblock nhà cung cấp
+
+
+Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middleware('auth:sanctum'); //tìm kiếm khách hàng và nhà cung cấp theo tên hoặc email
+
+
+
+Route::get('/admin/danh-muc/get-data', [AdminController::class, 'getDanhMuc'])->middleware('auth:sanctum'); 
+Route::post('/admin/danh-muc/create', [AdminController::class, 'createDanhMuc'])->middleware('auth:sanctum'); 
+Route::post('/admin/danh-muc/update', [AdminController::class, 'updateDanhMuc'])->middleware('auth:sanctum'); 
+Route::delete('/admin/danh-muc/destroy/{id}', [AdminController::class, 'destroyDanhMuc'])->middleware('auth:sanctum'); 
+
+
+
