@@ -153,7 +153,7 @@ const Dang_nhap = (props) => {
                 Mật khẩu
               </label>
               <Link
-                to="/forgot-password"
+                to="/quen-mat-khau"
                 className="text-xs text-blue-500 hover:underline"
               >
                 Quên mật khẩu?
