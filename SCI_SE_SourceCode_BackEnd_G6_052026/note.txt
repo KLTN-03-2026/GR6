@@ -1,3 +1,5 @@
 xóa cache: php artisan cache:clear
 run queue worker: php artisan queue:work
 run server & worker :  npm run dev-all
+
+cách xóa dữ liệu & thêm dữ liệu seeding: php artisan db:seed

@@ -14,6 +14,49 @@ use Illuminate\Support\Str;
 
 class KhachHangController extends Controller
 {
+    public function upDate(Request $request)
+    {
+        $KhachHang = $this->isUserKhachHang();
+        if ($KhachHang) {
+            $KhachHang->update([
+                'ten_khach_hang' => $request->ten_khach_hang,
+                'so_dien_thoai'  => $request->so_dien_thoai,
+                'email'          => $request->email,
+                'avatar'         => $request->avatar,
+                'password'       =>bcrypt($request->password),
+            ]);
+            $KhachHang->save();
+            return response()->json([
+                'message' => 'Cập nhật thông tin thành công!',
+                'status'  => true
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Không tìm thấy khách hàng!',
+                'status'  => false
+            ]);
+        }
+    }
+    public function checkLogin()
+    {
+        $KhachHang = $this->isUserKhachHang();
+        if ($KhachHang) {
+            return response()->json([
+                'status' => true,
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => "Bạn chưa đăng nhập!"
+            ]);
+        }
+    }
+    public function thongTinCaNhan() {
+        $KhachHang=$this->isUserKhachHang()->select('ten_khach_hang','email','so_dien_thoai','avatar')->first();
+        return response()->json([
+            'data' => $KhachHang
+        ]);
+    }
     public function quenMatKhau(Request $request)
     {
         $KhachHang =  KhachHang::when($request->email, function ($query) use ($request) {
@@ -32,10 +75,10 @@ class KhachHangController extends Controller
                 'message' => 'Đã cấp lại mật khẩu mới, vui lòng kiểm tra email!',
                 'status'  => true
             ]);
-        }else{
+        } else {
             return response()->json([
                 'message' => 'Email sai hoặc chưa đăng ký trên hệ thống!',
-                'status'  =>false
+                'status'  => false
             ]);
         }
     }

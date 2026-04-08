@@ -12,6 +12,11 @@ Route::post('/khach-hang/dang-ky', [KhachHangController::class, 'create']);
 Route::post('/khach-hang/dang-nhap', [KhachHangController::class, 'dangNhap']);
 Route::post('/khach-hang/dang-xuat', [KhachHangController::class, 'dangXuat'])->middleware('auth:sanctum');
 Route::post('/khach-hang/quen-mat-khau', [KhachHangController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
+Route::get('/khach-hang/thong-tin-ca-nhan', [KhachHangController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
+Route::post('/khach-hang/check-login', [KhachHangController::class, 'checkLogin']); // gửi bearer +token
+Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
+
+
 
 
 
@@ -20,6 +25,8 @@ Route::post('/nha-cung-cap/dang-ky', [NhaCungCapController::class, 'create']);
 Route::post('/nha-cung-cap/dang-nhap', [NhaCungCapController::class, 'dangNhap']);
 Route::post('/nha-cung-cap/dang-xuat', [NhaCungCapController::class, 'dangXuat'])->middleware('auth:sanctum');
 Route::post('/nha-cung-cap/quen-mat-khau', [NhaCungCapController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
+Route::get('/nha-cung-cap/thong-tin-ca-nhan', [NhaCungCapController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
+Route::post('/nha-cung-cap/check-login', [NhaCungCapController::class, 'checkLogin']); // gửi bearer +token
 
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 
