@@ -58,7 +58,7 @@ const Header = () => {
         <input type="text" placeholder="Tìm kiếm..." className="search-input" />
       </div>
         <nav className="header-nav">
-        <Link className="nav-link" to="/services">Dịch vụ</Link>
+        <Link className="nav-link" to="/dich-vu">Dịch vụ</Link>
         <Link className="nav-link" to="/booking">Lịch hẹn</Link>
         <Link className="nav-link" to="/offers">Ưu đãi</Link>
         </nav>

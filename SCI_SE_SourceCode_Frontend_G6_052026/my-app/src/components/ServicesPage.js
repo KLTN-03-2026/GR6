@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/ServicesPage.css';
+import { useNavigate } from 'react-router-dom';
 import { Send, Star, Sparkles, MessageCircle, X, Minus, Paperclip } from 'lucide-react';
 
 const services = [
@@ -17,7 +18,7 @@ const categories = ['Tất cả', 'Làm đẹp', 'Sửa chữa', 'Gia đình', '
 
 const ServicesPage = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <main className="services-main">
       {/* Banner & Hero */}
@@ -50,7 +51,7 @@ const ServicesPage = () => {
       {/* Services Grid */}
       <section className="services-grid">
         {services.map((service) => (
-          <article key={service.id} className="service-card">
+          <article key={service.id} className="service-card" onClick={() => navigate('/chi-tiet')} style={{ cursor: 'pointer' }}>
             <div className="service-thumb">
               <img src={service.img} alt={service.title} />
               <div className="service-rating">{service.rating.toFixed(1)}</div>
