@@ -8,7 +8,7 @@ const Dang_nhap = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState("customer");
+  const [role, setRole] = useState("khach_hang");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -87,11 +87,11 @@ const Dang_nhap = (props) => {
         <div className="flex bg-gray-100 p-1 rounded-lg mb-6">
           <button
             className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
-              role === "customer"
+              role === "khach_hang"
                 ? "bg-white shadow text-blue-600"
                 : "text-gray-500 hover:text-gray-700"
             }`}
-            onClick={() => setRole("customer")}
+            onClick={() => setRole("khach_hang")}
           >
             Khách hàng
           </button>
