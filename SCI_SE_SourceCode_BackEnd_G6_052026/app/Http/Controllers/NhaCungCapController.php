@@ -14,6 +14,27 @@ use Illuminate\Support\Str;
 
 class NhaCungCapController extends Controller
 {
+      public function checkLogin()
+    {
+        $NhaCungCap = $this->isUserNhaCungCap();
+        if ($NhaCungCap) {
+            return response()->json([
+                'status' => true,
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => "Bạn chưa đăng nhập!"
+            ]);
+        }
+    }
+    public function thongTinCaNhan()
+    {
+        $NhaCungCap = $this->isUserNhaCungCap()->select('ten_nha_cung_cap', 'email', 'so_dien_thoai', 'avatar','dia_chi')->first();
+        return response()->json([
+            'data' => $NhaCungCap
+        ]);
+    }
     public function quenMatKhau(Request $request)
     {
         $NhaCungCap =  NhaCungCap::when($request->email, function ($query) use ($request) {
