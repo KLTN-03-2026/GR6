@@ -12,7 +12,8 @@ import Dangkyncc from './components/Dang_ky_ncc';
 import Quen_MK from './components/Quen_MK';
 import Dich_vu from './components/Dich_vu';
 import Chi_tiet_thuong_hieu from './components/Chi_tiet_thuong_hieu';
-import Chi_tiet_dv from './components/Chi_tiet_dv';;
+import Chi_tiet_dv from './components/Chi_tiet_dv';
+import Dang_nhap_Admin from './components/Dang_nhap_Admin';;
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -29,6 +30,8 @@ root.render(
         <Route path='quen-mat-khau' element={<Quen_MK />} />
         <Route path='chi-tiet' element={<Chi_tiet_dv />} />
         <Route path='chi-tiet-thuong-hieu' element={<Chi_tiet_thuong_hieu />} />
+        <Route path='admin/dang-nhap' element={<Dang_nhap_Admin />} />
+
       </Routes>
     </App>
   </Router>

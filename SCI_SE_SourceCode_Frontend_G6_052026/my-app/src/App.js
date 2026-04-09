@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 function App(props) {
   const location = useLocation();
-  const hideLayoutRoutes = ["/dang-nhap", "/dang-ky","/nha-cung-cap","/dang-ky-ncc","/quen-mat-khau"];
+  const hideLayoutRoutes = ["/dang-nhap", "/dang-ky","/nha-cung-cap","/dang-ky-ncc","/quen-mat-khau","/admin/dang-nhap"];
   const isHideLayout = hideLayoutRoutes.includes(location.pathname);
   return (
     <div>
