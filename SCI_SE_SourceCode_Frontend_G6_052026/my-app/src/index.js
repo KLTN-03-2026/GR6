@@ -13,8 +13,10 @@ import Quen_MK from './components/Quen_MK';
 import Dich_vu from './components/Dich_vu';
 import Chi_tiet_thuong_hieu from './components/Chi_tiet_thuong_hieu';
 import Chi_tiet_dv from './components/Chi_tiet_dv';
-import Dang_nhap_Admin from './components/Dang_nhap_Admin';;
-
+import Dang_nhap_Admin from './components/Dang_nhap_Admin';
+import Quan_ly_ho_so from './components/Quan_ly_ho_so';
+import Quan_ly_nguoi_dung from './components/Quan_ly_nguoi_dung';
+import Quan_ly_danh_muc from './components/Quan_ly_danh_muc';;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -31,6 +33,9 @@ root.render(
         <Route path='chi-tiet' element={<Chi_tiet_dv />} />
         <Route path='chi-tiet-thuong-hieu' element={<Chi_tiet_thuong_hieu />} />
         <Route path='admin/dang-nhap' element={<Dang_nhap_Admin />} />
+        <Route path='quan-ly-ho-so' element={<Quan_ly_ho_so />} />
+        <Route path='admin/quan-ly-nguoi-dung' element={<Quan_ly_nguoi_dung />} />
+        <Route path='admin/quan-ly-danh-muc' element={<Quan_ly_danh_muc />} />
 
       </Routes>
     </App>
