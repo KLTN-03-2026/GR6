@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DanhMucDichVuController;
 use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
@@ -60,10 +61,12 @@ Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middl
 
 
 
-Route::get('/admin/danh-muc/get-data', [AdminController::class, 'getDanhMuc'])->middleware('auth:sanctum'); 
-Route::post('/admin/danh-muc/create', [AdminController::class, 'createDanhMuc'])->middleware('auth:sanctum'); 
-Route::post('/admin/danh-muc/update', [AdminController::class, 'updateDanhMuc'])->middleware('auth:sanctum'); 
-Route::delete('/admin/danh-muc/destroy/{id}', [AdminController::class, 'destroyDanhMuc'])->middleware('auth:sanctum'); 
+Route::get('/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
+Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
+Route::post('/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc']);
+Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc']);
+
+ 
 
 
 
