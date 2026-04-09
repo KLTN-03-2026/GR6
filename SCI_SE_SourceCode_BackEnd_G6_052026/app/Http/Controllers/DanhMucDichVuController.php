@@ -2,64 +2,73 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DanhMucDichVuRequest;
 use App\Models\DanhMucDichVu;
+use App\Models\KhachHang;
+use App\Models\NhaCungCap;
 use Illuminate\Http\Request;
 
 class DanhMucDichVuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function destroyDanhMuc($id)
     {
-        //
+        $danhMuc = DanhMucDichVu::where('id', $id)->first();
+        if ($danhMuc) {
+            $danhMuc->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'Xóa danh mục dịch vụ thành công!',
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy danh mục dịch vụ!'
+            ]);
+        }
+    }
+    public function updateDanhMuc(DanhMucDichVuRequest $request)
+    {
+        $danhMuc = DanhMucDichVu::where('id', $request->id)->first();
+        if ($danhMuc) {
+            $danhMuc->update([
+                'ten_dich_vu' => $request->ten_dich_vu,
+                'id_father' => $request->id_father,
+                'hinh_anh' => $request->hinh_anh,
+            ]);
+            $danhMuc->save();
+            return response()->json([
+                'status' => true,
+                'message' => 'Cập nhật danh mục dịch vụ thành công!',
+                'data' => $danhMuc
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy danh mục dịch vụ!'
+            ]);
+        }
+    }
+    public function createDanhMuc(DanhMucDichVuRequest $request)
+    {
+        $danhMuc = DanhMucDichVu::create([
+            'ten_dich_vu' => $request->ten_dich_vu,
+            'id_father' => $request->id_father,
+            'hinh_anh' => $request->hinh_anh,
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Danh mục dịch vụ đã được tạo thành công!',
+            'data' => $danhMuc
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function getDanhMuc()
     {
-        //
+        $data = DanhMucDichVu::get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(DanhMucDichVu $danhMucDichVu)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DanhMucDichVu $danhMucDichVu)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DanhMucDichVu $danhMucDichVu)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(DanhMucDichVu $danhMucDichVu)
-    {
-        //
-    }
+   
 }
