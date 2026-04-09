@@ -1,116 +1,141 @@
-import React, { useState } from 'react';
-import { Search, Star, CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import '../styles/ServicesPage.css';
+import { useNavigate } from 'react-router-dom';
+import api from '../api';
+import { 
+  Send, Sparkles, MessageCircle, X, Minus, Paperclip, ChevronRight 
+} from 'lucide-react';
 
-const categories = ['Tất cả', 'Làm đẹp', 'Sửa chữa', 'Gia đình', 'Thú cưng', 'Thể thao', 'Giáo dục', 'Vận chuyển'];
-
-const mockServices = [
-  { id: 1, title: 'Cắt tóc nam phong cách', rating: 4.9, price: '200.000 VND', desc: 'Cắt tóc, tạo kiểu và chăm sóc râu chuyên nghiệp với các stylist hàng...', img: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600', popular: true },
-  { id: 2, title: 'Spa Chăm sóc da chuyên sâu', rating: 4.8, price: '550.000 VND', desc: 'Liệu trình trẻ hóa làn da và thư giãn tinh thần với tinh dầu tự nhiên.', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600', popular: false },
-  { id: 3, title: 'Sửa chữa điện lạnh', rating: 4.5, price: '150.000 VND', desc: 'Bảo trì và sửa chữa máy lạnh, tủ lạnh nhanh chóng tại nhà.', img: 'https://images.unsplash.com/photo-1581091012184-2ff710bd895e?w=600', popular: false },
-  { id: 4, title: 'Dịch vụ dọn dẹp nhà', rating: 4.7, price: '300.000 VND', desc: 'Dọn dẹp nhà cửa, căn hộ chuyên nghiệp, uy tín và sạch sẽ.', img: 'https://images.unsplash.com/photo-1581574204868-6e19d6b8acfc?w=600', popular: false },
-  { id: 5, title: 'Trang điểm dự tiệc', rating: 4.9, price: '450.000 VND', desc: 'Makeup phong cách đa dạng từ nhẹ nhàng đến sang trọng cho các sự...', img: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=600', popular: false },
-  { id: 6, title: 'Gia sư tiếng Anh 1-1', rating: 4.6, price: '250.000 VND', desc: 'Cải thiện kỹ năng giao tiếp và thi chứng chỉ quốc tế IELTS/TOEIC.', img: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600', popular: false },
-  { id: 7, title: 'Thiết kế Logo & Branding', rating: 5.0, price: '1.200.000 VND', desc: 'Nâng tầm thương hiệu với thiết kế sáng tạo và độc đáo.', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600', popular: false },
-  { id: 8, title: 'Tư vấn tài chính cá nhân', rating: 4.4, price: '800.000 VND', desc: 'Lập kế hoạch tài chính, đầu tư và tiết kiệm hiệu quả lâu dài.', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600', popular: false },
-];
-
-const Dich_vu = () => {
-  const [activeCategory, setActiveCategory] = useState('Tất cả');
+const ServicesPage = () => {
   const navigate = useNavigate();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [parentCategories, setParentCategories] = useState([]);
+  const [childCategories, setChildCategories] = useState([]);
+  const [allServices, setAllServices] = useState([]);
+  const [displayServices, setDisplayServices] = useState([]);
+  const [activeParentId, setActiveParentId] = useState(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [resCate, resServ] = await Promise.all([
+          api.get('/danh-muc/get-data'),
+          api.get('/dich-vu/get-data')
+        ]);
+
+        if (resCate.data.status) {
+          const cateData = resCate.data.data;
+          setParentCategories(cateData.filter(item => Number(item.id_father) === 0));
+          setChildCategories(cateData.filter(item => Number(item.id_father) !== 0));
+        }
+
+        if (resServ.data.status) {
+          const servData = resServ.data.data;
+          setAllServices(servData);
+          setDisplayServices(servData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleCategoryClick = (id) => {
+    setSelectedCategoryId(id);
+    if (id === null) {
+      setDisplayServices(allServices);
+    } else {
+      const filtered = allServices.filter(item => Number(item.id_danh_muc_dich_vu) === Number(id));
+      setDisplayServices(filtered);
+    }
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN').format(price) + ' VND';
+  };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans text-gray-900">
-
-      <main className="container mx-auto px-4 py-10 max-w-7xl flex-grow">
-        {/* Tiêu đề trang */}
-        <h1 className="text-4xl font-extrabold mb-8 tracking-tight text-slate-900">
-          Dịch vụ chuyên nghiệp dành cho bạn
-        </h1>
-
-        {/* Lọc Categories */}
-        <div className="flex items-center gap-3 mb-12 overflow-x-auto pb-2 scrollbar-hide">
-          {categories.map((cat) => (
-            <button 
-              key={cat} 
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap
-                ${activeCategory === cat 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Lưới hiển thị dịch vụ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-          {mockServices.map((service) => (
-            /* THÊM SỰ KIỆN onClick VÀO ĐÂY */
+    <main className="services-main">
+      <section className="hero-section">
+        <h1>Dịch vụ chuyên nghiệp dành cho bạn</h1>
+        <p>Khám phá hàng ngàn dịch vụ chất lượng cao được tuyển chọn.</p>
+      </section>
+      <section className="category-container">
+        <div className="category-row">
+          <span 
+            className={`category-pill ${selectedCategoryId === null ? 'active' : ''}`}
+            onClick={() => handleCategoryClick(null)}
+          >
+            Tất cả
+          </span>
+          
+          {parentCategories.map((parent) => (
             <div 
-              key={service.id} 
-              className="group cursor-pointer"
-              onClick={() => navigate('/chi-tiet')} 
+              key={parent.id} 
+              className="category-group"
+              onMouseEnter={() => setActiveParentId(parent.id)}
+              onMouseLeave={() => setActiveParentId(null)}
             >
-              {/* Ảnh dịch vụ */}
-              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden mb-4 shadow-sm border border-gray-50">
-                <img 
-                  src={service.img} 
-                  alt={service.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                {service.popular && (
-                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur px-3 py-1 rounded-full shadow-sm">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-800">Phổ biến</span>
-                  </div>
-                )}
-              </div>
+              <span className={`category-pill ${activeParentId === parent.id ? 'active' : ''}`}>
+                {parent.ten_dich_vu}
+              </span>
 
-              {/* Thông tin dịch vụ */}
-              <div className="space-y-2 px-1">
-                <div className="flex justify-between items-start gap-2">
-                  <h3 className="font-bold text-[17px] leading-tight text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
-                    {service.title}
-                  </h3>
-                  <div className="flex items-center gap-1 text-yellow-500 shrink-0">
-                    <Star size={14} fill="currentColor" />
-                    <span className="text-xs font-bold text-gray-700">{service.rating}</span>
-                  </div>
+              {activeParentId === parent.id && (
+                <div className="category-dropdown">
+                  {childCategories
+                    .filter(child => Number(child.id_father) === parent.id)
+                    .map(child => (
+                      <div 
+                        key={child.id} 
+                        className="dropdown-item"
+                        onClick={() => handleCategoryClick(child.id)}
+                      >
+                        <img src={child.hinh_anh} alt="" />
+                        <div className="dropdown-text">
+                            <span>{child.ten_dich_vu}</span>
+                        </div>
+                        <ChevronRight size={14} className="chevron-icon" />
+                      </div>
+                    ))}
                 </div>
-                
-                <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed h-10">
-                  {service.desc}
-                </p>
-
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-lg font-black text-blue-600 tracking-tight">
-                    {service.price}
-                  </span>
-                  <div className="w-10 h-10 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600 bg-blue-50/50 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                    <CalendarDays size={20} />
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
+      </section>
 
-        {/* Phân trang */}
-        <div className="flex justify-center items-center gap-2 mt-16">
-          <button className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 transition-colors">
-            <ChevronLeft size={20} />
-          </button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold">1</button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-full text-gray-600 font-bold hover:bg-gray-100 transition-colors">2</button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-full text-gray-600 font-bold hover:bg-gray-100 transition-colors">3</button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 transition-colors">
-            <ChevronRight size={20} />
-          </button>
-        </div>
-      </main>
-    </div>
+      <section className="services-grid">
+        {isLoading ? (
+          <div>Đang tải dữ liệu...</div>
+        ) : displayServices.length > 0 ? (
+          displayServices.map((service) => (
+            <article key={service.id} className="service-card" onClick={() => navigate('/chi-tiet')}>
+              <div className="service-thumb">
+                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="" />
+                <div className="service-rating">4.8</div>
+              </div>
+              <div className="service-info">
+                <h3>{service.ten_dich_vu}</h3>
+                <p className="service-subtitle">{service.mo_ta_ngan}</p>
+                <div className="service-bottom">
+                  <span className="service-price">{formatPrice(service.don_gia)}</span>
+                  <span className="service-tag">Chi tiết</span>
+                </div>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="no-data">Không có dịch vụ nào trong danh mục này.</div>
+        )}
+      </section>
+    </main>
   );
 };
 
-export default Dich_vu;
+export default ServicesPage;
