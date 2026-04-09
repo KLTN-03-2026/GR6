@@ -18,6 +18,7 @@ class ThuongHieu extends Model
         'logo',
         'mo_ta',
         'ma_so_thue',
+        'ten_ngan_hang',
         'tai_khoan_ngan_hang',
         'diem_hai_long',
         'is_active',

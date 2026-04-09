@@ -35,6 +35,7 @@ Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->mi
 
 
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
+Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 
 //mail kích hoạt
 Route::get('/nha-cung-cap/kich-hoat-tai-khoan/{hash_active}', [NhaCungCapController::class, 'kichHoat']); //nhà cung cấp

@@ -20,9 +20,10 @@ return new class extends Migration
             $table->string('so_dien_thoai');
             $table->string('logo');
             $table->string('mo_ta');
-            $table->integer('ma_so_thue');
-            $table->integer('tai_khoan_ngan_hang');
-            $table->double('diem_hai_long');
+            $table->string('ma_so_thue');
+            $table->string('ten_ngan_hang');
+            $table->string('tai_khoan_ngan_hang');
+            $table->double('diem_hai_long', 10, 2)->default(0);
             $table->integer('is_active');
             $table->timestamps();
         });

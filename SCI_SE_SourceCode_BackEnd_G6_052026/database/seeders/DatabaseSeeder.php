@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DichVuSeeder::class,
             NhaCungCapSeeder::class,
             HinhAnhSeeder::class,
+            ThuongHieuSeeder::class,
         ]);
     }
 }
