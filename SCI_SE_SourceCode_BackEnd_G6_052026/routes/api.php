@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DanhMucDichVuController;
 use App\Http\Controllers\DichVuController;
+use App\Http\Controllers\HinhAnhDichVuController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middl
 
 
 
+// quên mật khẩu
+Route::post('/quen-mat-khau', [NhaCungCapController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
 
 
 
@@ -28,16 +31,21 @@ Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middl
 Route::post('/nha-cung-cap/dang-ky', [NhaCungCapController::class, 'create']);
 Route::post('/nha-cung-cap/dang-nhap', [NhaCungCapController::class, 'dangNhap']);
 Route::post('/nha-cung-cap/dang-xuat', [NhaCungCapController::class, 'dangXuat'])->middleware('auth:sanctum');
-Route::post('/nha-cung-cap/quen-mat-khau', [NhaCungCapController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
 Route::get('/nha-cung-cap/thong-tin-ca-nhan', [NhaCungCapController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
 Route::post('/nha-cung-cap/check-login', [NhaCungCapController::class, 'checkLogin']); // gửi bearer +token
 Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
 
 
-
+//dịch vụ
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
+
+//hình ảnh dịch vụ
+Route::get('/hinh-anh-dich-vu/get-data-hinh-anh', [HinhAnhDichVuController::class, 'getDichVuHinhAnh']); //lấy toàn bộ hình ảnh và id dịch vụ của hình ảnh đó
+Route::get('/hinh-anh-dich-vu/get-data-hinh-anh-by-dich-vu/{id}', [HinhAnhDichVuController::class, 'getDichVuHinhAnhById']); //lấy toàn bộ hình ảnh theo id dịch vụ
+Route::post('/hinh-anh-dich-vu/create', [HinhAnhDichVuController::class, 'create']);
+
 
 //mail kích hoạt
 Route::get('/nha-cung-cap/kich-hoat-tai-khoan/{hash_active}', [NhaCungCapController::class, 'kichHoat']); //nhà cung cấp
@@ -61,7 +69,7 @@ Route::get('/admin/providers/block/{id}', [AdminController::class, 'blockProvide
 Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middleware('auth:sanctum'); //tìm kiếm khách hàng và nhà cung cấp theo tên hoặc email
 
 
-
+// danh mục dịch vụ
 Route::get('/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
 Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
 Route::post('/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc']);

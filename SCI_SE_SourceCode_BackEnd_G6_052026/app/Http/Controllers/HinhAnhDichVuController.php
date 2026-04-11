@@ -4,62 +4,53 @@ namespace App\Http\Controllers;
 
 use App\Models\HinhAnhDichVu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class HinhAnhDichVuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function getDichVuHinhAnhById($id)
     {
-        //
+        $data = HinhAnhDichVu::where('id_dich_vu', $id)
+            ->select('id_dich_vu', 'hinh_anh')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'id_dich_vu' => 'required|exists:dich_vus,id',
+            'hinh_anh'   => 'required|array',
+            'hinh_anh.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(HinhAnhDichVu $hinhAnhDichVu)
-    {
-        //
-    }
+        foreach ($request->file('hinh_anh') as $file) {
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(HinhAnhDichVu $hinhAnhDichVu)
-    {
-        //
-    }
+            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, HinhAnhDichVu $hinhAnhDichVu)
-    {
-        //
-    }
+            $path = $file->storeAs('hinh_anh_dich_vu', $filename, 'public');
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(HinhAnhDichVu $hinhAnhDichVu)
+            HinhAnhDichVu::create([
+                'id_dich_vu' => $request->id_dich_vu,
+                'hinh_anh'   => $path
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Upload ảnh thành công',
+        ]);
+    }
+    public function getDichVuHinhAnh()
     {
-        //
+        $data = HinhAnhDichVu::select('id_dich_vu', 'hinh_anh')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
     }
 }
