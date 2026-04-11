@@ -34,4 +34,6 @@ abstract class Controller
         }
         return false;
     }
+    //quên mật khẩu chung cho cả khách hàng và nhà cung cấp
+    
 }

@@ -57,31 +57,6 @@ class KhachHangController extends Controller
             'data' => $KhachHang
         ]);
     }
-    public function quenMatKhau(Request $request)
-    {
-        $KhachHang =  KhachHang::when($request->email, function ($query) use ($request) {
-            $query->where('email', $request->email);
-        })
-            ->when($request->so_dien_thoai, function ($query) use ($request) {
-                $query->where('so_dien_thoai', $request->so_dien_thoai);
-            })
-            ->first();
-        if ($KhachHang) {
-            $new_password = str::random(8);
-            $KhachHang->password = bcrypt($new_password);
-            $KhachHang->save();
-            Mail::to($KhachHang->email)->send(new QuenMatKhau($new_password, $KhachHang->ten_khach_hang));
-            return response()->json([
-                'message' => 'Đã cấp lại mật khẩu mới, vui lòng kiểm tra email!',
-                'status'  => true
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Email sai hoặc chưa đăng ký trên hệ thống!',
-                'status'  => false
-            ]);
-        }
-    }
     public function dangXuat(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -158,7 +133,7 @@ class KhachHangController extends Controller
             'password'       => bcrypt($request->password),
             'hash_active'    => Str::uuid(),
         ]);
-        Mail::to($KhachHang->email)->send(new KichHoatTaiKhoan($KhachHang->hash_active, $KhachHang->ten_khach_hang));
+        Mail::to($KhachHang->email)->queue(new KichHoatTaiKhoan($KhachHang->hash_active, $KhachHang->ten_khach_hang));
 
         return response()->json([
             'message' => 'Tạo tài khoản thành công!',

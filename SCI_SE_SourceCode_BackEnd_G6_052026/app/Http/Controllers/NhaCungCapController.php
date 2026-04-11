@@ -6,6 +6,7 @@ use App\Http\Requests\ThemMoiNCCRequest;
 use App\Mail\KichHoatTaiKhoan;
 use App\Mail\KichHoatTaiKhoanNCC;
 use App\Mail\QuenMatKhau;
+use App\Models\KhachHang;
 use App\Models\NhaCungCap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,27 +62,32 @@ class NhaCungCapController extends Controller
     }
     public function quenMatKhau(Request $request)
     {
-        $NhaCungCap =  NhaCungCap::when($request->email, function ($query) use ($request) {
-            $query->where('email', $request->email);
-        })
-            ->when($request->so_dien_thoai, function ($query) use ($request) {
-                $query->where('so_dien_thoai', $request->so_dien_thoai);
-            })
-            ->first();
+        $new_password = str::random(8);
+        $NhaCungCap = NhaCungCap::where('email', $request->email)->first();
         if ($NhaCungCap) {
-            $new_password = str::random(8);
             $NhaCungCap->password = bcrypt($new_password);
             $NhaCungCap->save();
-            Mail::to($NhaCungCap->email)->send(new QuenMatKhau($new_password, $NhaCungCap->ten_nha_cung_cap));
+            Mail::to($NhaCungCap->email)->queue(new QuenMatKhau($new_password, $NhaCungCap->ten_nha_cung_cap));
             return response()->json([
                 'message' => 'Đã cấp lại mật khẩu mới, vui lòng kiểm tra email!',
                 'status'  => true
             ]);
         } else {
-            return response()->json([
-                'message' => 'Email sai hoặc chưa đăng ký trên hệ thống!',
-                'status'  => false
-            ]);
+            $khachHang = KhachHang::where('email', $request->email)->first();
+            if ($khachHang) {
+                $khachHang->password = bcrypt($new_password);
+                $khachHang->save();
+                Mail::to($khachHang->email)->queue(new QuenMatKhau($new_password, $khachHang->ten_khach_hang));
+                return response()->json([
+                    'message' => 'Đã cấp lại mật khẩu mới, vui lòng kiểm tra email!',
+                    'status'  => true
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Email sai hoặc chưa đăng ký trên hệ thống!',
+                    'status'  => false
+                ]);
+            }
         }
     }
 
@@ -156,7 +162,7 @@ class NhaCungCapController extends Controller
             'password'       => bcrypt($request->password),
             'hash_active'    => Str::uuid(),
         ]);
-        Mail::to($ncc->email)->send(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
+        Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
 
         return response()->json([
             'message' => 'Tạo tài khoản thành công!',

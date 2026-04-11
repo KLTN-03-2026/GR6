@@ -23,8 +23,8 @@ class ThemMoiKhachHangRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ten_khach_hang' => 'required| min: 4| max: 100',
-            'so_dien_thoai'  => 'required| digits: 10| unique:khach_hangs,so_dien_thoai|unique:nha_cung_caps,so_dien_thoai',
+            'ten_khach_hang' => 'required| min: 4| max: 100|regex:/^[\pL\s]+$/u',
+            'so_dien_thoai'  => 'required|regex:/^0[3-9][0-9]{8}$/| unique:khach_hangs,so_dien_thoai|unique:nha_cung_caps,so_dien_thoai',
             'email'          => 'required| email| unique:khach_hangs,email|unique:nha_cung_caps,email',
             'password'       => 'required| min: 8|max:50',
         ];
@@ -32,7 +32,7 @@ class ThemMoiKhachHangRequest extends FormRequest
     public function messages()
     {
         return [
-            'ten_khach_hang.*' => 'tên phải từ 4 đến 100 kí tự',
+            'ten_khach_hang.*' => 'tên trên 4 kí tự và không chứa kí tự đặc biệt',
             'so_dien_thoai.*'  => 'Số điện thoại không đúng hoặc đã được sử dụng',
             'email.*'          => 'Email đã được sử dụng hoặc không đúng định dạng',
             'password.*'       => 'Mật khẩu phải từ 8 đến 50 kí tự',

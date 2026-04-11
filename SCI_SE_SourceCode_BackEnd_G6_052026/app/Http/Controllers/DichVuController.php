@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DichVu;
+use App\Models\HinhAnhDichVu;
 use Illuminate\Http\Request;
 
 class DichVuController extends Controller
