@@ -4,7 +4,7 @@ import {
   FileText, Settings, LayoutDashboard, List, 
   HelpCircle, LogOut, Download, Check, X, ChevronLeft, ChevronRight 
 } from 'lucide-react';
-
+import { Link, useNavigate, useLocation } from "react-router-dom";
 const Quan_ly_nguoi_dung = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -31,9 +31,11 @@ const Quan_ly_nguoi_dung = () => {
                 <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all">
                   <LayoutDashboard size={18} /> Bảng điều khiển
                 </button>
-                <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all">
-                  <List size={18} /> Danh mục
-                </button>
+                <Link to="/admin/quan-ly-danh-muc">
+                  <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all">
+                    <List size={18} /> Danh mục
+                  </button>
+                </Link>
                 <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold bg-blue-50 text-blue-600 rounded-xl transition-all">
                   <Users size={18} /> Khách hàng
                 </button>
