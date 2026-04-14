@@ -16,14 +16,16 @@ const ServicesPage = () => {
   const [activeParentId, setActiveParentId] = useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [Images, setImages] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [resCate, resServ] = await Promise.all([
+        const [resCate, resServ, resImg] = await Promise.all([
           api.get('/danh-muc/get-data'),
-          api.get('/dich-vu/get-data')
+          api.get('/dich-vu/get-data'),
+          api.get('/hinh-anh-dich-vu/get-data-hinh-anh')
         ]);
 
         if (resCate.data.status) {
@@ -36,6 +38,10 @@ const ServicesPage = () => {
           const servData = resServ.data.data;
           setAllServices(servData);
           setDisplayServices(servData);
+        }
+        if (resImg.data.status) {
+          console.log("ẢNH DATA:", resImg.data);
+          setImages(resImg.data.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -58,6 +64,12 @@ const ServicesPage = () => {
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN').format(price) + ' VND';
+  };
+  const getImageId = (serviceId) => {
+  const img = Images.find(
+    item => Number(item.id_dich_vu) === Number(serviceId)
+  );
+  return img ? img.hinh_anh : "https://via.placeholder.com/300";
   };
 
   return (
@@ -117,7 +129,7 @@ const ServicesPage = () => {
           displayServices.map((service) => (
             <article key={service.id} className="service-card" onClick={() => navigate('/chi-tiet')}>
               <div className="service-thumb">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="" />
+                <img src={getImageId(service.id)} alt="" />
                 <div className="service-rating">4.8</div>
               </div>
               <div className="service-info">

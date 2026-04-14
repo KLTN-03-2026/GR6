@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
+import api from '../../api';
 import { toast } from "react-toastify";
 
 const Dang_nhap_Admin = (props) => {
@@ -31,7 +31,7 @@ const Dang_nhap_Admin = (props) => {
         localStorage.setItem("admin_auth", JSON.stringify(adminAuth));
 
         toast.success("Xác thực quản trị viên thành công!");
-        navigate("/"); 
+        navigate("/admin/quan-ly-nguoi-dung"); 
       } else {
         toast.error(response.data?.message || "Tài khoản không có quyền truy cập");
       }
