@@ -108,15 +108,11 @@ class KhachHangController extends Controller
             $KhachHang->is_active = 1;
             $KhachHang->hash_active = null;
             $KhachHang->save();
-            // return redirect('http://localhost:3000/'); //route tới trang xác nhận thành công nhé
-            //     return response()->json([
-            //         'status' => true,
-            //         'message' => 'Kích hoạt tài khoản thành công!'
-            //     ]);
-            return response()->json([
-                'status' => true,
-                'message' => "Bạn đã kích hoạt tài khoản thành công!"
-            ]);
+            return redirect('http://localhost:3000/dang-nhap'); //route tới trang xác nhận thành công nhé
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Kích hoạt tài khoản thành công!'
+                ]);
         } else {
             return response()->json([
                 'status' => false,
