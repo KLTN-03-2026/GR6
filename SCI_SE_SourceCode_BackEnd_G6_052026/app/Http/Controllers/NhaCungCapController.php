@@ -142,14 +142,15 @@ class NhaCungCapController extends Controller
             $NhaCungCap->is_active = 1;
             $NhaCungCap->hash_active = null;
             $NhaCungCap->save();
-            return response()->json([
-                'status' => true,
-                'message' => "Bạn đã kích hoạt tài khoản thành công!"
-            ]);
+           return redirect('http://localhost:3000/dang-nhap'); //route tới trang xác nhận thành công nhé
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Kích hoạt tài khoản thành công!'
+                ]);
         } else {
             return response()->json([
                 'status' => false,
-                'message' => "Tài khoản bạn đã được kích hoạt hoặc không tồn tại!"
+                'message' => "Tài khoản bạn đã được kích hoạt hoặc không tồn tại!"  
             ]);
         }
     }

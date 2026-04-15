@@ -35,7 +35,7 @@
                         </p>
 
                         <!-- Button -->
-                        <a href="http://localhost:3000/login"
+                        <a href="http://localhost:3000/dang-nhap"
                            style="display:inline-block;margin-top:20px;padding:12px 25px;background:#38c172;color:white;text-decoration:none;border-radius:6px;font-weight:bold;">
                             Đăng nhập ngay
                         </a>

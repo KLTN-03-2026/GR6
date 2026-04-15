@@ -58,10 +58,13 @@ Route::post('/admin/dang-nhap', [AdminController::class, 'dangNhap']);
 Route::post('/admin/dang-xuat', [AdminController::class, 'dangXuat'])->middleware('auth:sanctum');
 Route::post('/admin/check-login', [AdminController::class, 'checkLogin'])->middleware('auth:sanctum');
 
+
+//admin quản lý khách hàng
 Route::get('/admin/customers', [AdminController::class, 'getAllCustomers'])->middleware('auth:sanctum'); //lấy toàn bộ khách hàng
 Route::get('/admin/customers/block/{id}', [AdminController::class, 'blockCustomer'])->middleware('auth:sanctum'); //block/unblock khách hàng
 
 
+//admin quản lý nhà cung cấp
 Route::get('/admin/providers', [AdminController::class, 'getAllProviders'])->middleware('auth:sanctum'); //lấy toàn bộ nhà cung cấp
 Route::get('/admin/providers/block/{id}', [AdminController::class, 'blockProvider'])->middleware('auth:sanctum'); //block/unblock nhà cung cấp
 
@@ -69,13 +72,8 @@ Route::get('/admin/providers/block/{id}', [AdminController::class, 'blockProvide
 Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middleware('auth:sanctum'); //tìm kiếm khách hàng và nhà cung cấp theo tên hoặc email
 
 
-// danh mục dịch vụ
-Route::get('/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
-Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
-Route::post('/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc']);
-Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc']);
-
- 
-
-
-
+//admin quản lý danh mục dịch vụ
+Route::get('/admin/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
+Route::post('/admin/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
+Route::post('/admin/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc']);
+Route::delete('/admin/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc']);
