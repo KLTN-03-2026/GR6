@@ -12,6 +12,46 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+    public function getCountProviders()
+    {
+        $tong_so_nha_cung_cap = NhaCungCap::count();
+        $nha_cung_cap_block = NhaCungCap::where('is_blocked', 1)->count();
+        $nha_cung_cap_khong_block = NhaCungCap::where('is_blocked', 0)->count();
+        $nha_cung_cap_chua_active = NhaCungCap::where('is_active', 0)->count();
+        $nha_cung_cap_da_active = NhaCungCap::where('is_active', 1)->count();
+        $nha_cung_cap_moi_trong_thang = NhaCungCap::where('created_at', '>=', now()->subMonth())->count();
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'tong_so_nha_cung_cap' => $tong_so_nha_cung_cap,
+                'nha_cung_cap_block' => $nha_cung_cap_block,
+                'nha_cung_cap_khong_block' => $nha_cung_cap_khong_block,
+                'nha_cung_cap_chua_active' => $nha_cung_cap_chua_active,
+                'nha_cung_cap_da_active' => $nha_cung_cap_da_active,
+                'nha_cung_cap_moi_trong_thang' => $nha_cung_cap_moi_trong_thang
+            ]
+        ]);
+    }
+    public function getCountCustomers()
+    {
+        $tong_so_khach_hang = KhachHang::count();
+        $khach_hang_block = KhachHang::where('is_blocked', 1)->count();
+        $khach_hang_khong_block = KhachHang::where('is_blocked', 0)->count();
+        $khach_hang_chua_active = KhachHang::where('is_active', 0)->count();
+        $khach_hang_da_active = KhachHang::where('is_active', 1)->count();
+        $khach_hang_moi_trong_thang = KhachHang::where('created_at', '>=', now()->subMonth())->count();
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'tong_so_khach_hang' => $tong_so_khach_hang,
+                'khach_hang_block' => $khach_hang_block,
+                'khach_hang_khong_block' => $khach_hang_khong_block,
+                'khach_hang_chua_active' => $khach_hang_chua_active,
+                'khach_hang_da_active' => $khach_hang_da_active,
+                'khach_hang_moi_trong_thang' => $khach_hang_moi_trong_thang
+            ]
+        ]);
+    }
     public function search($keyword)
     {
         $customers = KhachHang::where('ten_khach_hang', 'like', "%$keyword%")

@@ -61,19 +61,22 @@ Route::post('/admin/check-login', [AdminController::class, 'checkLogin'])->middl
 
 //admin quản lý khách hàng
 Route::get('/admin/customers', [AdminController::class, 'getAllCustomers'])->middleware('auth:sanctum'); //lấy toàn bộ khách hàng
+Route::get('/admin/customers-count', [AdminController::class, 'getCountCustomers'])->middleware('auth:sanctum'); //lấy toàn bộ khách hàng
 Route::get('/admin/customers/block/{id}', [AdminController::class, 'blockCustomer'])->middleware('auth:sanctum'); //block/unblock khách hàng
+
 
 
 //admin quản lý nhà cung cấp
 Route::get('/admin/providers', [AdminController::class, 'getAllProviders'])->middleware('auth:sanctum'); //lấy toàn bộ nhà cung cấp
 Route::get('/admin/providers/block/{id}', [AdminController::class, 'blockProvider'])->middleware('auth:sanctum'); //block/unblock nhà cung cấp
-
+Route::get('/admin/providers-count', [AdminController::class, 'getCountProviders'])->middleware('auth:sanctum'); 
 
 Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middleware('auth:sanctum'); //tìm kiếm khách hàng và nhà cung cấp theo tên hoặc email
 
 
 //admin quản lý danh mục dịch vụ
-Route::get('/admin/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
-Route::post('/admin/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
-Route::post('/admin/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc']);
-Route::delete('/admin/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc']);
+Route::get('/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
+Route::get('/danh-muc/get-count-data', [DanhMucDichVuController::class, 'getCountDanhMuc']);
+Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc'])->middleware('auth:sanctum');
+Route::post('/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc'])->middleware('auth:sanctum');
+Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc'])->middleware('auth:sanctum');
