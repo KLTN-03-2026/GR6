@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DanhMucDichVuController;
+use App\Http\Controllers\DatLichController;
 use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\HinhAnhDichVuController;
 use App\Http\Controllers\KhachHangController;
@@ -18,6 +19,11 @@ Route::post('/khach-hang/dang-xuat', [KhachHangController::class, 'dangXuat'])->
 Route::post('/khach-hang/quen-mat-khau', [KhachHangController::class, 'quenMatKhau'])->middleware('throttle:quen-mat-khau'); //limit call api (1 lần gọi sau 60 phút)
 Route::get('/khach-hang/thong-tin-ca-nhan', [KhachHangController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
 Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
+
+//khách hàng đặt lịch
+Route::get('/khach-hang/dat-lich/getdata', [DatLichController::class, 'getDataDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+Route::post('/khach-hang/dat-lich/create', [DatLichController::class, 'createDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+
 
 
 
