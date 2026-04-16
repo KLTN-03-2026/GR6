@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ThemMoiKhachHangRequest;
 use App\Mail\KichHoatTaiKhoan;
 use App\Mail\QuenMatKhau;
+use App\Models\DatLich;
 use App\Models\KhachHang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,7 @@ class KhachHangController extends Controller
     public function thongTinCaNhan() {
         $KhachHang=$this->isUserKhachHang()->select('ten_khach_hang','email','so_dien_thoai','avatar')->first();
         return response()->json([
+            'status' => true,
             'data' => $KhachHang
         ]);
     }

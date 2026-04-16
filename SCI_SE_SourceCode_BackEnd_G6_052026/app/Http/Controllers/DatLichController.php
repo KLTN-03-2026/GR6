@@ -7,59 +7,42 @@ use Illuminate\Http\Request;
 
 class DatLichController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function createDatLich(Request $request) // hàm này chưa xong, chờ ux ui
     {
-        //
+        $KhachHang = $this->isUserKhachHang();
+        if ($KhachHang) {
+             DatLich::create([
+                'khach_hang_id' => $KhachHang->id,
+                'dich_vu_id' => $request->dich_vu_id,
+                'ngay_dat' => $request->ngay_dat,
+                'gio_dat' => $request->gio_dat,
+                'trang_thai' => 0, // 0: mới đặt, 1: đã xác nhận, 2: đã hoàn thành, 3: đã hủy
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đặt lịch thành công!',
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Bạn chưa đăng nhập!',
+                'status'  => false
+            ]);
+        }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function getDataDatLich()
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(DatLich $datLich)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DatLich $datLich)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DatLich $datLich)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(DatLich $datLich)
-    {
-        //
+        $KhachHang = $this->isUserKhachHang();
+        if ($KhachHang) {
+            $data = DatLich::where('khach_hang_id', $KhachHang->id)->get();
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Bạn chưa đăng nhập!',
+                'status'  => false
+            ]);
+        }
     }
 }

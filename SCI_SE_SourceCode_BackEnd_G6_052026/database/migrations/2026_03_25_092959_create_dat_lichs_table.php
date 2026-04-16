@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('ten_nguoi_dat');
             $table->string('so_dien_thoai_nguoi_dat');
             $table->string('ghi_chu');
-            $table->integer('trang_thai_dat_lich');
+            $table->integer('trang_thai_dat_lich'); // 0: mới đặt, 1: đã xác nhận, 2: đã hoàn thành, 3: đã hủy
             $table->timestamps();
         });
     }
