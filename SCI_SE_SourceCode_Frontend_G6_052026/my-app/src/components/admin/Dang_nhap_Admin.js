@@ -22,7 +22,7 @@ const Dang_nhap_Admin = (props) => {
       });
       console.log("Admin login successful:", response.data); 
       if (response.data && response.data.admin_access_token) { 
-        localStorage.setItem("admin_token", response.data.admin_access_token);
+        localStorage.setItem("admin_access_token", response.data.admin_access_token);
         const adminAuth = {
           username: response.data.username || username,
           role: "admin",
