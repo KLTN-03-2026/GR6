@@ -76,20 +76,17 @@ class DanhMucDichVuController extends Controller
     }
     public function createDanhMuc(DanhMucDichVuRequest $request)
     {
-        $request->validate([
-            'hinh_anh.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
         $filename = Str::uuid() . '.' . $request->file('hinh_anh')->getClientOriginalExtension();
         $path = $request->file('hinh_anh')->storeAs('hinh_anh_danh_muc', $filename, 'public');
-        $danhMuc = DanhMucDichVu::create([
+        DanhMucDichVu::create([
             'ten_dich_vu' => $request->ten_dich_vu,
             'id_father' => $request->id_father,
             'hinh_anh' => $path,
+            'trang_thai' => 1
         ]);
         return response()->json([
             'status' => true,
             'message' => 'Danh mục dịch vụ đã được tạo thành công!',
-            'data' => $danhMuc
         ]);
     }
 

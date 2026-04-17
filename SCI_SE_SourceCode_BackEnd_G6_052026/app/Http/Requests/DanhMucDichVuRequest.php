@@ -25,7 +25,7 @@ class DanhMucDichVuRequest extends FormRequest
         return [
             'ten_dich_vu' => 'required| min: 4| max: 100|unique:danh_muc_dich_vus,ten_dich_vu',
             'id_father' => 'required|exists:danh_muc_dich_vus,id',
-            'hinh_anh' => 'required|url',
+            'hinh_anh' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
     public function messages()
