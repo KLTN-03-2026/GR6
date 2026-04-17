@@ -7,6 +7,7 @@ use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\HinhAnhDichVuController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
+use App\Http\Controllers\ThanhToanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +84,10 @@ Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middl
 //admin quản lý danh mục dịch vụ
 Route::get('/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
 Route::get('/danh-muc/get-count-data', [DanhMucDichVuController::class, 'getCountDanhMuc']);
-Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc'])->middleware('auth:sanctum');
+Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
 Route::post('/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc'])->middleware('auth:sanctum');
 Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc'])->middleware('auth:sanctum');
+
+
+//VNPAY payment
+Route::post('/vnpay-payment', [ThanhToanController::class, 'createPayment']);
