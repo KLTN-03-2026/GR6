@@ -16,7 +16,6 @@ class DatLichController extends Controller
                 'dich_vu_id' => $request->dich_vu_id,
                 'ngay_dat' => $request->ngay_dat,
                 'gio_dat' => $request->gio_dat,
-                'trang_thai' => 0, // 0: mới đặt, 1: đã xác nhận, 2: đã hoàn thành, 3: đã hủy
             ]);
             return response()->json([
                 'status' => true,
