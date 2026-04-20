@@ -127,7 +127,7 @@ const ServicesPage = () => {
           <div>Đang tải dữ liệu...</div>
         ) : displayServices.length > 0 ? (
           displayServices.map((service) => (
-            <article key={service.id} className="service-card" onClick={() => navigate('/chi-tiet')}>
+            <article key={service.id} className="service-card" onClick={() => navigate(`/chi-tiet/${service.id}`)}>
               <div className="service-thumb">
                 <img src={getImageId(service.id)} alt="" />
                 <div className="service-rating">4.8</div>

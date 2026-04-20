@@ -1,0 +1,142 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+// Giả sử bạn import function này từ file api config của bạn
+import api, { getHinhAnhDichVu } from '../api'; 
+import { 
+  Star, Clock, CircleDollarSign, ShieldCheck, 
+  CalendarCheck, Info 
+} from 'lucide-react';
+
+const Chi_tiet_dv = () => {
+  const { id } = useParams();
+  const [serviceDetail, setServiceDetail] = useState(null);
+  const [listImages, setListImages] = useState([]); // Lưu danh sách hình ảnh từ API mới
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // 1. Lấy chi tiết dịch vụ
+        const resDetail = await api.get(`/dich-vu/chi-tiet-dich-vu/${id}`);
+        
+        // 2. Lấy toàn bộ danh sách hình ảnh
+        const resImages = await getHinhAnhDichVu();
+        
+        if (resDetail.data.status) {
+          setServiceDetail(resDetail.data.data);
+        }
+
+        if (resImages.data.status) {
+          // Lọc ra những hình ảnh có id_dich_vu trùng với id hiện tại
+          const filtered = resImages.data.data.filter(img => img.id_dich_vu === parseInt(id));
+          setListImages(filtered);
+        }
+      } catch (error) {
+        console.error("Lỗi fetch data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) fetchData();
+  }, [id]);
+
+  const formatPrice = (price) => {
+    if (!price) return "0 VND";
+    return new Intl.NumberFormat('vi-VN').format(price) + ' VND';
+  };
+
+  if (isLoading) return <div className="text-center py-20 font-sans">Đang tải dữ liệu...</div>;
+  if (!serviceDetail) return <div className="text-center py-20 font-sans">Dịch vụ không tồn tại.</div>;
+
+  // Lấy ảnh đầu tiên làm ảnh chính, nếu không có thì dùng ảnh mặc định
+  const mainImage = listImages.length > 0 ? listImages[0].hinh_anh : "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800";
+
+  return (
+    <div className="bg-gray-50 min-h-screen pb-20 font-sans">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          <div className="lg:col-span-8 space-y-8">
+            {/* Gallery Hình ảnh - Lấy từ API hinh-anh-dich-vu */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-3 h-[400px] rounded-3xl overflow-hidden shadow-sm">
+                <img 
+                  src={mainImage} 
+                  alt={serviceDetail.ten_dich_vu} 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
+              
+              {/* Hiển thị tối đa 3 ảnh phụ từ listImages */}
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="h-28 rounded-2xl overflow-hidden shadow-sm bg-gray-200">
+                  <img 
+                    src={listImages[index + 1]?.hinh_anh || "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=400"} 
+                    alt="gallery" 
+                    className={`w-full h-full object-cover ${!listImages[index + 1] ? 'opacity-30' : ''}`} 
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Nội dung bên dưới giữ nguyên */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-4xl font-black text-gray-900">{serviceDetail.ten_dich_vu}</h1>
+                <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Dịch vụ xác thực</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-400"><Star size={18} fill="currentColor" /></div>
+                <span className="font-bold text-gray-900">4.8</span>
+                <span className="text-gray-400 text-sm">(Đánh giá hệ thống)</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
+              <h2 className="text-xl font-bold mb-4">Chi tiết dịch vụ</h2>
+              <p className="text-gray-600 font-bold mb-3 italic">{serviceDetail.mo_ta_ngan}</p>
+              <p className="text-gray-600 leading-relaxed mb-8">{serviceDetail.mo_ta_dai}</p>
+              
+              <div className="flex flex-wrap gap-10">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600"><Clock size={24} /></div>
+                  <div>
+                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Thời lượng</p>
+                    <p className="font-bold text-gray-900">{serviceDetail.thoi_gian_du_kien} phút</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600"><CircleDollarSign size={24} /></div>
+                  <div>
+                    <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Đơn giá</p>
+                    <p className="font-bold text-gray-900">{formatPrice(serviceDetail.don_gia)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Cột phải giữ nguyên */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-28 bg-white p-6 rounded-[32px] shadow-xl border border-gray-100">
+              <p className="text-sm font-bold text-gray-400 mb-1">Giá thanh toán</p>
+              <h3 className="text-3xl font-black text-gray-900 mb-6">{formatPrice(serviceDetail.don_gia)}</h3>
+              <button 
+                onClick={() => alert(`Đang tiến hành đặt: ${serviceDetail.ten_dich_vu}`)}
+                className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-blue-700 transition-all"
+              >
+                ĐẶT LỊCH NGAY
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Chi_tiet_dv;
