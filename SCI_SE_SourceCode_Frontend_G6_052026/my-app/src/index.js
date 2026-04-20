@@ -16,7 +16,8 @@ import Chi_tiet_dv from './components/Chi_tiet_dv';
 import Dang_nhap_Admin from './components/admin/Dang_nhap_Admin';
 import Quan_ly_ho_so from './components/Quan_ly_ho_so';
 import Quan_ly_nguoi_dung from './components/admin/Quan_ly_nguoi_dung';
-import Quan_ly_danh_muc from './components/admin/Quan_ly_danh_muc';;
+import Quan_ly_danh_muc from './components/admin/Quan_ly_danh_muc';
+import Dat_lich from './components/Khachhang/Dat_lich';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -30,12 +31,13 @@ root.render(
         <Route path='nha-cung-cap' element={<Nha_Cung_Cap />} />
         <Route path='dang-ky-ncc' element={<Dangkyncc />} />
         <Route path='quen-mat-khau' element={<Quen_MK />} />
-        <Route path='chi-tiet' element={<Chi_tiet_dv />} />
+        <Route path='chi-tiet/:id' element={<Chi_tiet_dv />} />
         <Route path='chi-tiet-thuong-hieu' element={<Chi_tiet_thuong_hieu />} />
         <Route path='admin/dang-nhap' element={<Dang_nhap_Admin />} />
         <Route path='quan-ly-ho-so' element={<Quan_ly_ho_so />} />
         <Route path='admin/quan-ly-nguoi-dung' element={<Quan_ly_nguoi_dung />} />
         <Route path='admin/quan-ly-danh-muc' element={<Quan_ly_danh_muc />} />
+        <Route path='dat-lich' element={<Dat_lich />} />
 
       </Routes>
     </App>

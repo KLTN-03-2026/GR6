@@ -103,8 +103,6 @@ const Quan_ly_nguoi_dung = () => {
             <p className="text-gray-500 text-sm">Xem và điều chỉnh quyền truy cập của các thành viên trong hệ thống.</p>
           </div>
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-blue-600 hover:bg-gray-50 transition-all"><Download size={18} /> Xuất báo cáo</button>
-            <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 rounded-xl text-sm font-bold text-white hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all"><UserPlus size={18} /> Tạo tài khoản</button>
           </div>
         </div>
 
