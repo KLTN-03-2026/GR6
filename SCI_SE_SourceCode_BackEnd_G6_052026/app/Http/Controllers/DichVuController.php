@@ -8,6 +8,24 @@ use Illuminate\Http\Request;
 
 class DichVuController extends Controller
 {
+    public function getNCC($id)
+    {
+        $ncc = DichVu::where('dich_vus.id', $id)
+            ->join('thuong_hieus', 'thuong_hieus.id', 'dich_vus.id_thuong_hieu')
+            ->select('thuong_hieus.id', 'thuong_hieus.ten_thuong_hieu', 'thuong_hieus.dia_chi','thuong_hieus.logo')
+            ->first();
+        if (!$ncc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy nhà cung cấp cho dịch vụ với ID đã cho.'
+            ], 404);
+        } else {
+            return response()->json([
+                'status' => true,
+                'data' => $ncc
+            ]);
+        }
+    }
     public function getDichVu()
     {
         $dichVu = DichVu::get();
@@ -19,8 +37,11 @@ class DichVuController extends Controller
     public function chiTietDichVu($id)
     {
         $dichVu = DichVu::where('id', $id)
-            ->select('dich_vus.id', 'dich_vus.ten_dich_vu', 'dich_vus.mo_ta_ngan', 'dich_vus.mo_ta_chi_tiet', 'dich_vus.gia_tien', 'dich_vus.hinh_anh')
+            ->select('dich_vus.id', 'dich_vus.ten_dich_vu', 'dich_vus.mo_ta_ngan', 'dich_vus.mo_ta_dai', 'dich_vus.don_gia', 'dich_vus.thoi_gian_du_kien')
             ->first();
+        $hinhAnhDichVu = HinhAnhDichVu::where('id_dich_vu', $id)
+            ->select('hinh_anh_dich_vus.id', 'hinh_anh_dich_vus.id_dich_vu', 'hinh_anh_dich_vus.hinh_anh')
+            ->get();
         if (!$dichVu) {
             return response()->json([
                 'status' => false,
@@ -30,7 +51,9 @@ class DichVuController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $dichVu
+            'data' => $dichVu,
+            'data_hinh_anh' => $hinhAnhDichVu
+
         ]);
     }
     public function timKiemDichVu($keyword)
