@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             NhaCungCapSeeder::class,
             HinhAnhSeeder::class,
             ThuongHieuSeeder::class,
+            NhanVienSeeder::class,
         ]);
     }
 }
