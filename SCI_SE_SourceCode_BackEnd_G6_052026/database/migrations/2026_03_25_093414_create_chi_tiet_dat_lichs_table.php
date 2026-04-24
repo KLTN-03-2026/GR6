@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->integer('id_dat_lich');
             $table->integer('id_dich_vu');
-            $table->integer('id_nhan_vien');
+            $table->integer('id_nhan_vien')->nullable();
             $table->string('dia_chi_thuc_hien');
-            $table->dateTime('gio_bat_dau');
-            $table->dateTime('gio_ket_thuc');
+            $table->time('gio_bat_dau');
+            $table->date('ngay_dat_lich');
             $table->integer('so_luong');
-            $table->decimal('don_gia');
+            $table->decimal('don_gia', 10, 2);
             $table->timestamps();
         });
     }
