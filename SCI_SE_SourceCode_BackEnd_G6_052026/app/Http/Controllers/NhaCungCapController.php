@@ -8,10 +8,12 @@ use App\Mail\KichHoatTaiKhoanNCC;
 use App\Mail\QuenMatKhau;
 use App\Models\KhachHang;
 use App\Models\NhaCungCap;
+use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 class NhaCungCapController extends Controller
 {
@@ -142,26 +144,47 @@ class NhaCungCapController extends Controller
             $NhaCungCap->is_active = 1;
             $NhaCungCap->hash_active = null;
             $NhaCungCap->save();
-           return redirect('http://localhost:3000/dang-nhap'); //route tới trang xác nhận thành công nhé
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Kích hoạt tài khoản thành công!'
-                ]);
+            return redirect('http://localhost:3000/dang-nhap'); //route tới trang xác nhận thành công nhé
+            return response()->json([
+                'status' => true,
+                'message' => 'Kích hoạt tài khoản thành công!'
+            ]);
         } else {
             return response()->json([
                 'status' => false,
-                'message' => "Tài khoản bạn đã được kích hoạt hoặc không tồn tại!"  
+                'message' => "Tài khoản bạn đã được kích hoạt hoặc không tồn tại!"
             ]);
         }
     }
     public function create(ThemMoiNCCRequest $request)
     {
+        $ma_so_thue = $request->ma_so_thue;
+        // $check_mst = Http::get("https://api.xinvoice.vn/gdt-api/tax-payer/" . $ma_so_thue);
+        
+        foreach ($request->file('logo') as $file) {
+
+            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+            $logo = $file->storeAs('logo_thuong_hieu', $filename, 'public');
+        }
+
         $ncc = NhaCungCap::create([
             'ten_nha_cung_cap' => $request->ten_nha_cung_cap,
             'so_dien_thoai'  => $request->so_dien_thoai,
             'email'          => $request->email,
             'password'       => bcrypt($request->password),
             'hash_active'    => Str::uuid(),
+        ]);
+        ThuongHieu::create([
+            'ten_thuong_hieu'           => $request->ten_thuong_hieu,
+            'id_nha_cung_cap'           => $ncc->id,
+            'id_danh_muc_dich_vu'       => $request->id_danh_muc_dich_vu,
+            'ma_so_thue'                => $ma_so_thue,
+            'ma_bin_ngan_hang'          => $request->ma_bin_ngan_hang,
+            'tai_khoan_ngan_hang'       => $request->tai_khoan_ngan_hang,
+            'dia_chi'                   => $request->dia_chi,
+            'logo'                      => $logo,
+
         ]);
         Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
 

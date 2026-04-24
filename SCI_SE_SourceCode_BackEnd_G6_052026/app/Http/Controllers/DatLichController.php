@@ -2,20 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DatLichRequest;
+use App\Models\ChiTietDatLich;
 use App\Models\DatLich;
 use Illuminate\Http\Request;
 
 class DatLichController extends Controller
 {
-    public function createDatLich(Request $request) // hàm này chưa xong, chờ ux ui
+    public function createDatLich(DatLichRequest $request) // hàm này chưa xong, chờ ux ui
     {
         $KhachHang = $this->isUserKhachHang();
         if ($KhachHang) {
-             DatLich::create([
-                'khach_hang_id' => $KhachHang->id,
-                'dich_vu_id' => $request->dich_vu_id,
-                'ngay_dat' => $request->ngay_dat,
-                'gio_dat' => $request->gio_dat,
+            $Lich = DatLich::create([
+                'id_khach_hang' => $KhachHang->id,
+                'id_thuong_hieu' => $request->id_thuong_hieu,
+                'ten_nguoi_dat' => $request->ten_nguoi_dat,
+                'so_dien_thoai_nguoi_dat' => $request->so_dien_thoai_nguoi_dat,
+                'ghi_chu' => $request->ghi_chu,
+            ]);
+            if ($request->id_nhan_vien) {
+                $id_nhan_vien = $request->id_nhan_vien;
+            } else {
+                $id_nhan_vien = null;
+            }
+            ChiTietDatLich::create([
+                'id_dat_lich' => $Lich->id,
+                'id_dich_vu' => $request->id_dich_vu,
+                'id_nhan_vien' => $id_nhan_vien,
+                'dia_chi_thuc_hien' => $request->dia_chi_thuc_hien,
+                'gio_bat_dau' => $request->gio_bat_dau,
+                'ngay_dat_lich' => $request->ngay_dat_lich,
+                'so_luong' => $request->so_luong,
+                'don_gia' => $request->don_gia,
             ]);
             return response()->json([
                 'status' => true,
@@ -32,7 +50,7 @@ class DatLichController extends Controller
     {
         $KhachHang = $this->isUserKhachHang();
         if ($KhachHang) {
-            $data = DatLich::where('khach_hang_id', $KhachHang->id)->get();
+            $data = DatLich::where('id_khach_hang', $KhachHang->id)->get();
             return response()->json([
                 'status' => true,
                 'data' => $data
