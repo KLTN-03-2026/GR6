@@ -6,6 +6,7 @@
   } from 'lucide-react';
   import { Link, useNavigate, useLocation } from "react-router-dom";
   import api from '../../api/index'; 
+import { toast } from 'react-toastify';
 
   const Quan_ly_danh_muc = () => {
     const navigate = useNavigate();
@@ -111,7 +112,7 @@
           await api.post("danh-muc/create", data, getAuthConfig());
         }
 
-        alert('Thành công!');
+        toast.success("Thành Công!");
         handleReset();
         fetchInitialData();
 
@@ -139,10 +140,10 @@
       if (!window.confirm("Bạn có chắc muốn xóa danh mục này?")) return;
       try {
         await api.delete(`danh-muc/destroy/${id}`, getAuthConfig());
-        alert("Đã xóa thành công!");
+        toast.success("Đã xóa thành công!");
         fetchInitialData();
       } catch (err) {
-        alert("Lỗi: Không thể xóa.");
+        toast.error("Lỗi: Không thể xóa.");
       }
     };
     const [isOpen, setIsOpen] = useState(false);
