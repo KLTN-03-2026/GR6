@@ -7,6 +7,7 @@ use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\HinhAnhDichVuController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
+use App\Http\Controllers\ThanhToanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,7 +47,8 @@ Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->mi
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
-Route::get('/dich-vu/get-nha-cung-cap/{id}', [DichVuController::class, 'getNCC']); //lấy nhà cung cấp theo id dịch vụ
+Route::get('/dich-vu/get-nha-cung-cap/{id}', [DichVuController::class, 'getNCC']);
+
 
 //hình ảnh dịch vụ
 Route::get('/hinh-anh-dich-vu/get-data-hinh-anh', [HinhAnhDichVuController::class, 'getDichVuHinhAnh']); //lấy toàn bộ hình ảnh và id dịch vụ của hình ảnh đó
@@ -84,6 +86,10 @@ Route::get('/admin/search/{keyword}', [AdminController::class, 'search'])->middl
 //admin quản lý danh mục dịch vụ
 Route::get('/danh-muc/get-data', [DanhMucDichVuController::class, 'getDanhMuc']);
 Route::get('/danh-muc/get-count-data', [DanhMucDichVuController::class, 'getCountDanhMuc']);
-Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc'])->middleware('auth:sanctum');
+Route::post('/danh-muc/create', [DanhMucDichVuController::class, 'createDanhMuc']);
 Route::post('/danh-muc/update', [DanhMucDichVuController::class, 'updateDanhMuc'])->middleware('auth:sanctum');
 Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destroyDanhMuc'])->middleware('auth:sanctum');
+
+
+//VNPAY payment
+Route::post('/vnpay-payment', [ThanhToanController::class, 'createPayment']);

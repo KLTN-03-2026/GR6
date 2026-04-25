@@ -18,13 +18,14 @@ return new class extends Migration
             $table->string('ten_thuong_hieu');
             $table->string('dia_chi');
             $table->string('so_dien_thoai');
-            $table->text('logo');
-            $table->string('mo_ta');
+            $table->text('logo')->nullable();
+            $table->text('anh_bia')->nullable();
+            $table->string('mo_ta')->nullable();
             $table->string('ma_so_thue');
-            $table->string('ten_ngan_hang');
+            $table->string('ma_bin_ngan_hang');
             $table->string('tai_khoan_ngan_hang');
             $table->double('diem_hai_long', 10, 2)->default(0);
-            $table->integer('is_active');
+            $table->integer('is_active')->default(1); // 0: chưa kích hoạt, 1: đã kích hoạt
             $table->timestamps();
         });
     }

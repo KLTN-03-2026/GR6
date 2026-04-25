@@ -39,6 +39,7 @@ class DanhMucDichVuRequest extends FormRequest
             },
         ],
             'hinh_anh' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+
         ];
     }
     public function messages()
