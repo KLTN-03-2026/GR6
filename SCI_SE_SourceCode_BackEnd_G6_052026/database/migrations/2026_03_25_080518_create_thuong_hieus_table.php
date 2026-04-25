@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('ten_thuong_hieu');
             $table->string('dia_chi');
             $table->string('so_dien_thoai');
-            $table->string('logo');
+            $table->text('logo');
             $table->string('mo_ta');
             $table->string('ma_so_thue');
             $table->string('ten_ngan_hang');
