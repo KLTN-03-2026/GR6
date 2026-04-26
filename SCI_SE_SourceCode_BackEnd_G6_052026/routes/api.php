@@ -7,7 +7,9 @@ use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\HinhAnhDichVuController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
+use App\Http\Controllers\NhanVienController;
 use App\Http\Controllers\ThanhToanController;
+use App\Http\Controllers\ThuongHieuController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +24,17 @@ Route::get('/khach-hang/thong-tin-ca-nhan', [KhachHangController::class, 'thongT
 Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin khách hàng đang đăng nhập
 
 //khách hàng đặt lịch
-Route::get('/khach-hang/dat-lich/getdata', [DatLichController::class, 'getDataDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+Route::get('/khach-hang/dat-lich/get-data', [DatLichController::class, 'getDataDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+Route::get('/khach-hang/chi-tiet-dat-lich/{id_dat_lich}', [DatLichController::class, 'getDataChiTietDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
 Route::post('/khach-hang/dat-lich/create', [DatLichController::class, 'createDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+
+
+//crud nhân viên của dịch vụ
+Route::get('thuong-hieu/nhan-vien/get-data/{id_dich_vu}',[ThuongHieuController::class,'getDataNhanVien']);
+Route::post('thuong-hieu/nhan-vien/them-moi',[ThuongHieuController::class,'createNhanVien']);
+Route::post('thuong-hieu/nhan-vien/update',[ThuongHieuController::class,'updateNhanVien']);
+Route::post('thuong-hieu/nhan-vien/delete/{id}',[ThuongHieuController::class,'destroyNhanVien']);
+Route::post('thuong-hieu/nhan-vien/update-status/{id}',[ThuongHieuController::class,'changeStauts']);
 
 
 
@@ -47,7 +58,7 @@ Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->mi
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
-Route::get('/dich-vu/get-nha-cung-cap/{id}', [DichVuController::class, 'getNCC']);
+Route::get('/dich-vu/get-thuong-hieu/{id}', [DichVuController::class, 'getThuongHieu']);
 
 
 //hình ảnh dịch vụ

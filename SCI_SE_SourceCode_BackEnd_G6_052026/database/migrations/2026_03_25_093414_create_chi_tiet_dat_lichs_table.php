@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('id_dat_lich');
             $table->integer('id_dich_vu');
+            $table->string('ma_hoa_don');
             $table->integer('id_nhan_vien')->nullable();
             $table->string('dia_chi_thuc_hien');
             $table->time('gio_bat_dau');

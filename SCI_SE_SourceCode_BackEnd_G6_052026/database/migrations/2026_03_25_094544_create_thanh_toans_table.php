@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('thanh_toans', function (Blueprint $table) {
             $table->id();
             $table->integer('id_chi_tiet_dat_lich');
-            $table->string('ma_hoa_don');
             $table->decimal('tong_tien_thanh_toan', 15, 2);
             $table->decimal('tong_tien_da_nhan', 15, 2);
             $table->integer('trang_thai'); // 0: chưa thanh toán, 1: đã thanh toán, 2: thanh toán một phần
