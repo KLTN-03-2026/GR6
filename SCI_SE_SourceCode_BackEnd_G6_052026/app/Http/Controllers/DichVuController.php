@@ -8,21 +8,22 @@ use Illuminate\Http\Request;
 
 class DichVuController extends Controller
 {
-    public function getNCC($id)
+
+    public function getThuongHieu($id)
     {
-        $ncc = DichVu::where('dich_vus.id', $id)
+        $ThuongHieu = DichVu::where('dich_vus.id', $id)
             ->join('thuong_hieus', 'thuong_hieus.id', 'dich_vus.id_thuong_hieu')
-            ->select('thuong_hieus.id', 'thuong_hieus.ten_thuong_hieu', 'thuong_hieus.dia_chi','thuong_hieus.logo')
+            ->select('thuong_hieus.id', 'thuong_hieus.ten_thuong_hieu', 'thuong_hieus.dia_chi', 'thuong_hieus.logo')
             ->first();
-        if (!$ncc) {
+        if (!$ThuongHieu) {
             return response()->json([
                 'status' => false,
-                'message' => 'Không tìm thấy nhà cung cấp cho dịch vụ với ID đã cho.'
+                'message' => 'Không tìm thấy thương hiệu cho dịch vụ với ID đã cho.'
             ], 404);
         } else {
             return response()->json([
                 'status' => true,
-                'data' => $ncc
+                'data' => $ThuongHieu
             ]);
         }
     }
@@ -42,6 +43,16 @@ class DichVuController extends Controller
         $hinhAnhDichVu = HinhAnhDichVu::where('id_dich_vu', $id)
             ->select('hinh_anh_dich_vus.id', 'hinh_anh_dich_vus.id_dich_vu', 'hinh_anh_dich_vus.hinh_anh')
             ->get();
+        $hinhAnhDichVu->transform(function ($item) {
+            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
+                $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->hinh_anh = asset('storage/' . $item->hinh_anh);
+            }
+            return $item;
+        });
         if (!$dichVu) {
             return response()->json([
                 'status' => false,

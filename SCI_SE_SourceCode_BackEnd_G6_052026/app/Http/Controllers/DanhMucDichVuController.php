@@ -55,11 +55,13 @@ class DanhMucDichVuController extends Controller
     public function updateDanhMuc(DanhMucDichVuRequest $request)
     {
         $danhMuc = DanhMucDichVu::where('id', $request->id)->first();
+        $filename = Str::uuid() . '.' . $request->file('hinh_anh')->getClientOriginalExtension();
+        $path = $request->file('hinh_anh')->storeAs('hinh_anh_danh_muc', $filename, 'public');
         if ($danhMuc) {
             $danhMuc->update([
                 'ten_dich_vu' => $request->ten_dich_vu,
                 'id_father' => $request->id_father,
-                'hinh_anh' => $request->hinh_anh,
+                'hinh_anh' => $path,
             ]);
             $danhMuc->save();
             return response()->json([
