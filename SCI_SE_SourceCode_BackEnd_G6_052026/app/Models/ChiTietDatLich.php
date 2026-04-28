@@ -13,6 +13,7 @@ class ChiTietDatLich extends Model
         'id_dat_lich',
         'id_dich_vu',
         'id_nhan_vien',
+        'ma_hoa_don',
         'dia_chi_thuc_hien',
         'gio_bat_dau',
         'ngay_dat_lich',

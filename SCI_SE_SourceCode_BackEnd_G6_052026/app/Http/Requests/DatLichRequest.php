@@ -23,7 +23,6 @@ class DatLichRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_khach_hang' => 'required|integer|exists:khach_hangs,id',
             'id_thuong_hieu' => 'required|integer|exists:thuong_hieus,id',
             'ten_nguoi_dat' => 'required|string|max:255',
             'so_dien_thoai_nguoi_dat' => 'required|string|max:20',

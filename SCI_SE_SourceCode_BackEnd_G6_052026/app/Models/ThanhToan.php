@@ -11,10 +11,9 @@ class ThanhToan extends Model
     protected $table = 'thanh_toans';
     protected $fillable = [
         'id_chi_tiet_dat_lich',
-        'ma_hoa_don',
         'tong_tien_thanh_toan',
         'tong_tien_da_nhan',
         'trang_thai',
-        'is_falied',
+        'is_failed',
     ];
 }
