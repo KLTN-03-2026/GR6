@@ -29,6 +29,6 @@ export const getProviderStats = () => api.get("admin/providers-count");
 export const blockProvider = (id) => api.get(`admin/providers/block/${id}`);
 //hinh anh dich vu
 export const getHinhAnhDichVu = () => api.get("hinh-anh-dich-vu/get-data-hinh-anh");
-export const getThuongHieus = (id) => api.get(`/dich-vu/get-nha-cung-cap/${id}`);
+export const getThuongHieus = (id) => api.get(`/dich-vu/get-thuong-hieu/${id}`);
 
 export default api;

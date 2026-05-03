@@ -37,7 +37,7 @@ root.render(
         <Route path='quan-ly-ho-so' element={<Quan_ly_ho_so />} />
         <Route path='admin/quan-ly-nguoi-dung' element={<Quan_ly_nguoi_dung />} />
         <Route path='admin/quan-ly-danh-muc' element={<Quan_ly_danh_muc />} />
-        <Route path='dat-lich' element={<Dat_lich />} />
+        <Route path="dat-lich/:id_thuong_hieu/:id_dich_vu" element={<Dat_lich />} />
 
       </Routes>
     </App>
