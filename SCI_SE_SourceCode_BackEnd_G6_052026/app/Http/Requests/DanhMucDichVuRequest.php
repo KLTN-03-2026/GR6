@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +25,19 @@ class DanhMucDichVuRequest extends FormRequest
     {
         return [
             'ten_dich_vu' => 'required| min: 4| max: 100|unique:danh_muc_dich_vus,ten_dich_vu',
-            'id_father' => 'required|exists:danh_muc_dich_vus,id',
+            'id_father'   => [
+            'required',
+            'integer',
+            function ($attribute, $value, $fail) {
+                if ($value != 0) {
+                    // Dùng Model thay vì DB table sẽ an toàn và ít lỗi Namespace hơn
+                    $exists = \App\Models\DanhMucDichVu::where('id', $value)->exists();
+                    if (!$exists) {
+                        $fail('Danh mục cha được chọn không tồn tại.');
+                    }
+                }
+            },
+        ],
             'hinh_anh' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
 
         ];

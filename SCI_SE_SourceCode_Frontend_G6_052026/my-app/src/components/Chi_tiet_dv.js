@@ -177,7 +177,7 @@ const Chi_tiet_dv = () => {
                   </div>
                 </div>
 
-                <Link to="/dat-lich">
+                <Link to={`/dat-lich/${thuonghieu.id}/${id}`}>
                   <button 
                     className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95"
                   >

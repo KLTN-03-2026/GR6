@@ -100,7 +100,7 @@ class ThuongHieuSeeder extends Seeder
                 'ma_bin_ngan_hang' => 'Ngân hàng XYZ',
                 'tai_khoan_ngan_hang' => '0987654321',
                 'is_active' => 1
-            ],
+],
             [
                 'id_nha_cung_cap' => 7,
                 'id_danh_muc_dich_vu' => 11,
@@ -146,7 +146,7 @@ class ThuongHieuSeeder extends Seeder
             [
                 'id_nha_cung_cap' => 10,
                 'id_danh_muc_dich_vu' => 14,
-                'ten_thuong_hieu' => 'sửa chữa điện tử',
+'ten_thuong_hieu' => 'sửa chữa điện tử',
                 'dia_chi' => '321 Đường ZAB, Quận XYZ, TP.HCM',
                 'so_dien_thoai' => '0987654321',
                 'logo' => "https://static.vecteezy.com/system/resources/previews/021/548/095/original/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg",
