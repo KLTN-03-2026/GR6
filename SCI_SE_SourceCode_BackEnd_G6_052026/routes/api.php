@@ -36,6 +36,9 @@ Route::post('thuong-hieu/nhan-vien/update',[ThuongHieuController::class,'updateN
 Route::post('thuong-hieu/nhan-vien/delete/{id}',[ThuongHieuController::class,'destroyNhanVien']);
 Route::post('thuong-hieu/nhan-vien/update-status/{id}',[ThuongHieuController::class,'changeStauts']);
 
+//Quản lý lịch đặt của thương hiệu
+Route::get('thuong-hieu/dat-lich/get-data/{id_thuong_hieu}',[ThuongHieuController::class,'getDataDatLich']);
+Route::get('thuong-hieu/dat-lich/change-status/{id_dat_lich}',[ThuongHieuController::class,'changeStatusDatLich']);
 
 
 
@@ -59,12 +62,16 @@ Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDic
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
 Route::get('/dich-vu/get-thuong-hieu/{id}', [DichVuController::class, 'getThuongHieu']);
+Route::post('/dich-vu/create', [DichVuController::class, 'createDichVu']);
+Route::post('/dich-vu/update', [DichVuController::class, 'updateDichVu']);
+Route::post('/dich-vu/delete/{id}', [DichVuController::class, 'destroyDichVu']);
+Route::post('/dich-vu/change-status/{id}', [DichVuController::class, 'changeStatusDichVu']);
 
 
 //hình ảnh dịch vụ
 Route::get('/hinh-anh-dich-vu/get-data-hinh-anh', [HinhAnhDichVuController::class, 'getDichVuHinhAnh']); //lấy toàn bộ hình ảnh và id dịch vụ của hình ảnh đó
 Route::get('/hinh-anh-dich-vu/get-data-hinh-anh-by-dich-vu/{id}', [HinhAnhDichVuController::class, 'getDichVuHinhAnhById']); //lấy toàn bộ hình ảnh theo id dịch vụ
-Route::post('/hinh-anh-dich-vu/create', [HinhAnhDichVuController::class, 'create']);
+// Route::post('/hinh-anh-dich-vu/create', [HinhAnhDichVuController::class, 'create']);
 
 
 //mail kích hoạt

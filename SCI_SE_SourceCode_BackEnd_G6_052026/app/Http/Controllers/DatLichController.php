@@ -14,6 +14,20 @@ class DatLichController extends Controller
     public function getDataChiTietDatLich($id_dat_lich)
     {
         $KhachHang = $this->isUserKhachHang();
+        $data = ChiTietDatLich::where('id_dat_lich', $id_dat_lich)
+            ->join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
+            ->join('nhan_viens', 'nhan_viens.id', 'chi_tiet_dat_lichs.id_nhan_vien')
+            ->select(
+                'chi_tiet_dat_lichs.id',
+                'dich_vus.ten_dich_vu',
+                'nhan_viens.ten_nhan_vien',
+                'chi_tiet_dat_lichs.dia_chi_thuc_hien',
+                'chi_tiet_dat_lichs.gio_bat_dau',
+                'chi_tiet_dat_lichs.ngay_dat_lich',
+                'chi_tiet_dat_lichs.so_luong',
+                'chi_tiet_dat_lichs.don_gia'
+            )
+            ->first();
     }
     public function createDatLich(DatLichRequest $request)
     {
