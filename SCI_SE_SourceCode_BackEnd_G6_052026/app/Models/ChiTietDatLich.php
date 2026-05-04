@@ -16,6 +16,7 @@ class ChiTietDatLich extends Model
         'ma_hoa_don',
         'dia_chi_thuc_hien',
         'gio_bat_dau',
+        'gio_ket_thuc',
         'ngay_dat_lich',
         'so_luong',
         'don_gia',

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('ten_nhan_vien');
             $table->string('hinh_anh');
             $table->string('mo_ta_ngan');
-            $table->integer('trang_thai_lam_viec')->default(1);
+            $table->integer('trang_thai_lam_viec')->default(1); // 1: đang rảnh, 2: đang bận , 0: không làm 
             $table->timestamps();
         });
     }

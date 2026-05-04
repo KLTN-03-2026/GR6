@@ -7,59 +7,40 @@ use Illuminate\Http\Request;
 
 class DanhGiaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function getDanhGiaByDichVu($id)
     {
-        //
+        $danhGia = DanhGia::where('id_dich_vu', $id)
+            ->join('khach_hangs', 'khach_hangs.id', 'danh_gias.id_khach_hang')
+            ->select(
+                'khach_hangs.ten_khach_hang',
+                'danh_gias.muc_hai_long',
+                'danh_gias.noi_dung',
+                )
+            ->get();
+        return response()->json([
+            'status' => true,
+            'data' => $danhGia
+        ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function createDanhGia(Request $request)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(DanhGia $danhGia)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DanhGia $danhGia)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DanhGia $danhGia)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(DanhGia $danhGia)
-    {
-        //
+        $KhachHang = $this->isUserKhachHang();
+        if ($KhachHang) {
+            DanhGia::create([
+                'id_khach_hang' => $KhachHang->id,
+                'id_dich_vu' => $request->id_dich_vu,
+                'muc_hai_long' => $request->muc_hai_long,
+                'noi_dung' => $request->noi_dung,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đánh giá dịch vụ thành công!',
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Vui lòng đăng nhập để đánh giá dịch vụ!'
+            ], 401);
+        }
     }
 }
