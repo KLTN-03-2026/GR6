@@ -12,6 +12,29 @@ use Illuminate\Support\Str;
 
 class DichVuController extends Controller
 {
+    public function getDichVubyID($id)
+    {
+        $dichVu = DichVu::where('id_thuong_hieu', $id)->get();
+        if (!$dichVu) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy dịch vụ.'
+            ], 404);
+        } else {
+            return response()->json([
+                'status' => true,
+                'data' => $dichVu
+            ]);
+        }
+    }
+    public function getDichVuByThuongHieu($id_thuong_hieu)
+    {
+        $dichVu = DichVu::where('id_thuong_hieu', $id_thuong_hieu)->get();
+        return response()->json([
+            'status' => true,
+            'data' => $dichVu
+        ]);
+    }
     public function changeStatusDichVu($id)
     {
         $dichVu = DichVu::where('id', $id)->first();

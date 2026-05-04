@@ -10,7 +10,8 @@ class DanhGia extends Model
     use HasFactory;
     protected $table = 'danh_gias';
     protected $fillable = [
-        'id_dat_lich',
+        'id_khach_hang',
+        'id_dich_vu',
         'noi_dung',
         'muc_hai_long',
     ];

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('id_nhan_vien')->nullable();
             $table->string('dia_chi_thuc_hien');
             $table->time('gio_bat_dau');
+            $table->time('gio_ket_thuc');
             $table->date('ngay_dat_lich');
             $table->integer('so_luong');
             $table->decimal('don_gia', 10, 2);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DanhGiaController;
 use App\Http\Controllers\DanhMucDichVuController;
 use App\Http\Controllers\DatLichController;
 use App\Http\Controllers\DichVuController;
@@ -61,6 +62,7 @@ Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->mi
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
+Route::get('/dich-vu/get-data-by-ncc/{id}', [DichVuController::class, 'getDichVubyID']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
 Route::get('/dich-vu/get-thuong-hieu/{id}', [DichVuController::class, 'getThuongHieu']);
 Route::post('/dich-vu/create', [DichVuController::class, 'createDichVu']);
 Route::post('/dich-vu/update', [DichVuController::class, 'updateDichVu']);
@@ -111,3 +113,8 @@ Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destro
 
 //VNPAY payment
 Route::post('/vnpay-payment', [ThanhToanController::class, 'createPayment']);
+
+//đánh giá
+Route::post('/danh-gia/create', [DanhGiaController::class, 'createDanhGia']);
+Route::get('/danh-gia/dich-vu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByDichVu']);
+
