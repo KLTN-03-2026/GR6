@@ -34,6 +34,7 @@ class PaymentRequest extends FormRequest
         return [
             'ma_hoa_don.*' => 'Mã hóa đơn không tồn tại!',
             'total_vnpay.*' => 'Tổng tiền không đúng định dạng',
+            'id_chi_tiet_dat_lich.*' => 'Chi tiết đặt lịch không tồn tại',
         ];
     }
     protected function failedValidation($validator)

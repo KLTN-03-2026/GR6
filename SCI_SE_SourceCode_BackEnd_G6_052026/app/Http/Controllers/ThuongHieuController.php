@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DatLich;
 use App\Models\DichVu;
 use App\Models\NhanVien;
 use App\Models\ThuongHieu;
@@ -11,6 +12,31 @@ use Illuminate\Support\Str;
 
 class ThuongHieuController extends Controller
 {
+    public function changeStatusDatLich($id_dat_lich)
+    {
+        $data = DatLich::where('id', $id_dat_lich)->first();
+        if(!$data){
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy lịch đặt.'
+            ], 404);
+        }   
+        $data->trang_thai_dat_lich = !$data->trang_thai_dat_lich; //đảo ngược trạng thái
+        $data->save();
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật trạng thái đặt lịch thành công!',
+        ]);       
+    }
+    public function getDataDatLich($id_thuong_hieu)
+    {
+        $data = DatLich::where('id_thuong_hieu', $id_thuong_hieu)
+            ->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
     public function destroyNhanVien($id)
     {
         $nhanVien = NhanVien::where('id', $id)->first();
@@ -55,7 +81,7 @@ class ThuongHieuController extends Controller
         //tạo path ảnh mới
         $filename = Str::uuid() . '.' . $request->file('hinh_anh')->getClientOriginalExtension();
         $path = $request->file('hinh_anh')->storeAs('hinh_anh_nhan_vien', $filename, 'public');
-        
+
         if ($nhanVien) {
             $nhanVien->update([
                 'ten_nhan_vien' => $request->ten_nhan_vien,

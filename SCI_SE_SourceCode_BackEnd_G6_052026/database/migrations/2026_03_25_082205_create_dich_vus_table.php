@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('mo_ta_ngan');
             $table->string('mo_ta_dai');
             $table->integer('so_luong_lich_toi_da');
-            $table->integer('trang_thai');
+            $table->integer('trang_thai')->default(1); // 1: hoạt động, 0: không hoạt động
             $table->integer('kieu_phuc_vu'); // 1: tại cửa hàng, 2: tại nhà khách hàng, 3: cả hai
             $table->timestamps();
         });
