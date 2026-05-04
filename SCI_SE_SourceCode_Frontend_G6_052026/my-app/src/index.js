@@ -18,6 +18,7 @@ import Quan_ly_ho_so from './components/Quan_ly_ho_so';
 import Quan_ly_nguoi_dung from './components/admin/Quan_ly_nguoi_dung';
 import Quan_ly_danh_muc from './components/admin/Quan_ly_danh_muc';
 import Dat_lich from './components/Khachhang/Dat_lich';
+import Quan_ly_dich_vu from './components/nhacungcap/Quan_ly_dich_vu';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -38,6 +39,9 @@ root.render(
         <Route path='admin/quan-ly-nguoi-dung' element={<Quan_ly_nguoi_dung />} />
         <Route path='admin/quan-ly-danh-muc' element={<Quan_ly_danh_muc />} />
         <Route path="dat-lich/:id_thuong_hieu/:id_dich_vu" element={<Dat_lich />} />
+        <Route path="quan-ly-dich-vu" element={<Quan_ly_dich_vu />} />
+
+
 
       </Routes>
     </App>
