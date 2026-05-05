@@ -74,33 +74,50 @@ class ThuongHieuController extends Controller
         }
     }
     public function updateNhanVien(Request $request)
-    {
-        $nhanVien = NhanVien::where('id', $request->id)->first();
-        //xóa hình ảnh cũ
-        Storage::disk('public')->delete($nhanVien->hinh_anh);
-        //tạo path ảnh mới
-        $filename = Str::uuid() . '.' . $request->file('hinh_anh')->getClientOriginalExtension();
-        $path = $request->file('hinh_anh')->storeAs('hinh_anh_nhan_vien', $filename, 'public');
+{
+    $nhanVien = NhanVien::find($request->id);
 
-        if ($nhanVien) {
-            $nhanVien->update([
-                'ten_nhan_vien' => $request->ten_nhan_vien,
-                'hinh_anh' => $path,
-                'mo_ta_ngan' => $request->mo_ta_ngan,
-            ]);
-            $nhanVien->save();
-            return response()->json([
-                'status' => true,
-                'message' => 'Cập nhật nhân viên thành công!',
-                'data' => $nhanVien
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy nhân viên!'
-            ]);
-        }
+    if (!$nhanVien) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Không tìm thấy nhân viên!'
+        ], 404);
     }
+
+    $dataUpdate = [
+        'ten_nhan_vien' => $request->ten_nhan_vien,
+        'mo_ta_ngan'    => $request->mo_ta_ngan,
+    ];
+
+    if ($request->hasFile('hinh_anh')) {
+
+        $file = $request->file('hinh_anh');
+
+        // tạo tên file
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+        // lưu ảnh mới
+        $path = $file->storeAs('hinh_anh_nhan_vien', $filename, 'public');
+
+     
+        if ($nhanVien->hinh_anh && Storage::disk('public')->exists($nhanVien->hinh_anh)) {
+            Storage::disk('public')->delete($nhanVien->hinh_anh);
+        }
+
+        $dataUpdate['hinh_anh'] = $path;
+    }
+
+ 
+
+    $nhanVien->update($dataUpdate);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Cập nhật nhân viên thành công!',
+        'data' => $nhanVien
+    ]);
+}
+
     public function createNhanVien(Request $request)
     {
         $filename = Str::uuid() . '.' . $request->file('hinh_anh')->getClientOriginalExtension();
@@ -117,12 +134,25 @@ class ThuongHieuController extends Controller
             'data' => $data
         ]);
     }
-    public function getDataNhanVien($id_dich_vu)
+    public function getDataNhanVien()
     {
-        $data = DichVu::where('dich_vus.id', $id_dich_vu)
-            ->join('thuong_hieus', 'thuong_hieus.id', 'dich_vus.id_thuong_hieu')
+        $nhacungcap = $this->isUserNhaCungCap();
+        if (!$nhacungcap) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Bạn không phải nhà cung cấp!'
+            ], 403);
+        }
+        $data = ThuongHieu::where('thuong_hieus.id', $nhacungcap->id)
             ->join('nhan_viens', 'nhan_viens.id_thuong_hieu', 'thuong_hieus.id')
-            ->select('nhan_viens.id', 'nhan_viens.ten_nhan_vien', 'nhan_viens.hinh_anh', 'nhan_viens.mo_ta_ngan', 'nhan_viens.trang_thai_lam_viec')
+            ->select(
+                'nhan_viens.id',
+                'nhan_viens.ten_nhan_vien',
+                'nhan_viens.hinh_anh',
+                'nhan_viens.mo_ta_ngan',
+                'nhan_viens.trang_thai_lam_viec',
+                'nhan_viens.id_thuong_hieu'
+            )
             ->get();
         $data->transform(function ($item) {
             // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
@@ -146,4 +176,5 @@ class ThuongHieuController extends Controller
             ]);
         }
     }
+
 }

@@ -8,6 +8,7 @@ use App\Models\DatLich;
 use App\Models\DichVu;
 use App\Models\HinhAnhDichVu;
 use App\Models\NhanVien;
+use App\Models\ThanhToan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -83,9 +84,6 @@ class DatLichController extends Controller
 
         return DB::transaction(function () use ($request, $KhachHang) {
 
-            // =========================
-            // 🔥 1. LẤY DỊCH VỤ
-            // =========================
             $dichVu = DichVu::find($request->id_dich_vu);
 
             if (!$dichVu) {
@@ -105,13 +103,9 @@ class DatLichController extends Controller
                 ], 400);
             }
 
-            // =========================
-            // 🔥 2. TÍNH THỜI GIAN
-            // =========================
             $start = Carbon::parse($request->ngay_dat_lich . ' ' . $request->gio_bat_dau);
             $end   = $start->copy()->addMinutes($duration);
 
-            // ❌ không cho đặt quá khứ
             if ($start->lt(now())) {
                 return response()->json([
                     'status' => false,
@@ -122,13 +116,9 @@ class DatLichController extends Controller
             $checkStart = $start->copy()->subMinutes($buffer);
             $checkEnd   = $end->copy()->addMinutes($buffer);
 
-            // =========================
-            // 🔥 3. XỬ LÝ NHÂN VIÊN
-            // =========================
 
             if ($request->id_nhan_vien) {
 
-                // 👉 check NV tồn tại + thuộc chi nhánh + đang làm
                 $nhanVien = NhanVien::where('id', $request->id_nhan_vien)
                     ->where('id_thuong_hieu', $request->id_thuong_hieu)
                     ->where('trang_thai_lam_viec', 1)
@@ -142,7 +132,6 @@ class DatLichController extends Controller
                     ], 400);
                 }
 
-                // 👉 check trùng lịch
                 $busy = ChiTietDatLich::where('id_nhan_vien', $nhanVien->id)
                     ->where('ngay_dat_lich', $request->ngay_dat_lich)
                     ->whereRaw("
@@ -164,9 +153,8 @@ class DatLichController extends Controller
                 $id_nhan_vien = $nhanVien->id;
             } else {
 
-                // 👉 auto chọn NV rảnh
                 $nhanViens = NhanVien::where('id_thuong_hieu', $request->id_thuong_hieu)
-                    ->where('trang_thai_lam_viec', 1)
+->where('trang_thai_lam_viec', 1)
                     ->lockForUpdate()
                     ->get();
 
@@ -199,9 +187,6 @@ class DatLichController extends Controller
                 }
             }
 
-            // =========================
-            // 🔥 4. TẠO ĐƠN
-            // =========================
             $DatLich = DatLich::create([
                 'id_khach_hang' => $KhachHang->id,
                 'id_thuong_hieu' => $request->id_thuong_hieu,
@@ -210,10 +195,7 @@ class DatLichController extends Controller
                 'ghi_chu' => $request->ghi_chu,
             ]);
 
-            // =========================
-            // 🔥 5. TẠO CHI TIẾT
-            // =========================
-            ChiTietDatLich::create([
+            $ChiTietDatLich = ChiTietDatLich::create([
                 'id_dat_lich' => $DatLich->id,
                 'id_dich_vu' => $request->id_dich_vu,
                 'id_nhan_vien' => $id_nhan_vien,
@@ -225,10 +207,14 @@ class DatLichController extends Controller
                 'so_luong' => max(1, $request->so_luong),
                 'don_gia' => $request->don_gia,
             ]);
+            $thanhToan = ThanhToan::create([
+                'ma_hoa_don'                  => $ChiTietDatLich->ma_hoa_don,
+                'id_chi_tiet_dat_lich'        => $ChiTietDatLich->id_chi_tiet_dat_lich, // nếu có
+                'tong_tien_thanh_toan'        => $ChiTietDatLich->don_gia * $ChiTietDatLich->so_luong, // tính tổng tiền dựa trên chi tiết đặt lịch
+                'tong_tien_da_nhan'           => 0, // số tiền khách hàng đã thanh toán (nếu có)
+                'trang_thai'                  => 0, // 0 = Chờ thanh toán
+            ]);
 
-            // =========================
-            // 🔥 6. RESPONSE
-            // =========================
             return response()->json([
                 'status' => true,
                 'message' => 'Đặt lịch thành công!',
