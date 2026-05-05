@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AiAssistantController;
+use App\Http\Controllers\AiChatbotController;
 use App\Http\Controllers\DanhGiaController;
 use App\Http\Controllers\DanhMucDichVuController;
 use App\Http\Controllers\DatLichController;
@@ -118,3 +120,6 @@ Route::post('/vnpay-payment', [ThanhToanController::class, 'createPayment']);
 Route::post('/danh-gia/create', [DanhGiaController::class, 'createDanhGia']);
 Route::get('/danh-gia/dich-vu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByDichVu']);
 
+// AI (Gemini)
+Route::post('/ai/assistant', [AiAssistantController::class, 'generate']);
+Route::post('/ai/chat', [AiChatbotController::class, 'chat']);
