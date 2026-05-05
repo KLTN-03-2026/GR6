@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Http;
 
 class NhaCungCapController extends Controller
 {
-     public function getDataBangDieuKhien()
+    public function getDataBangDieuKhien()
     {
         $nhaCungCap = $this->isUserNhaCungCap();
         $DoanhThu = NhaCungCap::where('id', $nhaCungCap->id)
@@ -139,6 +139,7 @@ class NhaCungCapController extends Controller
                     'status'    =>   1,
                     'chia_khoa' =>   $user->createToken('ma_so_bi_mat_ncc')->plainTextToken,
                     'ten_ncc'   =>   $user->ten_nha_cung_cap,
+                    'id'        =>   $user->id,
                     'role'      =>   "nha_cung_cap"
                 ]);
             }
@@ -169,51 +170,50 @@ class NhaCungCapController extends Controller
         }
     }
     public function createNCC(ThemMoiNCCRequest $request)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
-        $file = $request->file('logo');
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $logo = $file->storeAs('logo_thuong_hieu', $filename, 'public');
+        try {
+            $file = $request->file('logo');
+            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $logo = $file->storeAs('logo_thuong_hieu', $filename, 'public');
 
-        $ncc = NhaCungCap::create([
-            'ten_nha_cung_cap' => $request->ten_nha_cung_cap,
-            'so_dien_thoai'    => $request->so_dien_thoai,
-            'email'            => $request->email,
-            'password'         => bcrypt($request->password),
-            'hash_active'      => Str::uuid(),
-        ]);
+            $ncc = NhaCungCap::create([
+                'ten_nha_cung_cap' => $request->ten_nha_cung_cap,
+                'so_dien_thoai'    => $request->so_dien_thoai,
+                'email'            => $request->email,
+                'password'         => bcrypt($request->password),
+                'hash_active'      => Str::uuid(),
+            ]);
 
-        ThuongHieu::create([
-            'ten_thuong_hieu'     => $request->ten_thuong_hieu,
-            'id_nha_cung_cap'     => $ncc->id,
-            'so_dien_thoai'     => $request->so_dien_thoai,
-            'id_danh_muc_dich_vu' => $request->id_danh_muc_dich_vu,
-            'ma_so_thue'          => $request->ma_so_thue,
-            'ma_bin_ngan_hang'    => $request->ma_bin_ngan_hang,
-            'tai_khoan_ngan_hang' => $request->tai_khoan_ngan_hang,
-            'dia_chi'             => $request->dia_chi,
-            'logo'                => $logo,
-        ]);
+            ThuongHieu::create([
+                'ten_thuong_hieu'     => $request->ten_thuong_hieu,
+                'id_nha_cung_cap'     => $ncc->id,
+                'so_dien_thoai'     => $request->so_dien_thoai,
+                'id_danh_muc_dich_vu' => $request->id_danh_muc_dich_vu,
+                'ma_so_thue'          => $request->ma_so_thue,
+                'ma_bin_ngan_hang'    => $request->ma_bin_ngan_hang,
+                'tai_khoan_ngan_hang' => $request->tai_khoan_ngan_hang,
+                'dia_chi'             => $request->dia_chi,
+                'logo'                => $logo,
+            ]);
 
-        Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
+            Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
 
-        DB::commit();
+            DB::commit();
 
-        return response()->json([
-            'status'  => true,
-            'message' => 'Tạo tài khoản thành công!'
-        ]);
+            return response()->json([
+                'status'  => true,
+                'message' => 'Tạo tài khoản thành công!'
+            ]);
+        } catch (\Exception $e) {
 
-    } catch (\Exception $e) {
+            DB::rollBack();
 
-        DB::rollBack();
-
-        return response()->json([
-            'status'  => false,
-            'message' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'status'  => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 }

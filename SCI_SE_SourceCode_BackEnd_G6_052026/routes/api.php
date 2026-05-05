@@ -8,6 +8,7 @@ use App\Http\Controllers\DanhMucDichVuController;
 use App\Http\Controllers\DatLichController;
 use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\HinhAnhDichVuController;
+use App\Http\Controllers\HoiThoaiController;
 use App\Http\Controllers\KhachHangController;
 use App\Http\Controllers\NhaCungCapController;
 use App\Http\Controllers\NhanVienController;
@@ -124,3 +125,10 @@ Route::get('/danh-gia/dich-vu/get-data/{id}', [DanhGiaController::class, 'getDan
 // AI (Gemini)
 Route::post('/ai/assistant', [AiAssistantController::class, 'generate']);
 Route::post('/ai/chat', [AiChatbotController::class, 'chat']);
+
+//gửi tin nhắn realtime
+Route::post('/send-message', [HoiThoaiController::class, 'sendMessage']);
+Route::post('/get-or-create', [HoiThoaiController::class, 'getOrCreate']);
+Route::get('/get-all-messages/{id}', [HoiThoaiController::class, 'getAllMessages']);
+Route::get('khach-hang/get-all-conversations', [HoiThoaiController::class, 'khachHangGetAllConversations']);
+Route::get('thuong-hieu/get-all-conversations', [HoiThoaiController::class, 'thuongHieuGetAllConversations']);
