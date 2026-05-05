@@ -84,45 +84,40 @@ import { toast } from 'react-toastify';
     };
 
   const handleSubmit = async (e) => {
-      e.preventDefault();
+  e.preventDefault();
 
-      if (!formData.name.trim()) {
-        setError('Tên không được trống');
-        return;
-      }
-      if (!(formData.hinh_anh instanceof File)) {
-        setError("Bạn phải chọn lại ảnh khi cập nhật!");
-        return;
-      }
+  if (!formData.name.trim()) {
+    setError('Tên không được trống');
+    return;
+  }
 
-      try {
-        setFormLoading(true);
+  try {
+    setFormLoading(true);
 
-        const data = new FormData();
-        data.append('ten_dich_vu', formData.name);
-        data.append('id_father', formData.id_father);
+    const data = new FormData();
+    data.append('ten_dich_vu', formData.name);
+    data.append('id_father', formData.id_father || 0);
+    if (formData.hinh_anh instanceof File) {
+      data.append('hinh_anh', formData.hinh_anh);
+    }
 
-        // luôn gửi file giống create
-        data.append('hinh_anh', formData.hinh_anh);
+    if (editingId) {
+      data.append('id', editingId);
+      await api.post("danh-muc/update", data, getAuthConfig());
+    } else {
+      await api.post("danh-muc/create", data, getAuthConfig());
+    }
 
-        if (editingId) {
-          data.append('id', editingId);
-          await api.post("danh-muc/update", data, getAuthConfig());
-        } else {
-          await api.post("danh-muc/create", data, getAuthConfig());
-        }
-
-        toast.success("Thành Công!");
-        handleReset();
-        fetchInitialData();
-
-      } catch (err) {
-        console.log(err.response?.data);
-        setError(err.response?.data?.message || 'Lỗi hệ thống');
-      } finally {
-        setFormLoading(false);
-      }
-    };
+    toast.success("Thành Công!");
+    handleReset();
+    fetchInitialData();
+  } catch (err) {
+    console.log(err.response?.data);
+    setError(err.response?.data?.message || 'Lỗi hệ thống');
+  } finally {
+    setFormLoading(false);
+  }
+};
     const handleEdit = (cat) => {
       setFormData({
         name: cat.ten_dich_vu || '',

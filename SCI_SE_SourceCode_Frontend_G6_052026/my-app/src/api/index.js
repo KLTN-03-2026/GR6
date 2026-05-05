@@ -17,7 +17,7 @@ api.interceptors.request.use((config) => {
 }, (error) => Promise.reject(error));
 export const serviceApi = {
     // Tự động trả về dịch vụ của NCC tương ứng với Token trong Header
-    getDichVu: () => api.get("dich-vu/get-data"),
+    getDichVu: () => api.get("/dich-vu/get-data-by-ncc"),
     
     // Thêm mới (Backend tự lấy id_nha_cung_cap từ Token)
     create: (formData) => api.post("dich-vu/create", formData, {
