@@ -2,64 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Models\HoiThoai;
+use App\Models\TinNhan;
 use Illuminate\Http\Request;
 
 class HoiThoaiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function khachHangGetAllConversations(){
+        $id_khach_hang = $this->isUserKhachHang()->id;
+        $conversations = HoiThoai::where('id_khach_hang', $id_khach_hang)->get();
+        return response()->json($conversations);
+    }
+    public function thuongHieuGetAllConversations(){
+        $NhaCungCap = $this->isUserNhaCungCap()->id;//nhà cung cấp đang đăng nhập
+        $id_thuong_hieu = HoiThoai::where('id_thuong_hieu', $NhaCungCap)->pluck('id_thuong_hieu'); //thương hiệu của nhà cung cấp
+        $conversations = HoiThoai::where('id_thuong_hieu', $id_thuong_hieu)->get();
+        return response()->json($conversations);
+    }
+    public function getAllMessages($id)
     {
-        //
+        $messages = TinNhan::where('id_hoi_thoai', $id)
+        ->orderBy('created_at', 'asc')
+        ->select(
+            'id',
+            'id_hoi_thoai',
+            'id_nguoi_gui',
+            'noi_dung',
+            'created_at'
+        )
+        ->get();
+        return response()->json($messages);
+    }   
+    // tạo hoặc lấy hội thoại
+    public function getOrCreate(Request $request)
+    {
+        $chat = HoiThoai::firstOrCreate([
+            'id_khach_hang' => $request->id_khach_hang,
+            'id_thuong_hieu' => $request->id_thuong_hieu
+        ]);
+
+        return response()->json($chat);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function sendMessage(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'id_hoi_thoai' => 'required|integer|exists:hoi_thoais,id',
+            'id_nguoi_gui' => 'required|integer',
+            'noi_dung' => 'required|string'
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $chat = HoiThoai::findOrFail($request->id_hoi_thoai);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(HoiThoai $hoiThoai)
-    {
-        //
-    }
+        // check người gửi có thuộc hội thoại
+        if (
+            $request->id_nguoi_gui != $chat->id_khach_hang &&
+            $request->id_nguoi_gui != $chat->id_thuong_hieu
+        ) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(HoiThoai $hoiThoai)
-    {
-        //
-    }
+        $message = TinNhan::create([
+            'id_hoi_thoai' => $chat->id,
+            'id_nguoi_gui' => $request->id_nguoi_gui,
+            'noi_dung' => $request->noi_dung,
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, HoiThoai $hoiThoai)
-    {
-        //
-    }
+        broadcast(new MessageSent($message))->toOthers();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(HoiThoai $hoiThoai)
-    {
-        //
+        return response()->json($message);
     }
 }
