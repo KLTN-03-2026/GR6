@@ -93,7 +93,7 @@ class KhachHangController extends Controller
                     'status'    =>   1,
                     'chia_khoa' =>   $user->createToken('ma_so_bi_mat_khach_hang')->plainTextToken,
                     'ten_kh'    =>   $user->ten_khach_hang,
-                    'role'      =>   "khach_hang"
+                    'role'      =>   "khach_hang",
                 ]);
             }
         } else {

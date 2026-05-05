@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DichVuRequest;
 use App\Models\DichVu;
 use App\Models\HinhAnhDichVu;
+use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -12,13 +13,35 @@ use Illuminate\Support\Str;
 
 class DichVuController extends Controller
 {
-    public function getDichVubyID($id)
+    public function getDichVubyID()
     {
-        $dichVu = DichVu::where('id_thuong_hieu', $id)->get();
+        $nhacungcap = $this->isUserNhaCungCap();
+        if (!$nhacungcap) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Bạn không có quyền truy cập dữ liệu này.'
+            ], 403);
+        }
+        $dichVu = ThuongHieu::where('id_nha_cung_cap', $nhacungcap->id)
+            ->join('dich_vus', 'dich_vus.id_thuong_hieu', 'thuong_hieus.id')
+            ->select(
+                'dich_vus.id',
+                'dich_vus.ten_dich_vu',
+                'dich_vus.mo_ta_ngan',
+                'dich_vus.mo_ta_dai',
+                'dich_vus.don_gia',
+                'dich_vus.thoi_gian_du_kien',
+                'dich_vus.kieu_phuc_vu',
+                'dich_vus.id_thuong_hieu',
+                'dich_vus.id_danh_muc_dich_vu',
+                'dich_vus.so_luong_lich_toi_da',
+                'dich_vus.trang_thai'
+            )
+            ->get();
         if (!$dichVu) {
             return response()->json([
                 'status' => false,
-                'message' => 'Không tìm thấy dịch vụ.'
+                'message' => 'Không tìm thấy dịch vụ với ID đã cho.'
             ], 404);
         } else {
             return response()->json([
@@ -121,7 +144,7 @@ class DichVuController extends Controller
             ], 500);
         }
     }
-    public function updateDichVu(DichVuRequest $request)
+    public function updateDichVu(Request $request)
     {
         DB::beginTransaction();
 
@@ -140,12 +163,9 @@ class DichVuController extends Controller
             $dichVu->update([
                 'ten_dich_vu'          => $request->ten_dich_vu,
                 'mo_ta_ngan'           => $request->mo_ta_ngan,
-                'mo_ta_dai'            => $request->mo_ta_dai,
                 'don_gia'              => $request->don_gia,
                 'thoi_gian_du_kien'    => $request->thoi_gian_du_kien,
-                'kieu_phuc_vu'         => $request->kieu_phuc_vu,
                 'id_thuong_hieu'       => $request->id_thuong_hieu,
-                'id_danh_muc_dich_vu'  => $request->id_danh_muc_dich_vu,
                 'so_luong_lich_toi_da' => $request->so_luong_lich_toi_da,
             ]);
 
