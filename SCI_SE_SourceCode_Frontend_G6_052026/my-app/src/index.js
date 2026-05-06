@@ -11,7 +11,7 @@ import Nha_Cung_Cap from './components/nhacungcap/Nha_Cung_Cap';
 import Dangkyncc from './components/nhacungcap/Dang_ky_ncc';
 import Quen_MK from './components/Quen_MK';
 import Dich_vu from './components/Dich_vu';
-import Ho_so_thuong_hieu from './components/nhacungcap/Ho_so_thuong_hieu';
+import Chi_tiet_thuong_hieu from './components/Khachhang/Chi_tiet_thuong_hieu';
 import Chi_tiet_dv from './components/Chi_tiet_dv';
 import Dang_nhap_Admin from './components/admin/Dang_nhap_Admin';
 import Quan_ly_nguoi_dung from './components/admin/Quan_ly_nguoi_dung';
@@ -23,6 +23,7 @@ import Thanh_toan from './components/Khachhang/Thanh_toan';
 import Lich_hen from './components/Khachhang/Lich_hen';
 import Chi_tiet_lich_hen from './components/Khachhang/Chi_tiet_lich_hen';
 import Quan_ly_ho_so from './components/Khachhang/Quan_ly_ho_so';
+import Ho_so_thuong_hieu from './components/nhacungcap/Ho_so_thuong_hieu';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -37,7 +38,7 @@ root.render(
         <Route path='dang-ky-ncc' element={<Dangkyncc />} />
         <Route path='quen-mat-khau' element={<Quen_MK />} />
         <Route path='chi-tiet/:id' element={<Chi_tiet_dv />} />
-        <Route path='ho-so-thuong-hieu/:id' element={<Ho_so_thuong_hieu />} />
+        <Route path='chi-tiet-thuong-hieu/:id' element={<Chi_tiet_thuong_hieu />} />
         <Route path='admin/dang-nhap' element={<Dang_nhap_Admin />} />
         <Route path='quan-ly-ho-so' element={<Quan_ly_ho_so />} />
         <Route path='admin/quan-ly-nguoi-dung' element={<Quan_ly_nguoi_dung />} />
@@ -49,6 +50,7 @@ root.render(
         <Route path="/lich-hen" element={<Lich_hen />} />
         <Route path="chi-tiet-lich-hen/:id" element={<Chi_tiet_lich_hen />} />
         <Route path="quan-ly-ho-so" element={<Quan_ly_ho_so />} />
+        <Route path="nha-cung-cap/ho-so-thuong-hieu" element={<Ho_so_thuong_hieu />} />
       </Routes>
     </App>
   </Router>

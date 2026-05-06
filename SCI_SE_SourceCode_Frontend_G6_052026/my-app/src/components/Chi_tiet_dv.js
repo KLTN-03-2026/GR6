@@ -175,7 +175,7 @@ const Chi_tiet_dv = () => {
                   <div 
                     className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-2xl transition-all" 
                     // CHUYỂN TRANG THEO ID THỰC TẾ
-                    onClick={() => navigate(`/ho-so-thuong-hieu/${thuonghieu.id}`)}
+                    onClick={() => navigate(`/chi-tiet-thuong-hieu/${thuonghieu.id}`)}
                   >
                     <img src={serviceDetail.logo} className="w-12 h-12 rounded-xl" alt="provider" />
                     <div>

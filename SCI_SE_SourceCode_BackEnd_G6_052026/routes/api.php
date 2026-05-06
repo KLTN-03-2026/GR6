@@ -67,7 +67,7 @@ Route::post('/nha-cung-cap/dang-xuat', [NhaCungCapController::class, 'dangXuat']
 Route::get('/nha-cung-cap/thong-tin-ca-nhan', [NhaCungCapController::class, 'thongTinCaNhan'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
 Route::post('/nha-cung-cap/check-login', [NhaCungCapController::class, 'checkLogin']); // gửi bearer +token
 Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
-Route::get('/nha-cung-cap/bang-dieu-khien', [NhaCungCapController::class, 'getDataBangDieuKhien'])->middleware('auth:sanctum'); //lấy dữ liệu hiển thị lên bảng điều khiển của nhà cung cấp
+Route::get('/nha-cung-cap/bang-dieu-khien', [NhaCungCapController::class, 'getDataBangDieuKhien']); //lấy dữ liệu hiển thị lên bảng điều khiển của nhà cung cấp
 
 
 //dịch vụ
@@ -75,6 +75,7 @@ Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDic
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
 Route::get('/dich-vu/get-data-by-ncc/{id}', [DichVuController::class, 'getDichVubyID']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
+Route::get('/dich-vu/get-data-by-ncc', [DichVuController::class, 'getDichVuByNCC']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
 Route::get('/dich-vu/get-thuong-hieu/{id}', [DichVuController::class, 'getThuongHieu']);
 Route::post('/dich-vu/create', [DichVuController::class, 'createDichVu']);
 Route::post('/dich-vu/update', [DichVuController::class, 'updateDichVu']);

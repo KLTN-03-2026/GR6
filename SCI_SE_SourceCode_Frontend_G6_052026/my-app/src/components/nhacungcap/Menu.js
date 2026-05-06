@@ -30,7 +30,7 @@ const Menu = () => {
     { icon: <Briefcase size={18} />, text: "Dịch vụ", to: "/nha-cung-cap/quan-ly-dich-vu" },
     { icon: <Calendar size={18} />, text: "Lịch hẹn", to: "/nha-cung-cap/lich-hen" },
     { icon: <Users size={18} />, text: "Nhân viên", to: "/nha-cung-cap/quan-ly-nhan-vien" },
-    { icon: <Settings size={18} />, text: "Cài đặt", to: "/nha-cung-cap/cai-dat" },
+    { icon: <Settings size={18} />, text: "Cài đặt", to: "/nha-cung-cap/ho-so-thuong-hieu" },
   ];
 
   return (

@@ -1,203 +1,339 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Calendar, MessageCircle, Clock, Phone, Mail, Star } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
-import api from '../../api'; 
+import {
+    Camera, MapPin, Clock, Phone, Info, Pencil, Store, Loader2
+} from 'lucide-react';
+import { toast } from 'react-toastify';
+import axios from 'axios'; // Hoặc import từ file api của bạn
+import Menu from './Menu';
+import api from '../../api';
 
 const Ho_so_thuong_hieu = () => {
-  const { id } = useParams(); 
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('Dịch vụ');
+    const [banks, setBanks] = useState([]);
 
-  const [brandData, setBrandData] = useState(null);
-  const [services, setServices] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        // Gọi API lấy danh sách ngân hàng khi component mount
+        axios.get("https://api.vietqr.io/v2/banks")
+            .then(res => {
+                if (res.data.code === "00") {
+                    setBanks(res.data.data);
+                }
+            })
+            .catch(err => console.error("Lỗi lấy danh sách ngân hàng:", err));
+    }, []);
+    const [loading, setLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const [resBrand, resServices] = await Promise.all([
-          api.get(`/khach-hang/thuong-hieu/get-data/${id}`),
-          api.get(`/dich-vu/get-data-by-ncc/${id}`)
-        ]);
+    // State lưu trữ dữ liệu từ API
+    const [formData, setFormData] = useState({
+        ten_thuong_hieu: '',
+        so_dien_thoai: '',
+        id_danh_muc_dich_vu: '',
+        ma_so_thue: '',
+        ma_bin_ngan_hang: '',
+        tai_khoan_ngan_hang: '',
+        dia_chi: '',
+        logo: null,
+        anh_bia: null
+    });
 
-        if (resBrand.data.status) {
-          const db = resBrand.data.data;
-          setBrandData({
-            name: db.ten_thuong_hieu,
-            address: db.dia_chi || "Đang cập nhật địa chỉ",
-            rating: 4.8, 
-            reviews: 120,
-            banner: db.banner || "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1200",
-            logo: db.logo,
-            description: db.mo_ta || "Chưa có mô tả chi tiết.",
-            workingHours: "09:00 - 21:00",
-            phone: db.so_dien_thoai || "Đang cập nhật",
-            email: db.email || "Đang cập nhật"
-          });
+    // State preview ảnh
+    const [previews, setPreviews] = useState({
+        logo: null,
+        anh_bia: null
+    });
+
+    // 1. Lấy dữ liệu từ API
+    const fetchThuongHieu = async () => {
+        try {
+            setLoading(true);
+            // Thay URL bằng đường dẫn thực tế của bạn
+            const res = await api.get('/nha-cung-cap/thuong-hieu/get-data', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+
+            if (res.data.status && res.data.data.length > 0) {
+                const item = res.data.data[0]; // Lấy bản ghi đầu tiên
+                setFormData({
+                    ...formData,
+                    ten_thuong_hieu: item.ten_thuong_hieu || '',
+                    so_dien_thoai: item.so_dien_thoai || '',
+                    id_danh_muc_dich_vu: item.id_danh_muc_dich_vu || '',
+                    ma_so_thue: item.ma_so_thue || '',
+                    ma_bin_ngan_hang: item.ma_bin_ngan_hang || '',
+                    tai_khoan_ngan_hang: item.tai_khoan_ngan_hang || '',
+                    dia_chi: item.dia_chi || '',
+                });
+                setPreviews({
+                    logo: item.logo, // URL đã được Laravel xử lý asset() trong controller
+                    anh_bia: item.anh_bia,
+                });
+            }
+        } catch (err) {
+            toast.error("Không thể tải thông tin thương hiệu!");
+        } finally {
+            setLoading(false);
         }
-
-        if (resServices.data.status) {
-          setServices(resServices.data.data);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-      } finally {
-        setIsLoading(false);
-      }
     };
 
-    if (id) fetchData();
-  }, [id]);
+    useEffect(() => {
+        fetchThuongHieu();
+    }, []);
 
-  if (isLoading) return <div className="flex justify-center items-center h-screen font-bold text-blue-600">Đang tải hồ sơ...</div>;
-  if (!brandData) return <div className="text-center py-20 font-bold">Thương hiệu không tồn tại.</div>;
+    // 2. Xử lý thay đổi Input text
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-  return (
-    <div className="bg-white min-h-screen font-sans">
-      {/* --- HERO SECTION --- */}
-      <section className="relative h-[400px]">
-        <img src={brandData.banner} alt="banner" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/30"></div> 
-        <div className="absolute bottom-0 left-0 right-0 py-8 bg-gradient-to-t from-black/70 to-transparent">
-          <div className="container mx-auto px-6 flex items-end gap-6">
-            <div className="w-32 h-32 bg-white rounded-2xl p-1 shadow-xl shrink-0 translate-y-12 hidden md:block border-4 border-white">
-              <img src={brandData.logo} alt="logo" className="w-full h-full rounded-xl object-cover" />
+    // 3. Xử lý thay đổi File (Logo/Ảnh bìa)
+    const handleFileChange = (e, type) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData({ ...formData, [type]: file });
+            setPreviews({ ...previews, [type]: URL.createObjectURL(file) });
+        }
+    };
+
+    // 4. Gửi dữ liệu cập nhật
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const data = new FormData();
+        Object.keys(formData).forEach(key => {
+            if (formData[key] !== null) {
+                data.append(key, formData[key]);
+            }
+        });
+
+        try {
+            const res = await api.post('nha-cung-cap/thuong-hieu/update', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (res.data.status) {
+                toast.success(res.data.message);
+                fetchThuongHieu(); // Reload lại dữ liệu
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Cập nhật thất bại!");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC]">
+                <Loader2 className="animate-spin text-blue-600" size={48} />
             </div>
-            <div className="flex-grow text-white pb-2">
-              <h1 className="text-4xl font-bold mb-2">{brandData.name}</h1>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="flex items-center gap-1"><MapPin size={16} /> {brandData.address}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        );
+    }
 
-      {/* --- TAB NAVIGATION --- */}
-      <div className="border-b border-gray-100 mt-12 md:mt-16">
-        <div className="container mx-auto px-6">
-          <div className="flex gap-8">
-            {['Dịch vụ', 'Đánh giá'].map(tab => (
-              <button 
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`py-4 text-sm font-bold transition-all relative ${
-                  activeTab === tab ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                {tab}
-                {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-t-full"></div>}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+    return (
+        <div className="flex min-h-screen bg-[#F8FAFC]">
+            <Menu />
 
-      {/* --- MAIN CONTENT --- */}
-      <main className="container mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          
-          {/* CỘT TRÁI: HIỂN THỊ THEO TAB */}
-          <div className="lg:col-span-8">
-            {activeTab === 'Dịch vụ' ? (
-              <>
-                <h2 className="text-2xl font-bold mb-6 text-gray-900">Danh sách dịch vụ</h2>
-                {services.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {services.map(sv => (
-                      <div key={sv.id} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col">
-                        <div className="h-44 overflow-hidden relative">
-                          <img 
-                            src={sv.hinh_anh || "https://via.placeholder.com/400"} 
-                            alt={sv.ten_dich_vu} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                          />
+            <main className="flex-1 p-8">
+                {/* HEADER */}
+                <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-800">Hồ sơ thương hiệu</h1>
+                        <p className="text-gray-500 text-sm">Quản lý nhận diện thương hiệu và thông tin liên hệ của Spa.</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <button
+                            type="button"
+                            onClick={fetchThuongHieu}
+                            className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-semibold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all flex items-center gap-2"
+                        >
+                            {isSubmitting && <Loader2 className="animate-spin" size={18} />}
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </div>
+
+                <div className="max-w-7xl mx-auto grid grid-cols-12 gap-8">
+
+                    {/* CỘT TRÁI */}
+                    <div className="col-span-12 lg:col-span-5 space-y-6">
+
+                        {/* Logo Card */}
+                        <div className="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm">
+                            <h3 className="font-bold text-gray-800 mb-6">Hình ảnh đại diện</h3>
+                            <div className="flex flex-col items-center">
+                                <p className="text-[10px] font-black text-gray-400 tracking-[0.2em] mb-4 self-start uppercase">Logo thương hiệu</p>
+                                <div className="relative">
+                                    <div className="w-44 h-44 bg-gray-50 rounded-[32px] border border-gray-100 flex items-center justify-center p-4 overflow-hidden">
+                                        {previews.logo ? (
+                                            <img src={previews.logo} alt="Logo" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Store size={60} className="text-gray-200" />
+                                        )}
+                                    </div>
+                                    <label className="absolute -bottom-2 -right-2 p-2.5 bg-blue-600 text-white rounded-full border-4 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform">
+                                        <Pencil size={14} />
+                                        <input type="file" className="hidden" onChange={(e) => handleFileChange(e, 'logo')} accept="image/*" />
+                                    </label>
+                                </div>
+                                <p className="text-[11px] text-gray-400 mt-6 italic font-medium">Kích thước khuyến dùng: 500×500px</p>
+                            </div>
                         </div>
-                        <div className="p-5 flex flex-col flex-grow">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-bold text-lg text-gray-800 line-clamp-1">{sv.ten_dich_vu}</h3>
-                            <span className="text-blue-600 font-bold whitespace-nowrap ml-2">
-                              {new Intl.NumberFormat('vi-VN').format(sv.don_gia)}đ
-                            </span>
-                          </div>
-                          <p className="text-gray-500 text-sm mb-4 flex-grow line-clamp-2">
-                            {sv.mo_ta_ngan || "Không có mô tả cho dịch vụ này."}
-                          </p>
-                          <div className="flex justify-between items-center mt-auto border-t pt-4">
-                            <span className="text-xs text-gray-400 flex items-center gap-1">
-                              <Clock size={14}/> {sv.thoi_gian_du_kien} phút
-                            </span>
-                            <button 
-                              onClick={() => navigate(`/chi-tiet/${sv.id}`)}
-                              className="text-white text-xs font-bold px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm"
-                            >
-                              Đặt ngay
-                            </button>
-                          </div>
+
+                        {/* Ảnh bìa Card */}
+                        <div className="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm">
+                            <h3 className="font-bold text-gray-800 mb-6">Ảnh bìa</h3>
+                            <label className="border-2 border-dashed border-gray-100 rounded-[20px] bg-gray-50/50 p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-all group overflow-hidden relative min-h-[160px]">
+                                {previews.anh_bia ? (
+                                    <img src={previews.anh_bia} alt="Cover" className="absolute inset-0 w-full h-full object-cover rounded-[20px] opacity-70 group-hover:opacity-100 transition-opacity" />
+                                ) : (
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600 mb-3 group-hover:scale-110 transition-transform">
+                                            <Camera size={24} />
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">Tải lên ảnh bìa</span>
+                                        <span className="text-[11px] text-gray-400 mt-1">PNG, JPG hoặc WebP</span>
+                                    </div>
+                                )}
+                                <input type="file" className="hidden" onChange={(e) => handleFileChange(e, 'anh_bia')} />
+                            </label>
+                            <p className="text-[11px] text-gray-400 mt-4 text-center italic font-medium">Tỷ lệ khuyến nghị 2.5:1</p>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed text-gray-400">
-                    Thương hiệu hiện chưa có dịch vụ nào.
-                  </div>
-                )}
-              </>
-            ) : (
-              /* NỘI DUNG TAB ĐÁNH GIÁ */
-              <div>
-                <h2 className="text-2xl font-bold mb-6 text-gray-900">Đánh giá khách hàng</h2>
-                <div className="bg-gray-50 p-10 rounded-3xl text-center text-gray-500">
-                  <Star className="mx-auto mb-4 text-yellow-400" size={48} fill="currentColor" />
-                  <p>Tính năng đánh giá đang được cập nhật...</p>
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* CỘT PHẢI: THÔNG TIN CỐ ĐỊNH */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm sticky top-6">
-              <h3 className="text-lg font-bold mb-4 border-b pb-2">Thông tin liên hệ</h3>
-              <div className="space-y-4">
-                <div className="flex gap-3 text-sm">
-                  <Clock className="text-blue-500 shrink-0" size={18} />
-                  <div>
-                    <p className="font-bold text-gray-900">Giờ hoạt động</p>
-                    <p className="text-gray-500">{brandData.workingHours}</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 text-sm">
-                  <Phone className="text-blue-500 shrink-0" size={18} />
-                  <div>
-                    <p className="font-bold text-gray-900">Số điện thoại</p>
-                    <p className="text-gray-500">{brandData.phone}</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 text-sm">
-                  <Mail className="text-blue-500 shrink-0" size={18} />
-                  <div>
-                    <p className="font-bold text-gray-900">Email</p>
-                    <p className="text-gray-500 truncate w-full">{brandData.email}</p>
-                  </div>
-                </div>
-              </div>
+                        {/* SĐT Card */}
+                        <div className="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm">
+                            <div className="flex items-center gap-3 text-blue-600 mb-4">
+                                <Phone size={20} />
+                                <span className="font-bold text-gray-800">Số điện thoại thương hiệu</span>
+                            </div>
+                            <input
+                                type="text"
+                                name="so_dien_thoai"
+                                value={formData.so_dien_thoai}
+                                onChange={handleChange}
+                                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                            />
+                        </div>
+                    </div>
 
-              <div className="mt-8">
-                <h4 className="font-bold text-sm mb-2 italic text-gray-400">Mô tả:</h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {brandData.description}
-                </p>
-              </div>
-            </div>
-          </div>
+                    {/* CỘT PHẢI */}
+                    <div className="col-span-12 lg:col-span-7">
+                        <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm h-full">
+                            <div className="flex justify-between items-center mb-8">
+                                <h3 className="text-lg font-bold text-gray-800">Thông tin chi tiết</h3>
+                                <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-blue-500">
+                                    <Info size={18} />
+                                </div>
+                            </div>
 
+                            <div className="space-y-6">
+                                {/* Tên & Mã số thuế */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-2 uppercase">Tên thương hiệu</label>
+                                        <input
+                                            type="text"
+                                            name="ten_thuong_hieu"
+                                            value={formData.ten_thuong_hieu}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-4 text-sm font-bold text-gray-800 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-2 uppercase">Mã số thuế</label>
+                                        <input
+                                            type="text"
+                                            name="ma_so_thue"
+                                            value={formData.ma_so_thue}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-4 text-sm font-bold text-gray-800 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Ngân hàng */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-2 uppercase">
+                                            Ngân hàng (Mã BIN)
+                                        </label>
+                                        <select
+                                            name="ma_bin_ngan_hang"
+                                            value={formData.ma_bin_ngan_hang}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-4 text-sm font-bold text-gray-800 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all appearance-none"
+                                        >
+                                            <option value="">-- Chọn ngân hàng --</option>
+                                            {banks.map((bank) => (
+                                                <option key={bank.id} value={bank.bin}>
+                                                    {bank.shortName} - {bank.name} 
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-2 uppercase">Số tài khoản</label>
+                                        <input
+                                            type="text"
+                                            name="tai_khoan_ngan_hang"
+                                            value={formData.tai_khoan_ngan_hang}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-4 text-sm font-bold text-gray-800 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Địa chỉ */}
+                                <div>
+                                    <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-2 uppercase">Địa chỉ trụ sở</label>
+                                    <div className="relative">
+                                        <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500" />
+                                        <input
+                                            type="text"
+                                            name="dia_chi"
+                                            value={formData.dia_chi}
+                                            onChange={handleChange}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-12 pr-4 py-4 text-sm font-bold text-gray-800 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Mock Giờ làm việc - Giữ nguyên UI */}
+                                <div>
+                                    <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-4 uppercase">Giờ làm việc (Mặc định)</label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center group cursor-not-allowed border border-transparent">
+                                            <div>
+                                                <p className="text-[10px] font-black text-blue-500 mb-1">MỞ CỬA</p>
+                                                <p className="text-base font-black text-gray-700 uppercase">09:00 AM</p>
+                                            </div>
+                                            <Clock size={20} className="text-gray-300" />
+                                        </div>
+                                        <div className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center group cursor-not-allowed border border-transparent">
+                                            <div>
+                                                <p className="text-[10px] font-black text-blue-500 mb-1">ĐÓNG CỬA</p>
+                                                <p className="text-base font-black text-gray-700 uppercase">09:00 PM</p>
+                                            </div>
+                                            <Clock size={20} className="text-gray-300" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
-      </main>
-    </div>
-  );
+    );
 };
 
 export default Ho_so_thuong_hieu;

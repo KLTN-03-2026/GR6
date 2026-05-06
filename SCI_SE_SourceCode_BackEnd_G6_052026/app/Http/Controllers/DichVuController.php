@@ -14,6 +14,43 @@ use Illuminate\Support\Str;
 
 class DichVuController extends Controller
 {
+    public function getDichVuByNCC()
+    {
+        $nhacungcap = $this->isUserNhaCungCap();
+        if (!$nhacungcap) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Bạn không có quyền truy cập dữ liệu này.'
+            ], 403);
+        }
+        $dichVu = ThuongHieu::where('id_nha_cung_cap', $nhacungcap->id)
+            ->join('dich_vus', 'dich_vus.id_thuong_hieu', 'thuong_hieus.id')
+            ->select(
+                'dich_vus.id',
+                'dich_vus.ten_dich_vu',
+                'dich_vus.mo_ta_ngan',
+                'dich_vus.mo_ta_dai',
+                'dich_vus.don_gia',
+                'dich_vus.thoi_gian_du_kien',
+                'dich_vus.kieu_phuc_vu',
+                'dich_vus.id_thuong_hieu',
+                'dich_vus.id_danh_muc_dich_vu',
+                'dich_vus.so_luong_lich_toi_da',
+                'dich_vus.trang_thai'
+            )
+            ->get();
+        if (!$dichVu) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy dịch vụ với ID đã cho.'
+            ], 404);
+        } else {
+            return response()->json([
+                'status' => true,
+                'data' => $dichVu
+            ]);
+        }
+    }
     public function getDichVubyID($id)
     {
         // $nhacungcap = $this->isUserNhaCungCap();
@@ -282,11 +319,17 @@ class DichVuController extends Controller
     }
     public function getThuongHieu($id)
     {
-        $ThuongHieu = DichVu::where('dich_vus.id', $id)
+        $NhaCungCap = $this->isUserNhaCungCap();
+        $thuongHieu = DichVu::where('dich_vus.id', $id)
             ->join('thuong_hieus', 'thuong_hieus.id', 'dich_vus.id_thuong_hieu')
             ->select('thuong_hieus.id', 'thuong_hieus.ten_thuong_hieu', 'thuong_hieus.dia_chi', 'thuong_hieus.logo')
             ->first();
-        if (!$ThuongHieu) {
+             if ($thuongHieu['logo']) {
+        if (!filter_var($thuongHieu['logo'], FILTER_VALIDATE_URL)) {
+            $thuongHieu['logo'] = asset('storage/' . $thuongHieu['logo']);
+        }
+    }
+        if (!$thuongHieu) {
             return response()->json([
                 'status' => false,
                 'message' => 'Không tìm thấy thương hiệu cho dịch vụ với ID đã cho.'
@@ -294,7 +337,7 @@ class DichVuController extends Controller
         } else {
             return response()->json([
                 'status' => true,
-                'data' => $ThuongHieu
+                'data' => $thuongHieu
             ]);
         }
     }

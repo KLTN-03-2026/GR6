@@ -128,7 +128,7 @@ class ThanhToanController extends Controller
             $vnp_HashSecret  = 'XPWENN9TUUHLQNPNLQ729ARKOEUNR4H3';
 
             $vnp_TxnRef      = $chiTietDatLich->ma_hoa_don; 
-            $vnp_Amount      = $thanhToan->tong_tien_thanh_toan * 100;
+            $vnp_Amount      = $thanhToan->tong_tien_da_nhan * 100;
             $vnp_OrderInfo   = 'Thanh toan hoa don ' . $chiTietDatLich->ma_hoa_don;
             $vnp_IpAddr      = $request->ip();
 

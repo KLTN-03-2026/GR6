@@ -60,7 +60,7 @@ const HeaderNCC = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('admin_access_token');
-      await api.post('dang-xuat', {}, {
+      await api.post('/nha-cung-cap/dang-xuat', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (error) {
@@ -167,7 +167,7 @@ const HeaderNCC = () => {
                   </Link>
                 )}
                 
-                <Link to="/nha-cung-cap/chi-tiet-thuong-hieu" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                <Link to="/nha-cung-cap/ho-so-thuong-hieu" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                   <User size={16} /> Chi tiết thương hiệu
                 </Link>
                 
