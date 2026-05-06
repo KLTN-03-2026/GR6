@@ -16,9 +16,9 @@ return new class extends Migration
             $table->integer('id_thuong_hieu');
             $table->integer('id_danh_muc_dich_vu');
             $table->string('ten_dich_vu');
-            $table->decimal('don_gia');
+            $table->decimal ('don_gia', 10, 2);
             $table->integer('thoi_gian_du_kien');
-            $table->integer('thoi_gian_dem');
+            $table->integer('thoi_gian_dem')->default(30);
             $table->string('mo_ta_ngan');
             $table->string('mo_ta_dai');
             $table->integer('so_luong_lich_toi_da');

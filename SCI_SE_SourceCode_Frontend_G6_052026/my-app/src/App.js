@@ -17,7 +17,7 @@ function App(props) {
   // 2. Hàm render Header linh hoạt
   const renderHeader = () => {
     if (isHideLayout) return null;
-    if (isLogin && userRole === "nha_cung_cap") {
+    if (isLogin && userRole === "nha_cung_cap" || userRole === "admin") {
       return <HeaderNCC />;
     }
     return <Header />;

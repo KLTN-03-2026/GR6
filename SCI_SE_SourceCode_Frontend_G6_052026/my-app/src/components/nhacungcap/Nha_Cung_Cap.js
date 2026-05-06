@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import Menu from "./Menu";
 
 // fake data
 const chartData = [
@@ -33,50 +34,11 @@ export default function Nha_Cung_Cap(props) {
     <div className="flex bg-[#f6f8fc] min-h-screen">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r p-4 flex flex-col justify-between">
-        <div>
-          <Link to="/" className="flex items-center gap-2 font-bold text-lg mb-6">
-            🔷 ServiceHub
-          </Link>
-
-          <div className="space-y-1">
-            <SidebarItem icon={<LayoutDashboard size={18} />} text="Bảng điều khiển" active />
-            <SidebarItem icon={<Briefcase size={18} />} text="Dịch vụ" />
-            <SidebarItem icon={<Calendar size={18} />} text="Lịch hẹn" />
-            <SidebarItem icon={<Users size={18} />} text="Khách hàng" />
-            <SidebarItem icon={<Settings size={18} />} text="Cài đặt" />
-          </div>
-        </div>
-
-        <div className="text-sm text-gray-400">
-          <div className="cursor-pointer hover:text-black">Hỗ trợ</div>
-          <div className="cursor-pointer hover:text-black mt-2">Đăng xuất</div>
-        </div>
-      </aside>
+      <Menu/>
       <main className="flex-1 p-6">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="relative w-80">
-            <Search className="absolute top-2.5 left-3 text-gray-400" size={16} />
-            <input
-              className="w-full bg-white rounded-full pl-9 pr-4 py-2 text-sm border"
-              placeholder="Tìm kiếm tài nguyên..."
-            />
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Bell size={18} />
-            <Settings size={18} />
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">ABC</span>
-              <img
-                src="https://ui-avatars.com/api/?name=ABC"
-                className="w-8 h-8 rounded-full"
-              />
-            </div>
-          </div>
-        </div>
+        
 
         {/* TITLE */}
         <div className="flex justify-between items-end mb-6">

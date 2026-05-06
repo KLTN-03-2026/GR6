@@ -11,12 +11,91 @@ use App\Models\NhaCungCap;
 use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 
 class NhaCungCapController extends Controller
 {
+    public function updateThuongHieu(Request $request)
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)->first();
+        if (!$thuongHieu) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy thương hiệu!"
+            ], 404);
+        }
+        $data = [
+            'ten_thuong_hieu'     => $request->ten_thuong_hieu,
+            'so_dien_thoai'       => $request->so_dien_thoai,
+            'id_danh_muc_dich_vu' => $request->id_danh_muc_dich_vu,
+            'ma_so_thue'          => $request->ma_so_thue,
+            'ma_bin_ngan_hang'    => $request->ma_bin_ngan_hang,
+            'tai_khoan_ngan_hang' => $request->tai_khoan_ngan_hang,
+            'dia_chi'             => $request->dia_chi,
+        ];
+
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('logo_thuong_hieu', $filename, 'public');
+
+            $data['logo'] = $path;
+        }
+
+        $thuongHieu->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật thương hiệu thành công!'
+        ]);
+    }
+    public function getDataThuongHieu()
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        $data = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)
+            ->select(
+                'id',
+                'ten_thuong_hieu',
+                'so_dien_thoai',
+                'id_danh_muc_dich_vu',
+                'ma_so_thue',
+                'ma_bin_ngan_hang',
+                'tai_khoan_ngan_hang',
+                'dia_chi',
+                'logo'
+            )
+            ->get();
+        $data->transform(function ($item) {
+            // Nếu logo đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->logo, FILTER_VALIDATE_URL)) {
+                $item->logo = $item->logo;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->logo = asset('storage/' . $item->logo);
+            }
+            return $item;
+        })
+            ->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+    public function getDataBangDieuKhien()
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        $DoanhThu = NhaCungCap::where('id', $nhaCungCap->id)
+            ->join('thuong_hieu', 'nha_cung_cap.id', '=', 'thuong_hieu.id_nha_cung_cap')
+            ->join('dat_lich', 'thuong_hieu.id', '=', 'dat_lich.id_thuong_hieu')
+            ->join('chi_tiet_dat_lich', 'dat_lich.id', '=', 'chi_tiet_dat_lich.id_dat_lich')
+            ->join('thanh_toan', 'dat_lich.id', '=', 'thanh_toan.id_dat_lich')
+            ->where('thanh_toan.trang_thai', 1)
+            ->sum('thanh_toan.tong_tien');
+    }
     public function upDate(Request $request)
     {
         $NhaCungCap = $this->isUserNhaCungCap();
@@ -127,6 +206,7 @@ class NhaCungCapController extends Controller
                     'status'    =>   1,
                     'chia_khoa' =>   $user->createToken('ma_so_bi_mat_ncc')->plainTextToken,
                     'ten_ncc'   =>   $user->ten_nha_cung_cap,
+                    'id'        =>   $user->id,
                     'role'      =>   "nha_cung_cap"
                 ]);
             }
@@ -156,41 +236,51 @@ class NhaCungCapController extends Controller
             ]);
         }
     }
-    public function create(ThemMoiNCCRequest $request)
+    public function createNCC(ThemMoiNCCRequest $request)
     {
-        $ma_so_thue = $request->ma_so_thue;
-        // $check_mst = Http::get("https://api.xinvoice.vn/gdt-api/tax-payer/" . $ma_so_thue);
-        
-        foreach ($request->file('logo') as $file) {
+        DB::beginTransaction();
 
+        try {
+            $file = $request->file('logo');
             $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-
             $logo = $file->storeAs('logo_thuong_hieu', $filename, 'public');
+
+            $ncc = NhaCungCap::create([
+                'ten_nha_cung_cap' => $request->ten_nha_cung_cap,
+                'so_dien_thoai'    => $request->so_dien_thoai,
+                'email'            => $request->email,
+                'password'         => bcrypt($request->password),
+                'hash_active'      => Str::uuid(),
+            ]);
+
+            ThuongHieu::create([
+                'ten_thuong_hieu'     => $request->ten_thuong_hieu,
+                'id_nha_cung_cap'     => $ncc->id,
+                'so_dien_thoai'     => $request->so_dien_thoai,
+                'id_danh_muc_dich_vu' => $request->id_danh_muc_dich_vu,
+                'ma_so_thue'          => $request->ma_so_thue,
+                'ma_bin_ngan_hang'    => $request->ma_bin_ngan_hang,
+                'tai_khoan_ngan_hang' => $request->tai_khoan_ngan_hang,
+                'dia_chi'             => $request->dia_chi,
+                'logo'                => $logo,
+            ]);
+
+            Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Tạo tài khoản thành công!'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        $ncc = NhaCungCap::create([
-            'ten_nha_cung_cap' => $request->ten_nha_cung_cap,
-            'so_dien_thoai'  => $request->so_dien_thoai,
-            'email'          => $request->email,
-            'password'       => bcrypt($request->password),
-            'hash_active'    => Str::uuid(),
-        ]);
-        ThuongHieu::create([
-            'ten_thuong_hieu'           => $request->ten_thuong_hieu,
-            'id_nha_cung_cap'           => $ncc->id,
-            'id_danh_muc_dich_vu'       => $request->id_danh_muc_dich_vu,
-            'ma_so_thue'                => $ma_so_thue,
-            'ma_bin_ngan_hang'          => $request->ma_bin_ngan_hang,
-            'tai_khoan_ngan_hang'       => $request->tai_khoan_ngan_hang,
-            'dia_chi'                   => $request->dia_chi,
-            'logo'                      => $logo,
-
-        ]);
-        Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));
-
-        return response()->json([
-            'message' => 'Tạo tài khoản thành công!',
-            'status'  => true
-        ]);
     }
 }

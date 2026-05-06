@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('tin_nhans', function (Blueprint $table) {
             $table->id();
             $table->integer('id_hoi_thoai');
-            $table->integer('role_nguoi_gui');
+            $table->integer('id_nguoi_gui');
             $table->text('noi_dung');
+            $table->index('id_hoi_thoai');
+            $table->index('id_nguoi_gui');
             $table->timestamps();
         });
     }

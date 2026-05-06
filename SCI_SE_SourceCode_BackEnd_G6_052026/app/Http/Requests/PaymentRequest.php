@@ -23,18 +23,13 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ma_hoa_don'            => 'required|string',
-            'id_chi_tiet_dat_lich'  => 'required|integer|exists:chi_tiet_dat_lich,id',
-            'total_vnpay'           => 'required|numeric|min:1000',
-            
+            'id_chi_tiet_dat_lich'  => 'required|integer|exists:chi_tiet_dat_lichs,id',
         ];
     }
     public function messages()
     {
         return [
-            'ma_hoa_don.*' => 'Mã hóa đơn không tồn tại!',
-            'total_vnpay.*' => 'Tổng tiền không đúng định dạng',
-            'id_chi_tiet_dat_lich.*' => 'Chi tiết đặt lịch không tồn tại',
+            'id_chi_tiet_dat_lich.*'    => 'Chi tiết đặt lịch không tồn tại hoặc không hợp lệ',
         ];
     }
     protected function failedValidation($validator)

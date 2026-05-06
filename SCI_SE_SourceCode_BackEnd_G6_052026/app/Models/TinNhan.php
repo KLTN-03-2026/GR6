@@ -11,7 +11,7 @@ class TinNhan extends Model
     protected $table = 'tin_nhans';
     protected $fillable = [
         'id_hoi_thoai',
-        'role_nguoi_gui',
+        'id_nguoi_gui',
         'noi_dung',
     ];
 }
