@@ -9,26 +9,35 @@ use App\Services\GeminiService;
 
 class AiAssistantController extends Controller
 {
-    public function __construct(private readonly GeminiService $gemini) {}
-    
+    public function __construct(private readonly GeminiService $gemini)
+    {
+    }
+
     public function generate(Request $request): JsonResponse
     {
         $payload = $request->all();
         $input = $payload['keyword'] ?? $payload['noi_dung'] ?? $payload['q'] ?? '';
 
         $keyword = trim($input);
-
+        if ($keyword !== '' && !preg_match('/[\p{L}\p{N}]/u', $keyword)) {
+            return response()->json([
+                'ok' => true,
+                'data' => [],
+                'detected_keyword' => $keyword,
+                'message' => 'Từ khóa không hợp lệ'
+            ]);
+        }
         if (mb_strlen($keyword) > 10) {
             $prompt = "Bạn là máy lọc từ khóa dịch vụ. Từ câu: '$input', hãy chỉ trả về duy nhất tên dịch vụ cốt lõi nhất bằng tiếng Việt. "
-                    . "Ví dụ: 'gợi ý cho mình cắt tóc nam' -> 'cắt tóc nam'. "
-                    . "Chỉ trả về văn bản, không giải thích, không để trong ngoặc.";
-    
+                . "Ví dụ: 'gợi ý cho mình cắt tóc nam' -> 'cắt tóc nam'. "
+                . "Chỉ trả về văn bản, không giải thích, không để trong ngoặc.";
+
             $aiResult = $this->gemini->generateText($prompt);
 
             if ($aiResult['ok'] && $aiResult['text']) {
                 $keyword = mb_strtolower(trim(str_replace(['.', '"', 'ai:', 'AI:'], '', $aiResult['text'])), 'UTF-8');
             }
-        }   
+        }
 
         $firstImages = DB::table('hinh_anh_dich_vus')
             ->selectRaw('MIN(id) as id, id_dich_vu')
@@ -44,7 +53,7 @@ class AiAssistantController extends Controller
             ->where('dich_vus.trang_thai', 1);
 
         $likeFull = '%' . addcslashes($keyword, '%_\\') . '%';
-        
+
         if ($keyword !== '') {
             $hasFullMatch = DB::table('dich_vus')
                 ->where('trang_thai', 1)
@@ -55,13 +64,24 @@ class AiAssistantController extends Controller
                 $query->where('dich_vus.ten_dich_vu', 'LIKE', $likeFull);
             } else {
                 $words = explode(' ', $keyword);
-                $query->where(function ($q) use ($words) {
+                $appliedCondition = false;
+
+                $query->where(function ($q) use ($words, &$appliedCondition) {
                     foreach ($words as $word) {
                         if (mb_strlen($word) > 2) {
                             $q->orWhere('dich_vus.ten_dich_vu', 'LIKE', "%$word%");
+                            $appliedCondition = true;
                         }
                     }
                 });
+
+                if (!$appliedCondition || $query->count() === 0) {
+                    return response()->json([
+                        'ok' => true,
+                        'data' => [],
+                        'message' => 'Không tìm thấy dịch vụ phù hợp'
+                    ]);
+                }
             }
         }
 

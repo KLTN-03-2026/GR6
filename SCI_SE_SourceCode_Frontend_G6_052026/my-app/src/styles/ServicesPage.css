@@ -40,6 +40,13 @@
   font-size: 0.78rem;
   margin-bottom: 0.8rem;
 }
+.assistant-welcome-text {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+  margin-top: -0.5rem;
+  font-style: italic;
+}
 
 .assistant-prompt {
   font-size: 1.35rem;
@@ -50,6 +57,8 @@
 
 .assistant-input-wrap {
   position: relative;
+  display: flex; 
+  align-items: center;
 }
 
 .assistant-input-wrap input {
@@ -58,24 +67,39 @@
   border-radius: 14px;
   padding: 12px 50px 12px 16px;
   font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.assistant-input-wrap input:focus {
+  border-color: #2272f7;
 }
 
 .assistant-input-wrap button {
   position: absolute;
-  right: 9px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
   border: none;
   background: #2272f7;
   color: #fff;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.assistant-input-wrap button:hover {
+  background: #1a56c5;
 }
 
 .assistant-input-wrap button:disabled {
   opacity: 0.45;
+  background: #cbd5e1;
   cursor: not-allowed;
 }
 
@@ -339,16 +363,19 @@
   font-size: 0.9rem;
   box-shadow: 0 2px 5px rgba(0,0,0,0.03);
   max-width: 85%;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .msg-row.user {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .msg-row.user .msg-bubble {
-  background: #2272f7;
+ background: #2272f7;
   color: white;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 2px;
@@ -362,7 +389,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px;
+  padding: 12px;
   border-top: 1px solid #e5e7eb;
   background: white;
 }
@@ -370,20 +397,42 @@
 .heli-input input {
   flex: 1;
   border: 1px solid #d1d5db;
-  border-radius: 10px;
-  padding: 8px 12px;
+  border-radius: 12px;
+  padding: 10px 14px;
   font-size: 0.9rem;
   outline: none;
+  height: 40px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.heli-input input:focus {
+  border-color: #2272f7;
 }
 
 .heli-input button {
   background: #2272f7;
   border: none;
   color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 40px; 
+  height: 40px;
+  border-radius: 10px;
   cursor: pointer;
+  display: flex;    
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;    
+  transition: all 0.2s;
+}
+
+.heli-input button:hover {
+  background: #1a56c5;
+  transform: scale(1.05); 
+}
+
+.heli-input button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
 }
 
 /* MINI CARDS TRONG CHAT */
@@ -433,4 +482,93 @@
   font-size: 0.78rem;
   color: #2272f7;
   font-weight: 600;
+}
+
+/* --- TOAST XÁC NHẬN PHỦ PHÍA TRÊN --- */
+.global-toast-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.global-toast {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.toast-content {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.toast-icon {
+  font-size: 24px;
+}
+
+.toast-text p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.toast-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.toast-actions button {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-no {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.btn-no:hover {
+  background: #e2e8f0;
+}
+
+.btn-yes {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-yes:hover {
+  background: #dc2626;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
