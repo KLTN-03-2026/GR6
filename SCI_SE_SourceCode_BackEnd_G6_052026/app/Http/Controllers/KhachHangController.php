@@ -34,6 +34,11 @@ class KhachHangController extends Controller
             $thuongHieu['logo'] = asset('storage/' . $thuongHieu['logo']);
         }
     }
+     if ($thuongHieu['anh_bia']) {
+        if (!filter_var($thuongHieu['anh_bia'], FILTER_VALIDATE_URL)) {
+            $thuongHieu['anh_bia'] = asset('storage/' . $thuongHieu['anh_bia']);
+        }
+    }
       
         return response()->json([
             'status' => true,

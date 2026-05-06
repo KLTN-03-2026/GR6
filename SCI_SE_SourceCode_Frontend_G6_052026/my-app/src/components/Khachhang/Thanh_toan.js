@@ -103,11 +103,11 @@ const Thanh_toan = () => {
           {/* Service Info Card */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
-              <span className="text-blue-500">✨</span> Thông tin dịch vụ
+              <span className="text-blue-500"></span> Thông tin dịch vụ
             </h2>
             <div className="flex flex-col md:flex-row gap-5">
               <img 
-                src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=400&auto=format&fit=crop" 
+                src={bookingData.hinh_anh} 
                 alt="Spa" 
                 className="w-full md:w-40 h-32 object-cover rounded-xl"
               />

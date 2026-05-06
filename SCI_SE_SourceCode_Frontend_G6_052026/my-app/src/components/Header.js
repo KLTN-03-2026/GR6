@@ -68,7 +68,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token');
-      await api.post('dang-xuat', {}, { headers: { Authorization: `Bearer ${token}` } });
+      await api.post('/khach-hang/dang-xuat', {}, { headers: { Authorization: `Bearer ${token}` } });
     } finally {
       localStorage.clear(); 
       setIsLoggedIn(false);
@@ -160,7 +160,7 @@ const Header = () => {
               
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm ring-1 ring-slate-200 group-hover:ring-2 group-hover:ring-blue-500 transition-all">
                 <img 
-                  src={userData?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData?.name}`} 
+                  src={userData?.avatar == 0 || userData?.avatar === null ? 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' : userData?.avatar} 
                   alt="avatar" 
                   className="w-full h-full object-cover"
                 />

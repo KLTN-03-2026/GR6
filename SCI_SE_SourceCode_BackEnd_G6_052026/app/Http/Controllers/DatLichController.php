@@ -43,7 +43,8 @@ class DatLichController extends Controller
                 'khach_hangs.so_dien_thoai',
                 'khach_hangs.email',
                 'dat_lichs.trang_thai_dat_lich',
-                'hinh_anh_dich_vus.hinh_anh'
+                'hinh_anh_dich_vus.hinh_anh',
+                'dich_vus.thoi_gian_du_kien',
             )
             ->first();
         if ($data) {

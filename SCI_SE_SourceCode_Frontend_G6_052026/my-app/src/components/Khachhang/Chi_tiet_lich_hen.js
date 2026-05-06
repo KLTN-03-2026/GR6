@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
-import { 
-  Clock, Calendar, MapPin, Phone, Mail, 
-  User, RefreshCw, XCircle, Navigation 
+import {
+  Clock, Calendar, MapPin, Phone, Mail,
+  User, RefreshCw, XCircle, Navigation
 } from 'lucide-react';
 
 const Chi_tiet_lich_hen = () => {
@@ -41,7 +41,7 @@ const Chi_tiet_lich_hen = () => {
         if (response.data.status) {
           alert("Hủy lịch hẹn thành công!");
           // Tải lại dữ liệu để cập nhật trạng thái UI hoặc quay về trang danh sách
-          fetchDetail(); 
+          fetchDetail();
         } else {
           alert(response.data.message || "Không thể hủy lịch vào lúc này.");
         }
@@ -65,54 +65,53 @@ const Chi_tiet_lich_hen = () => {
   };
 
   const statusStyle = getStatusInfo(appointment.trang_thai_dat_lich);
-   const tien_con_lai = (appointment.tong_tien_thanh_toan || 0) - (appointment.tong_tien_da_nhan || 0);
+  const tien_con_lai = (appointment.tong_tien_thanh_toan || 0) - (appointment.tong_tien_da_nhan || 0);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] p-4 md:p-10 font-sans text-[#1a202c]">
       <div className="max-w-5xl mx-auto">
-        
+
         <header className="mb-8">
-          <button 
-            onClick={() => navigate(-1)} 
+          <button
+            onClick={() => navigate(-1)}
             className="text-sm text-[#3182ce] font-bold mb-4 flex items-center gap-1 hover:underline"
           >
             ← Quay lại
           </button>
-          <h1 className="text-3xl font-extrabold mb-3">Chi tiết lịch hẹn #{appointment.id}</h1>
+          <h1 className="text-3xl font-extrabold mb-3">Chi tiết lịch hẹn </h1>
           <div className="flex items-center gap-4">
             <span className={`${statusStyle.bg} ${statusStyle.text} px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-2`}>
               <span className={`w-2 h-2 ${statusStyle.dot} rounded-full animate-pulse`}></span>
               {statusStyle.label}
             </span>
-            <span className="text-[#718096] text-sm">Mã đơn: {appointment.ma_don_hang || 'N/A'}</span>
+            <span className="text-[#718096] text-sm">Mã đơn: {appointment.ma_hoa_don || 'N/A'}</span>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Thẻ dịch vụ */}
             <div className="bg-white p-6 rounded-[32px] shadow-sm flex gap-6 items-center border border-white">
-              <img 
-                src={appointment.hinh_anh || "https://via.placeholder.com/200"} 
-                alt="Service" 
+              <img
+                src={appointment.hinh_anh || "https://via.placeholder.com/200"}
+                alt="Service"
                 className="w-28 h-28 rounded-2xl object-cover"
               />
               <div className="space-y-2">
                 <span className="text-[#3182ce] text-[10px] font-black uppercase tracking-[2px]">
-                   DỊCH VỤ CHUYÊN NGHIỆP
+                  DỊCH VỤ CHUYÊN NGHIỆP
                 </span>
                 <h2 className="text-2xl font-bold leading-tight">{appointment.ten_dich_vu}</h2>
                 <div className="flex items-center gap-6 text-[#718096] font-medium pt-1">
                   <div className="flex items-center gap-2">
                     <Clock size={18} className="text-[#3182ce]" />
-                    <span>{appointment.thoi_gian_uoc_tinh || '60'} phút</span>
+                    <span>{appointment.thoi_gian_du_kien || 'nope'} phút</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 bg-[#ebf8ff] text-[#3182ce] rounded-full flex items-center justify-center">
-                        <span className="text-[10px] font-bold">đ</span>
-                    </div>
-                    <span className="font-bold text-[#2d3748]">{tien_con_lai}đ</span>
+                    <span className="font-bold text-[#2d3748]">
+                      {new Intl.NumberFormat('vi-VN').format(Math.round(appointment.don_gia))}đ
+                    </span>
                   </div>
                 </div>
               </div>
@@ -135,7 +134,11 @@ const Chi_tiet_lich_hen = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-[#a0aec0] uppercase tracking-wider">Thời gian hẹn</p>
-                  <p className="font-bold text-lg">{appointment.ngay_dat_lich}</p>
+                  <p className="font-bold text-lg">
+                    {new Date(appointment.ngay_dat_lich).toLocaleDateString('vi-VN', {
+                      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                    }) || 'Đang cập nhật'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -146,7 +149,7 @@ const Chi_tiet_lich_hen = () => {
                 <div className="w-1.5 h-6 bg-[#3182ce] rounded-full"></div>
                 <h3 className="font-bold text-lg">Khung giờ chi tiết</h3>
               </div>
-              
+
               <div className="bg-[#f8fafc] p-6 rounded-[24px] flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-white text-[#3182ce] rounded-full flex items-center justify-center shadow-sm">
@@ -159,15 +162,16 @@ const Chi_tiet_lich_hen = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-bold text-[#a0aec0] uppercase tracking-wider">Tổng cộng</p>
-                  <p className="font-bold text-xl">Dựa trên dịch vụ</p>
+                  <p className="font-bold text-xl">{new Intl.NumberFormat('vi-VN').format(Math.round(appointment.don_gia))}đ</p>
+                  
                 </div>
               </div>
             </div>
 
             {/* Nhóm nút hành động */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-              
-              <button 
+
+              <button
                 onClick={handleCancel}
                 disabled={appointment.trang_thai_dat_lich === 3 || appointment.trang_thai_dat_lich === 2}
                 className="bg-white hover:bg-[#fff5f5] text-[#e53e3e] border border-[#fecaca] py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:bg-gray-50"
@@ -187,7 +191,7 @@ const Chi_tiet_lich_hen = () => {
                   Đội ngũ CSKH của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7.
                 </p>
               </div>
-              
+
               <div className="space-y-3 relative z-10">
                 <div className="bg-[#ffffff08] hover:bg-[#ffffff12] border border-[#ffffff10] p-4 rounded-2xl flex items-center gap-4 transition-all group cursor-pointer">
                   <div className="w-10 h-10 bg-[#ffffff10] rounded-xl flex items-center justify-center group-hover:bg-[#3182ce] transition-all">

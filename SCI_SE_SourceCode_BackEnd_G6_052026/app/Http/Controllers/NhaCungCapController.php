@@ -38,12 +38,19 @@ class NhaCungCapController extends Controller
             'dia_chi'             => $request->dia_chi,
         ];
 
-        if ($request->hasFile('logo')) {
+         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('logo_thuong_hieu', $filename, 'public');
+            $path_logo = $file->storeAs('logo_thuong_hieu', $filename, 'public');
 
-            $data['logo'] = $path;
+            $data['logo'] = $path_logo;
+        }
+        if ($request->hasFile('anh_bia')) {
+            $file = $request->file('anh_bia');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path_anh_bia = $file->storeAs('anh_bia_thuong_hieu', $filename, 'public');
+
+            $data['anh_bia'] = $path_anh_bia;
         }
 
         $thuongHieu->update($data);
@@ -56,20 +63,15 @@ class NhaCungCapController extends Controller
     public function getDataThuongHieu()
     {
         $nhaCungCap = $this->isUserNhaCungCap();
+        if(!$nhaCungCap) {
+            return response()->json([
+                'status' => false,
+                'message' => "Bạn chưa đăng nhập!"
+            ], 401);
+        }
         $data = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)
-            ->select(
-                'id',
-                'ten_thuong_hieu',
-                'so_dien_thoai',
-                'id_danh_muc_dich_vu',
-                'ma_so_thue',
-                'ma_bin_ngan_hang',
-                'tai_khoan_ngan_hang',
-                'dia_chi',
-                'logo'
-            )
             ->get();
-        $data->transform(function ($item) {
+         $data->transform(function ($item) {
             // Nếu logo đã là URL (bắt đầu bằng http:// hoặc https://)
             if (filter_var($item->logo, FILTER_VALIDATE_URL)) {
                 $item->logo = $item->logo;  // giữ nguyên link
@@ -78,8 +80,18 @@ class NhaCungCapController extends Controller
                 $item->logo = asset('storage/' . $item->logo);
             }
             return $item;
-        })
-            ->get();
+        });
+        $data->transform(function ($item) {
+            // Nếu logo đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->anh_bia, FILTER_VALIDATE_URL)) {
+                $item->anh_bia = $item->anh_bia;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->anh_bia = asset('storage/' . $item->anh_bia);
+            }
+            return $item;
+        });
+           
         return response()->json([
             'status' => true,
             'data' => $data
@@ -88,13 +100,31 @@ class NhaCungCapController extends Controller
     public function getDataBangDieuKhien()
     {
         $nhaCungCap = $this->isUserNhaCungCap();
-        $DoanhThu = NhaCungCap::where('id', $nhaCungCap->id)
-            ->join('thuong_hieu', 'nha_cung_cap.id', '=', 'thuong_hieu.id_nha_cung_cap')
-            ->join('dat_lich', 'thuong_hieu.id', '=', 'dat_lich.id_thuong_hieu')
-            ->join('chi_tiet_dat_lich', 'dat_lich.id', '=', 'chi_tiet_dat_lich.id_dat_lich')
-            ->join('thanh_toan', 'dat_lich.id', '=', 'thanh_toan.id_dat_lich')
-            ->where('thanh_toan.trang_thai', 1)
-            ->sum('thanh_toan.tong_tien');
+        if (!$nhaCungCap) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy nhà cung cấp!"
+            ], 404);
+        }
+        $data = NhaCungCap::where('nha_cung_caps.id', $nhaCungCap->id)
+            ->join('thuong_hieus', 'nha_cung_caps.id', '=', 'thuong_hieus.id_nha_cung_cap')
+            ->join('dat_lichs', 'thuong_hieus.id', '=', 'dat_lichs.id_thuong_hieu')
+            ->join('khach_hangs', 'dat_lichs.id_khach_hang', '=', 'khach_hangs.id')
+            ->join('chi_tiet_dat_lichs', 'dat_lichs.id', '=', 'chi_tiet_dat_lichs.id_dat_lich')
+            ->join('dich_vus', 'chi_tiet_dat_lichs.id_dich_vu', '=', 'dich_vus.id')
+            ->leftJoin('thanh_toans', 'chi_tiet_dat_lichs.id', '=', 'thanh_toans.id_chi_tiet_dat_lich')
+            ->select(
+        'chi_tiet_dat_lichs.ma_hoa_don',
+        'khach_hangs.ten_khach_hang',
+        'dich_vus.ten_dich_vu',
+        'dat_lichs.trang_thai_dat_lich',
+        'thanh_toans.tong_tien_thanh_toan'
+    )
+          ->get();
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
     }
     public function upDate(Request $request)
     {
