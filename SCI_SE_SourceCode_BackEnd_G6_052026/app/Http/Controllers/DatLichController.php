@@ -15,23 +15,48 @@ use Illuminate\Support\Facades\DB;
 
 class DatLichController extends Controller
 {
-    public function getDataChiTietDatLich($id_dat_lich)
-    {
-        $KhachHang = $this->isUserKhachHang();
-        $data = ChiTietDatLich::where('id_dat_lich', $id_dat_lich)
+   public function getDataChiTietDatLich($id_chi_tiet_dat_lich)
+    {   
+        $data = ChiTietDatLich::where('chi_tiet_dat_lichs.id', $id_chi_tiet_dat_lich)
+            ->join('dat_lichs', 'dat_lichs.id', 'chi_tiet_dat_lichs.id_dat_lich')
+            ->join('khach_hangs', 'khach_hangs.id', 'dat_lichs.id_khach_hang')
             ->join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
             ->join('nhan_viens', 'nhan_viens.id', 'chi_tiet_dat_lichs.id_nhan_vien')
+            ->join('thuong_hieus', 'thuong_hieus.id', 'dat_lichs.id_thuong_hieu')
+             ->leftJoin('hinh_anh_dich_vus', function($join) {
+                $join->on('hinh_anh_dich_vus.id_dich_vu', '=', 'dich_vus.id')
+                     ->whereRaw('hinh_anh_dich_vus.id = (select id from hinh_anh_dich_vus where id_dich_vu = dich_vus.id limit 1)');
+            })
             ->select(
                 'chi_tiet_dat_lichs.id',
                 'dich_vus.ten_dich_vu',
                 'nhan_viens.ten_nhan_vien',
-                'chi_tiet_dat_lichs.dia_chi_thuc_hien',
+                'thuong_hieus.dia_chi',
                 'chi_tiet_dat_lichs.gio_bat_dau',
+                'chi_tiet_dat_lichs.gio_ket_thuc',
                 'chi_tiet_dat_lichs.ngay_dat_lich',
                 'chi_tiet_dat_lichs.so_luong',
-                'chi_tiet_dat_lichs.don_gia'
+                'chi_tiet_dat_lichs.don_gia',
+                'dat_lichs.ghi_chu',
+                'chi_tiet_dat_lichs.ma_hoa_don',
+                'khach_hangs.ten_khach_hang',
+                'khach_hangs.so_dien_thoai',
+                'khach_hangs.email',
+                'dat_lichs.trang_thai_dat_lich',
+                'hinh_anh_dich_vus.hinh_anh'
             )
             ->first();
+        if ($data) {
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy chi tiết đặt lịch!'
+            ], 404);
+        }
     }
     // public function createDatLich(DatLichRequest $request)
     // {
@@ -209,7 +234,7 @@ class DatLichController extends Controller
             ]);
             $thanhToan = ThanhToan::create([
                 'ma_hoa_don'                  => $ChiTietDatLich->ma_hoa_don,
-                'id_chi_tiet_dat_lich'        => $ChiTietDatLich->id_chi_tiet_dat_lich, // nếu có
+                'id_chi_tiet_dat_lich'        => $ChiTietDatLich->id, // nếu có
                 'tong_tien_thanh_toan'        => $ChiTietDatLich->don_gia * $ChiTietDatLich->so_luong, // tính tổng tiền dựa trên chi tiết đặt lịch
                 'tong_tien_da_nhan'           => 0, // số tiền khách hàng đã thanh toán (nếu có)
                 'trang_thai'                  => 0, // 0 = Chờ thanh toán
@@ -218,6 +243,8 @@ class DatLichController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Đặt lịch thành công!',
+                'id_dat_lich' => $DatLich->id,
+                'id_chi_tiet_dat_lich' => $ChiTietDatLich->id,
                 'id_nhan_vien' => $id_nhan_vien,
                 'dich_vu' => $dichVu->ten_dich_vu,
                 'gio_bat_dau' => $start->format('H:i'),
@@ -226,53 +253,53 @@ class DatLichController extends Controller
         });
     }
     public function getDataDatLich()
-    {
-        $KhachHang = $this->isUserKhachHang();
-        if ($KhachHang) {
-            $data = DatLich::where('id_khach_hang', $KhachHang->id)
-                ->join('thuong_hieus', 'thuong_hieus.id', 'dat_lichs.id_thuong_hieu')
-                ->join('chi_tiet_dat_lichs', 'chi_tiet_dat_lichs.id_dat_lich', 'dat_lichs.id')
-                ->join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
-                ->select(
-                    'dat_lichs.id',
-                    'dich_vus.ten_dich_vu',
-                    'thuong_hieus.ten_thuong_hieu',
-                    'chi_tiet_dat_lichs.ngay_dat_lich',
-                    'chi_tiet_dat_lichs.gio_bat_dau',
-                    'dat_lichs.trang_thai_dat_lich'
-                )
-                ->get();
-            $id_dich_vu = DatLich::where('id_khach_hang', $KhachHang->id)
-                ->join('thuong_hieus', 'thuong_hieus.id', 'dat_lichs.id_thuong_hieu')
-                ->join('chi_tiet_dat_lichs', 'chi_tiet_dat_lichs.id_dat_lich', 'dat_lichs.id')
-                ->join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
-                ->select(
-                    'dich_vus.id',
-                )
-                ->first();
+{
+    $KhachHang = $this->isUserKhachHang();
+    if ($KhachHang) {
+        $data = DatLich::where('id_khach_hang', $KhachHang->id)
+            ->join('thuong_hieus', 'thuong_hieus.id', 'dat_lichs.id_thuong_hieu')
+            ->join('chi_tiet_dat_lichs', 'chi_tiet_dat_lichs.id_dat_lich', 'dat_lichs.id')
+            ->join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
+            ->join('thanh_toans', 'thanh_toans.id_chi_tiet_dat_lich', 'chi_tiet_dat_lichs.id')
+            // Join với bảng hình ảnh, lấy hình ảnh đầu tiên của mỗi dịch vụ
+            ->leftJoin('hinh_anh_dich_vus', function($join) {
+                $join->on('hinh_anh_dich_vus.id_dich_vu', '=', 'dich_vus.id')
+                     ->whereRaw('hinh_anh_dich_vus.id = (select id from hinh_anh_dich_vus where id_dich_vu = dich_vus.id limit 1)');
+            })
+            ->select(
+                'dat_lichs.id',
+                'dich_vus.ten_dich_vu',
+                'thuong_hieus.ten_thuong_hieu',
+                'chi_tiet_dat_lichs.ngay_dat_lich',
+                'chi_tiet_dat_lichs.gio_bat_dau',
+                'dat_lichs.trang_thai_dat_lich',
+                'hinh_anh_dich_vus.hinh_anh', // Lấy cột hinh_anh từ bảng riêng
+               'thanh_toans.tong_tien_thanh_toan',
+               'thanh_toans.tong_tien_da_nhan',
+                
+            )
+            ->get();
 
-            $hinhanh = HinhAnhDichVu::where('id_dich_vu', $id_dich_vu->id)
-                ->first();
-            $hinhanh->transform(function ($item) {
-                // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
-                if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
-                    $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
-                } else {
-                    // Ngược lại, coi như đường dẫn local trong disk 'public'
+        // Bây giờ mới dùng transform trên $data (là một Collection)
+        $data->transform(function ($item) {
+            if ($item->hinh_anh) {
+                // Nếu là URL tuyệt đối thì giữ nguyên, nếu là path local thì thêm asset()
+                if (!filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
                     $item->hinh_anh = asset('storage/' . $item->hinh_anh);
                 }
-                return $item;
-            });
-            return response()->json([
-                'status' => true,
-                'data' => $data,
-                'hinh_anh' => $hinhanh->hinh_anh
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Bạn chưa đăng nhập!',
-                'status'  => false
-            ]);
-        }
+            } 
+            return $item;
+        });
+
+        return response()->json([
+            'status' => true,
+            'data'   => $data,
+        ]);
+    } else {
+        return response()->json([
+            'message' => 'Bạn chưa đăng nhập!',
+            'status'  => false
+        ]);
     }
+}
 }

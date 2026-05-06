@@ -18,6 +18,73 @@ use Illuminate\Support\Facades\Http;
 
 class NhaCungCapController extends Controller
 {
+    public function updateThuongHieu(Request $request)
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)->first();
+        if (!$thuongHieu) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy thương hiệu!"
+            ], 404);
+        }
+        $data = [
+            'ten_thuong_hieu'     => $request->ten_thuong_hieu,
+            'so_dien_thoai'       => $request->so_dien_thoai,
+            'id_danh_muc_dich_vu' => $request->id_danh_muc_dich_vu,
+            'ma_so_thue'          => $request->ma_so_thue,
+            'ma_bin_ngan_hang'    => $request->ma_bin_ngan_hang,
+            'tai_khoan_ngan_hang' => $request->tai_khoan_ngan_hang,
+            'dia_chi'             => $request->dia_chi,
+        ];
+
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('logo_thuong_hieu', $filename, 'public');
+
+            $data['logo'] = $path;
+        }
+
+        $thuongHieu->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật thương hiệu thành công!'
+        ]);
+    }
+    public function getDataThuongHieu()
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        $data = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)
+            ->select(
+                'id',
+                'ten_thuong_hieu',
+                'so_dien_thoai',
+                'id_danh_muc_dich_vu',
+                'ma_so_thue',
+                'ma_bin_ngan_hang',
+                'tai_khoan_ngan_hang',
+                'dia_chi',
+                'logo'
+            )
+            ->get();
+        $data->transform(function ($item) {
+            // Nếu logo đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->logo, FILTER_VALIDATE_URL)) {
+                $item->logo = $item->logo;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->logo = asset('storage/' . $item->logo);
+            }
+            return $item;
+        })
+            ->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
     public function getDataBangDieuKhien()
     {
         $nhaCungCap = $this->isUserNhaCungCap();

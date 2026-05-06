@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DichVuRequest;
 use App\Models\DichVu;
 use App\Models\HinhAnhDichVu;
+use App\Models\NhaCungCap;
 use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,15 +14,16 @@ use Illuminate\Support\Str;
 
 class DichVuController extends Controller
 {
-    public function getDichVubyID()
+    public function getDichVubyID($id)
     {
-        $nhacungcap = $this->isUserNhaCungCap();
-        if (!$nhacungcap) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Bạn không có quyền truy cập dữ liệu này.'
-            ], 403);
-        }
+        // $nhacungcap = $this->isUserNhaCungCap();
+        // if (!$nhacungcap) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Bạn không có quyền truy cập dữ liệu này.'
+        //     ], 403);
+        // }
+        $nhacungcap = NhaCungCap::where('id', $id)->first();
         $dichVu = ThuongHieu::where('id_nha_cung_cap', $nhacungcap->id)
             ->join('dich_vus', 'dich_vus.id_thuong_hieu', 'thuong_hieus.id')
             ->select(
@@ -35,8 +37,13 @@ class DichVuController extends Controller
                 'dich_vus.id_thuong_hieu',
                 'dich_vus.id_danh_muc_dich_vu',
                 'dich_vus.so_luong_lich_toi_da',
-                'dich_vus.trang_thai'
+                'dich_vus.trang_thai',
+                'hinh_anh_dich_vus.hinh_anh'
             )
+            ->leftJoin('hinh_anh_dich_vus', function($join) {
+                $join->on('hinh_anh_dich_vus.id_dich_vu', '=', 'dich_vus.id')
+                     ->whereRaw('hinh_anh_dich_vus.id = (select id from hinh_anh_dich_vus where id_dich_vu = dich_vus.id limit 1)');
+            })
             ->get();
         if (!$dichVu) {
             return response()->json([
