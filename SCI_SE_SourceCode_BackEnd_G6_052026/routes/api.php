@@ -29,9 +29,16 @@ Route::post('/khach-hang/update', [KhachHangController::class, 'upDate'])->middl
 
 //khách hàng đặt lịch
 Route::get('/khach-hang/dat-lich/get-data', [DatLichController::class, 'getDataDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
-Route::get('/khach-hang/chi-tiet-dat-lich/{id_dat_lich}', [DatLichController::class, 'getDataChiTietDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+Route::get('/khach-hang/chi-tiet-dat-lich/{id_chi_tiet_dat_lich}', [DatLichController::class, 'getDataChiTietDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
 Route::post('/khach-hang/dat-lich/create', [DatLichController::class, 'createDatLich'])->middleware('auth:sanctum'); //đặt lịch dịch vụ
+Route::get('/khach-hang/nhan-vien/get-data/{id}', [KhachHangController::class, 'getNhanVienData']);
 
+//khách hàng xem hồ sơ thương hiệu
+Route::get('/khach-hang/thuong-hieu/get-data/{id_thuong_hieu}', [KhachHangController::class, 'getThuongHieuData']);
+
+//crud thương hiệu của nhà cung cấp
+Route::get('nha-cung-cap/thuong-hieu/get-data',[NhaCungCapController::class,'getDataThuongHieu']);
+Route::post('nha-cung-cap/thuong-hieu/update',[NhaCungCapController::class,'updateThuongHieu']);
 
 //crud nhân viên của dịch vụ
 Route::get('thuong-hieu/nhan-vien/get-data',[ThuongHieuController::class,'getDataNhanVien']);
@@ -42,7 +49,8 @@ Route::post('thuong-hieu/nhan-vien/update-status/{id}',[ThuongHieuController::cl
 
 //Quản lý lịch đặt của thương hiệu
 Route::get('thuong-hieu/dat-lich/get-data/{id_thuong_hieu}',[ThuongHieuController::class,'getDataDatLich']);
-Route::get('thuong-hieu/dat-lich/change-status/{id_dat_lich}',[ThuongHieuController::class,'changeStatusDatLich']);
+Route::get('thuong-hieu/dat-lich/hoan-thanh/{id_dat_lich}',[ThuongHieuController::class,'doneDatLich']);
+Route::get('dat-lich/huy/{id_dat_lich}',[ThuongHieuController::class,'cancelDatLich']);
 
 
 
@@ -66,7 +74,7 @@ Route::get('/nha-cung-cap/bang-dieu-khien', [NhaCungCapController::class, 'getDa
 Route::post('/tim-kiem-dich-vu/{keyword}', [DichVuController::class, 'timKiemDichVu']);
 Route::get('/dich-vu/chi-tiet-dich-vu/{id}', [DichVuController::class, 'chiTietDichVu']);  //xem chi tiết khi nhấn vào dịch vụ
 Route::get('/dich-vu/get-data', [DichVuController::class, 'getDichVu']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
-Route::get('/dich-vu/get-data-by-ncc', [DichVuController::class, 'getDichVubyID']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
+Route::get('/dich-vu/get-data-by-ncc/{id}', [DichVuController::class, 'getDichVubyID']); //lấy dữ liệu danh mục dịch vụ để hiển thị lên giao diện
 Route::get('/dich-vu/get-thuong-hieu/{id}', [DichVuController::class, 'getThuongHieu']);
 Route::post('/dich-vu/create', [DichVuController::class, 'createDichVu']);
 Route::post('/dich-vu/update', [DichVuController::class, 'updateDichVu']);
@@ -117,6 +125,8 @@ Route::delete('/danh-muc/destroy/{id}', [DanhMucDichVuController::class, 'destro
 
 //VNPAY payment
 Route::post('/vnpay-payment', [ThanhToanController::class, 'createPayment']);
+Route::get('/vnpay-payment/return', [ThanhToanController::class, 'handleVnpayReturn']);
+
 
 //đánh giá
 Route::post('/danh-gia/create', [DanhGiaController::class, 'createDanhGia']);
@@ -132,3 +142,6 @@ Route::post('/get-or-create', [HoiThoaiController::class, 'getOrCreate']);
 Route::get('/get-all-messages/{id}', [HoiThoaiController::class, 'getAllMessages']);
 Route::get('khach-hang/get-all-conversations', [HoiThoaiController::class, 'khachHangGetAllConversations']);
 Route::get('thuong-hieu/get-all-conversations', [HoiThoaiController::class, 'thuongHieuGetAllConversations']);
+
+//thoi gian làm việc của nhân viên
+Route::get('/nhan-vien/thoi-gian-lam-viec/{id}', [NhanVienController::class, 'WorkingHours']);

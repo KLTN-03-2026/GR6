@@ -16,10 +16,9 @@ const HeaderNCC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. Logic kiểm tra Auth (Chỉ dành cho Nhà cung cấp)
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const authRaw = localStorage.getItem('auth');
+    const token = localStorage.getItem('token') || localStorage.getItem('admin_access_token');
+    const authRaw = localStorage.getItem('auth') || localStorage.getItem('admin_auth');
 
     if (token && authRaw) {
       setIsLoggedIn(true);
@@ -39,7 +38,6 @@ const HeaderNCC = () => {
     }
   }, [location]);
 
-  // 2. Logic Tìm kiếm
   useEffect(() => {
     const delay = setTimeout(async () => {
       if (!keyword.trim()) {
@@ -59,10 +57,9 @@ const HeaderNCC = () => {
     return () => clearTimeout(delay);
   }, [keyword]);
 
-  // 3. Logic Đăng xuất
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || localStorage.getItem('admin_access_token');
       await api.post('dang-xuat', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -79,8 +76,7 @@ const HeaderNCC = () => {
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-50">
-      {/* 1. Logo Section */}
-      <div className="w-64 flex items-center gap-2 shrink-0 cursor-pointer" >
+      <div className="w-64 flex items-center gap-2 shrink-0 cursor-pointer" onClick={() => navigate('/')}>
         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
           <svg viewBox="0 0 24 24" className="text-white w-5 h-5 fill-current">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
@@ -91,7 +87,6 @@ const HeaderNCC = () => {
 
       <div className="h-full w-px bg-slate-100 mx-2"></div>
 
-      {/* 2. Search Bar Section */}
       <div className="flex-1 flex justify-center px-8 relative">
         <div className="relative w-full max-w-2xl">
           {isSearching ? (
@@ -107,7 +102,6 @@ const HeaderNCC = () => {
             className="w-full pl-12 pr-4 py-2.5 bg-[#f1f5f9] border-none rounded-full text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 outline-none"
           />
 
-          {/* Dropdown kết quả tìm kiếm */}
           {keyword && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-[60]">
               {isSearching ? (
@@ -136,7 +130,6 @@ const HeaderNCC = () => {
         </div>
       </div>
 
-      {/* 3. Action Icons & Profile */}
       <div className="flex items-center gap-4 shrink-0">
         <button className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
           <Bell size={20} strokeWidth={1.5} />
@@ -147,18 +140,14 @@ const HeaderNCC = () => {
 
         {!isLoggedIn ? (
           <div className="flex gap-2">
-            <button onClick={() => navigate('/dang-nhap')} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600">
-              Đăng nhập
-            </button>
-            <button onClick={() => navigate('/dang-ky')} className="px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-              Đăng ký
-            </button>
+            <button onClick={() => navigate('/dang-nhap')} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600">Đăng nhập</button>
+            <button onClick={() => navigate('/dang-ky')} className="px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700">Đăng ký</button>
           </div>
         ) : (
           <div className="flex items-center gap-3 pl-2 group relative">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-slate-700 leading-none">{userData?.name}</p>
-              <p className="text-[11px] text-slate-400 mt-1 uppercase font-medium tracking-wider">Nhà cung cấp</p>
+              <p className="text-[11px] text-slate-400 mt-1 uppercase font-medium tracking-wider">Tài khoản</p>
             </div>
             
             <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 cursor-pointer ring-offset-2 group-hover:ring-2 ring-blue-500 transition-all">
@@ -169,12 +158,19 @@ const HeaderNCC = () => {
               />
             </div>
 
-            {/* User Dropdown Menu */}
-            <div className="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-50">
+            <div className="absolute right-0 top-full pt-2 w-52 hidden group-hover:block z-50">
               <div className="bg-white border border-slate-200 rounded-xl shadow-lg py-1 overflow-hidden">
+                {/* CHUYỂN PHẦN ADMIN SANG ĐÂY */}
+                {localStorage.getItem('admin_access_token') && (
+                  <Link to="/admin/quan-ly-danh-muc" className="flex items-center gap-2 px-4 py-2 text-sm text-blue-600 font-bold hover:bg-blue-50">
+                    <Settings size={16} /> Quản trị hệ thống
+                  </Link>
+                )}
+                
                 <Link to="/nha-cung-cap/chi-tiet-thuong-hieu" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                   <User size={16} /> Chi tiết thương hiệu
                 </Link>
+                
                 <hr className="my-1 border-slate-100" />
                 <button 
                   onClick={() => setIsLogoutModalOpen(true)}

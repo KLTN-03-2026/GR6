@@ -2,64 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChiTietDatLich;
 use App\Models\NhanVien;
 use Illuminate\Http\Request;
 
 class NhanVienController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function WorkingHours(Request $request, $id)
     {
-        //
-    }
+        // 1. Lấy ngày từ params (date=YYYY-MM-DD)
+        $ngay_dat = $request->date;
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // 2. Query lịch bận và PHẢI lọc theo ngày
+        $data = ChiTietDatLich::where('id_nhan_vien', $id)
+            ->when($ngay_dat, function ($query) use ($ngay_dat) {
+                return $query->where('ngay_dat_lich', $ngay_dat);
+            })
+            ->select(
+                'id_nhan_vien', 
+                'gio_bat_dau',
+                'gio_ket_thuc',
+                'ngay_dat_lich'
+            )
+            ->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        // 3. Nếu chọn "Hệ thống chọn" ($id = 0), bạn có thể xử lý trả về rỗng 
+        // hoặc logic riêng tùy bạn. Ở đây tôi để mặc định theo query.
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(NhanVien $nhanVien)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(NhanVien $nhanVien)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, NhanVien $nhanVien)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(NhanVien $nhanVien)
-    {
-        //
+        return response()->json([
+            'status' => true,
+            'message' => 'Lấy dữ liệu thời gian bận thành công!',
+            'data' => $data
+        ]);
     }
 }

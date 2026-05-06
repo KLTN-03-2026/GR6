@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class ThuongHieuController extends Controller
 {
-    public function changeStatusDatLich($id_dat_lich)
+    public function cancelDatLich($id_dat_lich)
     {
         $data = DatLich::where('id', $id_dat_lich)->first();
         if(!$data){
@@ -21,7 +21,23 @@ class ThuongHieuController extends Controller
                 'message' => 'Không tìm thấy lịch đặt.'
             ], 404);
         }   
-        $data->trang_thai_dat_lich = !$data->trang_thai_dat_lich; //đảo ngược trạng thái
+        $data->trang_thai_dat_lich = 3; //hủy
+        $data->save();
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật trạng thái đặt lịch thành công!',
+        ]);       
+    }
+    public function doneDatLich($id_dat_lich)
+    {
+        $data = DatLich::where('id', $id_dat_lich)->first();
+        if(!$data){
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy lịch đặt.'
+            ], 404);
+        }   
+        $data->trang_thai_dat_lich = 2; //hoàn thành
         $data->save();
         return response()->json([
             'status' => true,
