@@ -6,6 +6,7 @@ import {
 import { serviceApi } from '../../api/index';
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
+import Menu from './Menu';
 
 const Quan_ly_dich_vu = () => {
   const [services, setServices] = useState([]);
@@ -147,32 +148,7 @@ const Quan_ly_dich_vu = () => {
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
       {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r p-4 flex flex-col justify-between">
-        <div>
-          <div className="space-y-1">
-            <Link to="/nha-cung-cap">
-              <SidebarItem icon={<LayoutDashboard size={18} />} text="Bảng điều khiển" active />
-            </Link>
-            <Link to="/nha-cung-cap/quan-ly-dich-vu">
-              <SidebarItem icon={<Briefcase size={18} />} text="Dịch vụ" />
-            </Link>
-            <Link to="/nha-cung-cap/lich-hen">
-              <SidebarItem icon={<Calendar size={18} />} text="Lịch hẹn" />
-            </Link>
-            <Link to="/nha-cung-cap/quan-ly-nhan-vien">
-              <SidebarItem icon={<Users size={18} />} text="Nhân viên" />
-            </Link>
-            <Link to="/nha-cung-cap/cai-dat">
-              <SidebarItem icon={<Settings size={18} />} text="Cài đặt" />
-            </Link>
-          </div>
-        </div>
-
-        <div className="text-sm text-gray-400">
-          <div className="cursor-pointer hover:text-black">Hỗ trợ</div>
-          <div className="cursor-pointer hover:text-black mt-2">Đăng xuất</div>
-        </div>
-      </aside>
+      <Menu />
 
       {/* MAIN CONTENT */}
       <main className="flex-1 p-8">
