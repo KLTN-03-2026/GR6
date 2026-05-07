@@ -22,13 +22,13 @@ const Dang_nhap_Admin = (props) => {
       });
       console.log("Admin login successful:", response.data); 
       if (response.data && response.data.admin_access_token) { 
-        localStorage.setItem("admin_access_token", response.data.admin_access_token);
+        localStorage.setItem("token", response.data.admin_access_token);
         const adminAuth = {
           username: response.data.username || username,
           role: "admin",
           id: response.data.id
         };
-        localStorage.setItem("admin_auth", JSON.stringify(adminAuth));
+        localStorage.setItem("auth", JSON.stringify(adminAuth));
 
         toast.success("Xác thực quản trị viên thành công!");
         navigate("/admin/quan-ly-nguoi-dung"); 

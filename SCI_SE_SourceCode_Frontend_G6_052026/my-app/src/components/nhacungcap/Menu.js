@@ -28,7 +28,7 @@ const Menu = () => {
   const menuItems = [
     { icon: <LayoutDashboard size={18} />, text: "Bảng điều khiển", to: "/nha-cung-cap" },
     { icon: <Briefcase size={18} />, text: "Dịch vụ", to: "/nha-cung-cap/quan-ly-dich-vu" },
-    { icon: <Calendar size={18} />, text: "Lịch hẹn", to: "/nha-cung-cap/lich-hen" },
+    { icon: <Calendar size={18} />, text: "Lịch hẹn", to: "/nha-cung-cap/quan-ly-lich-hen" },
     { icon: <Users size={18} />, text: "Nhân viên", to: "/nha-cung-cap/quan-ly-nhan-vien" },
     { icon: <Settings size={18} />, text: "Cài đặt", to: "/nha-cung-cap/ho-so-thuong-hieu" },
   ];

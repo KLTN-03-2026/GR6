@@ -3,7 +3,7 @@ import '../styles/ServicesPage.css';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import {
-  Send, Sparkles, MessageCircle, X, Minus, Paperclip, ChevronRight
+  Send, Sparkles, MessageCircle, X, Minus, Paperclip, ChevronRight, Star
 } from 'lucide-react';
 
 const ASSISTANT_MAX_CARDS = 4;
@@ -96,7 +96,7 @@ const ServicesPage = () => {
     const n = Number(String(raw).replace(/[^\d.-]/g, ''));
     return isNaN(n) ? 0 : n;
   };
-  const formatRating = (v) => isNaN(Number(v)) ? '—' : Number(v).toFixed(1);
+  const formatRating = (v) => isNaN(Number(v)) ? '0' : Number(v).toFixed(1);
 
   // Xử lý AI Assistant
   const handleAssistantSubmit = async () => {
@@ -288,7 +288,10 @@ const ServicesPage = () => {
               <article key={item.id} className="service-card" onClick={() => navigate(`/chi-tiet/${item.id}`)}>
                 <div className="service-thumb">
                   <img src={item.hinh_anh || 'https://via.placeholder.com/300'} alt="" />
-                  <div className="service-rating">{formatRating(item.thuong_hieu?.diem_hai_long)}</div>
+                  <div className="service-rating">
+                    <span>{formatRating(item.thuong_hieu?.diem_hai_long)}</span>
+                    <Star size={12} fill="#ffc107" color="#ffc107" strokeWidth={1.5} />
+                  </div>
                 </div>
                 <div className="service-info">
                   <h3>{item.ten_dich_vu}</h3>
@@ -329,7 +332,10 @@ const ServicesPage = () => {
           <article key={service.id} className="service-card" onClick={() => navigate(`/chi-tiet/${service.id}`)}>
             <div className="service-thumb">
               <img src={getImageByServiceId(service.id)} alt="" />
-              <div className="service-rating">4.8</div>
+              <div className="service-rating">
+                <span>{service.diem_hai_long}</span>
+                <Star size={12} fill="#ffc107" color="#ffc107" strokeWidth={1.5} />
+              </div>
             </div>
             <div className="service-info">
               <h3>{service.ten_dich_vu}</h3>

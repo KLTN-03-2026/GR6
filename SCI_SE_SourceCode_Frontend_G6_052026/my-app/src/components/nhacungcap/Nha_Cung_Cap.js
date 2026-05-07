@@ -42,8 +42,11 @@ export default function Nha_Cung_Cap() {
       if (res.data.status) {
         setDataList(res.data.data);
         // Tính tổng doanh thu từ dữ liệu thực tế
-        const total = res.data.data.reduce((sum, item) => sum + Number(item.tong_tien_thanh_toan), 0);
-        setTotalRevenue(total);
+        const total = res.data.data
+        .filter(item => Number(item.trang_thai_dat_lich) !== 3) // Loại bỏ các đơn có trạng thái là 3
+        .reduce((sum, item) => sum + Number(item.tong_tien_thanh_toan), 0);
+
+setTotalRevenue(total);
       }
     } catch (error) {
       toast.error("Không thể tải dữ liệu bảng điều khiển");
@@ -61,10 +64,9 @@ export default function Nha_Cung_Cap() {
   // Hàm xử lý hiển thị trạng thái
   const getStatusInfo = (status) => {
     switch (status) {
-      case 1: return { text: "ĐÃ XÁC NHẬN", color: "bg-green-100 text-green-700" };
-      case 2: return { text: "ĐÃ HOÀN THÀNH", color: "bg-blue-100 text-blue-700" };
+      case 1: return { text: "ĐÃ XÁC NHẬN", color: "bg-blue-100 text-blue-700" };
+      case 2: return { text: "HOÀN THÀNH", color: "bg-green-100 text-green-700" };
       case 3: return { text: "ĐÃ HỦY", color: "bg-red-100 text-red-700" };
-      default: return { text: "CHỜ XÁC NHẬN", color: "bg-yellow-100 text-yellow-700" };
     }
   };
 

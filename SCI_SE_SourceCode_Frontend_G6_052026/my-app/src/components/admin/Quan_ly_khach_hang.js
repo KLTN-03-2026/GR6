@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { 
   Users, UserCheck, UserPlus, UserX, 
   FileText, Settings, LayoutDashboard, List, 
-  HelpCircle, LogOut, Download, Check, X, ChevronLeft, ChevronRight 
+  HelpCircle, LogOut, Download, Check, X, ChevronLeft, ChevronRight, 
+  Menu
 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import api, { 
-  getCustomers, getCustomerStats, blockCustomer,
-  getProviders, getProviderStats, blockProvider 
+  getCustomers, getCustomerStats, blockCustomer
 } from "../../api/index";
+import MenuAd from './MenuAd';
 
-const Quan_ly_nguoi_dung = () => {
-  const [role, setRole] = useState('khach_hang'); 
+const Quan_ly_khach_hang = () => {
   const [dataList, setDataList] = useState([]);
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,15 +19,9 @@ const Quan_ly_nguoi_dung = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      if (role === 'khach_hang') {
-        const [resData, resStats] = await Promise.all([getCustomers(), getCustomerStats()]);
-        if (resData.data.status) setDataList(resData.data.data);
-        if (resStats.data.status) setStatsData(resStats.data.data);
-      } else {
-        const [resData, resStats] = await Promise.all([getProviders(), getProviderStats()]);
-        if (resData.data.status) setDataList(resData.data.data);
-        if (resStats.data.status) setStatsData(resStats.data.data);
-      }
+      const [resData, resStats] = await Promise.all([getCustomers(), getCustomerStats()]);
+      if (resData.data.status) setDataList(resData.data.data);
+      if (resStats.data.status) setStatsData(resStats.data.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -37,7 +31,7 @@ const Quan_ly_nguoi_dung = () => {
 
   useEffect(() => {
     fetchData();
-  }, [role]);
+  }, []);
 
   const handleToggleBlock = async (id) => {
     const originalList = [...dataList];
@@ -45,11 +39,11 @@ const Quan_ly_nguoi_dung = () => {
     setDataList(updatedList);
 
     try {
-      const res = role === 'khach_hang' ? await blockCustomer(id) : await blockProvider(id);
+      const res = await blockCustomer(id);
       if (!res.data.status) {
         setDataList(originalList);
       } else {
-        const resStats = role === 'khach_hang' ? await getCustomerStats() : await getProviderStats();
+        const resStats = await getCustomerStats();
         if (resStats.data.status) setStatsData(resStats.data.data);
       }
     } catch (error) {
@@ -59,50 +53,36 @@ const Quan_ly_nguoi_dung = () => {
 
   const stats = [
     { 
-      label: role === 'khach_hang' ? "TỔNG KHÁCH HÀNG" : "TỔNG NHÀ CUNG CẤP", 
-      value: (role === 'khach_hang' ? statsData?.tong_so_khach_hang : statsData?.tong_so_nha_cung_cap) || 0, 
+      label: "TỔNG KHÁCH HÀNG", 
+      value: statsData?.tong_so_khach_hang || 0, 
       icon: <Users className="text-blue-500" />, color: "bg-blue-50" 
     },
     { 
       label: "ĐANG HOẠT ĐỘNG", 
-      value: (role === 'khach_hang' ? statsData?.khach_hang_da_active : statsData?.nha_cung_cap_da_active) || 0, 
+      value: statsData?.khach_hang_da_active || 0, 
       icon: <UserCheck className="text-blue-500" />, color: "bg-white", border: true 
     },
     { 
       label: "MỚI TRONG THÁNG", 
-      value: (role === 'khach_hang' ? statsData?.khach_hang_moi_trong_thang : statsData?.nha_cung_cap_moi_trong_thang) || 0, 
+      value: statsData?.khach_hang_moi_trong_thang || 0, 
       trend: "Tháng này", color: "bg-white", border: true 
     },
     { 
       label: "TÀI KHOẢN BỊ KHÓA", 
-      value: (role === 'khach_hang' ? statsData?.khach_hang_block : statsData?.nha_cung_cap_block) || 0, 
+      value: statsData?.khach_hang_block || 0, 
       icon: <UserX className="text-red-500" />, color: "bg-white", border: true 
     },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans">
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col shrink-0 sticky top-0 h-screen">
-        <nav className="flex-grow px-4 space-y-1 text-slate-600 font-medium mt-4">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><LayoutDashboard size={18} /> Bảng điều khiển</button>
-          <Link to="/admin/quan-ly-danh-muc"><button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><List size={18} /> Danh mục</button></Link>
-          <button onClick={() => setRole('khach_hang')} className={`w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition-all ${role === 'khach_hang' ? 'bg-blue-50 text-blue-600 font-bold' : 'hover:bg-gray-50'}`}><Users size={18} /> Khách hàng</button>
-          <button onClick={() => setRole('nha_cung_cap')} className={`w-full flex items-center gap-3 px-4 py-3 text-sm rounded-xl transition-all ${role === 'nha_cung_cap' ? 'bg-blue-50 text-blue-600 font-bold' : 'hover:bg-gray-50'}`}><Users size={18} /> Nhà cung cấp</button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><Settings size={18} /> Cài đặt</button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><FileText size={18} /> Báo cáo</button>
-        </nav>
-        <div className="p-4 border-t border-gray-100 space-y-1">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:bg-gray-50 rounded-xl transition-all"><LogOut size={18} /> Đăng xuất</button>
-        </div>
-      </aside>
+      <MenuAd />
 
       <main className="flex-grow p-8 overflow-y-auto">
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 mb-2">Quản lý {role === 'khach_hang' ? 'khách hàng' : 'nhà cung cấp'}</h1>
+            <h1 className="text-3xl font-black text-gray-900 mb-2">Quản lý khách hàng</h1>
             <p className="text-gray-500 text-sm">Xem và điều chỉnh quyền truy cập của các thành viên trong hệ thống.</p>
-          </div>
-          <div className="flex gap-3">
           </div>
         </div>
 
@@ -123,16 +103,7 @@ const Quan_ly_nguoi_dung = () => {
 
         <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-            <div className="flex gap-4">
-              <select 
-                value={role} 
-                onChange={(e) => setRole(e.target.value)}
-                className="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-bold text-gray-600 focus:ring-0"
-              >
-                <option value="khach_hang">Vai trò: Khách hàng</option>
-                <option value="nha_cung_cap">Vai trò: Nhà cung cấp</option>
-              </select>
-            </div>
+            <div className="flex gap-4 font-bold text-xs text-gray-600 uppercase">Danh sách khách hàng</div>
             <span className="text-xs text-gray-400 font-medium">Đang hiển thị {dataList.length} thành viên</span>
           </div>
 
@@ -154,16 +125,14 @@ const Quan_ly_nguoi_dung = () => {
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">
-                        {(u.ten_khach_hang || u.ten_nha_cung_cap)?.charAt(0).toUpperCase()}
+                        {u.ten_khach_hang?.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-sm font-bold text-gray-900">{u.ten_khach_hang || u.ten_nha_cung_cap}</span>
+                      <span className="text-sm font-bold text-gray-900">{u.ten_khach_hang}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5 text-sm text-gray-500">{u.email}</td>
                   <td className="px-8 py-5">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-tight">
-                      {role === 'khach_hang' ? 'CUSTOMER' : 'PROVIDER'}
-                    </span>
+                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-tight">CUSTOMER</span>
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-1.5">
@@ -191,4 +160,4 @@ const Quan_ly_nguoi_dung = () => {
   );
 };
 
-export default Quan_ly_nguoi_dung;
+export default Quan_ly_khach_hang;

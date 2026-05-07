@@ -75,7 +75,12 @@ const Lich_hen = () => {
         <div className="flex flex-col gap-5">
           {filteredAppointments.length > 0 ? filteredAppointments.map((item) => {
             const status = getStatusDetail(item.trang_thai_dat_lich);
-            const tien_con_lai = (item.tong_tien_thanh_toan || 0) - (item.tong_tien_da_nhan || 0);
+            
+            // LOGIC CẬP NHẬT: Nếu trạng thái là 2 (Đã xong) thì reset về 0
+            const tien_con_lai = Number(item.trang_thai_dat_lich) === 2 
+              ? 0 
+              : (item.tong_tien_thanh_toan || 0) - (item.tong_tien_da_nhan || 0);
+              
             const isCancelled = item.trang_thai_dat_lich === 3;
 
             return (
@@ -114,7 +119,6 @@ const Lich_hen = () => {
                       <span className="text-[15px]">{item.gio_bat_dau}</span>
                     </div>
                     
-                    {/* Chỉ hiển thị tiền nếu lịch chưa bị hủy */}
                     {!isCancelled && (
                       <div className="flex flex-col items-end ml-auto group/money">
                         <span className="text-[11px] font-bold uppercase tracking-wider text-[#a0aec0] mb-1">
