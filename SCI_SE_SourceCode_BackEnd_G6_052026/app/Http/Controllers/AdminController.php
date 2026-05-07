@@ -7,11 +7,152 @@ use App\Models\Admin;
 use App\Models\DanhMucDichVu;
 use App\Models\KhachHang;
 use App\Models\NhaCungCap;
+use App\Models\ThanhToan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+     public function thongKeDoanhThu()
+    {
+        // Tổng doanh thu
+        $tongDoanhThu = ThanhToan::where('trang_thai', '!=', 3)
+            ->sum('tong_tien_da_nhan');
+        // Tổng nhà cung cấp
+        $countNCC = NhaCungCap::count();
+        // Tổng khách hàng
+        $countKH = KhachHang::count();
+        // Doanh thu theo danh mục
+       $doanhThuTheoDanhMuc = DanhMucDichVu::from('danh_muc_dich_vus as cha')
+
+    // join danh mục con
+    ->leftJoin(
+        'danh_muc_dich_vus as con',
+        'con.id_father',
+        '=',
+        'cha.id'
+    )
+
+    // dịch vụ thuộc danh mục con
+    ->leftJoin(
+        'dich_vus',
+        'dich_vus.id_danh_muc_dich_vu',
+        '=',
+        'con.id'
+    )
+
+    // chi tiết đặt lịch
+    ->leftJoin(
+        'chi_tiet_dat_lichs',
+        'chi_tiet_dat_lichs.id_dich_vu',
+        '=',
+        'dich_vus.id'
+    )
+
+    // thanh toán
+    ->leftJoin(
+        'thanh_toans',
+        'thanh_toans.id_chi_tiet_dat_lich',
+        '=',
+        'chi_tiet_dat_lichs.id'
+    )
+
+    // chỉ lấy danh mục cha
+    ->where('cha.id_father', 0)
+
+    ->groupBy(
+        'cha.id',
+        'cha.ten_dich_vu'
+    )
+
+    ->select(
+        'cha.ten_dich_vu',
+
+        DB::raw("
+            COALESCE(
+                SUM(
+                    CASE
+                        WHEN thanh_toans.trang_thai != 3
+                        THEN thanh_toans.tong_tien_da_nhan
+                        ELSE 0
+                    END
+                ),
+            0) as doanh_thu
+        ")
+    )
+
+    ->get();
+        // TOP 5 đối tác doanh thu cao nhất
+         // TOP 5 đối tác doanh thu cao nhất
+        $topNCC = NhaCungCap::join(
+            'thuong_hieus',
+            'thuong_hieus.id_nha_cung_cap',
+            '=',
+            'nha_cung_caps.id'
+        )
+            ->join(
+                'dich_vus',
+                'dich_vus.id_thuong_hieu',
+                '=',
+                'thuong_hieus.id'
+            )
+            ->join(
+                'chi_tiet_dat_lichs',
+                'chi_tiet_dat_lichs.id_dich_vu',
+                '=',
+                'dich_vus.id'
+            )
+            ->join(
+                'dat_lichs',
+                'dat_lichs.id',
+                '=',
+                'chi_tiet_dat_lichs.id_dat_lich'
+            )
+            ->join(
+                'thanh_toans',
+                'thanh_toans.id_chi_tiet_dat_lich',
+                '=',
+                'chi_tiet_dat_lichs.id'
+            )
+            ->join(
+                'danh_muc_dich_vus',
+                'danh_muc_dich_vus.id',
+                '=',
+                'dich_vus.id_danh_muc_dich_vu'
+            )
+            ->where('thanh_toans.trang_thai', '!=', 3)
+            ->groupBy(
+                'nha_cung_caps.id',
+                'nha_cung_caps.ten_nha_cung_cap',
+                'danh_muc_dich_vus.ten_dich_vu'
+            )
+            ->select(
+                'nha_cung_caps.ten_nha_cung_cap',
+                'danh_muc_dich_vus.ten_dich_vu',
+                   DB::raw("
+                        COUNT(
+                            DISTINCT CASE 
+                                WHEN thanh_toans.trang_thai != 3 
+                                THEN dat_lichs.id 
+                            END
+                        ) as tong_don
+                    "),
+                DB::raw('SUM(thanh_toans.tong_tien_da_nhan) as tong_doanh_thu')
+            )
+            ->orderByDesc('tong_doanh_thu')
+            ->limit(5)
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'tong_doanh_thu' => $tongDoanhThu,
+            'count_ncc' => $countNCC,
+            'count_kh' => $countKH,
+            'doanh_thu_theo_danh_muc' => $doanhThuTheoDanhMuc,
+            'top_doi_tac' => $topNCC
+        ]);
+    }
     public function getCountProviders()
     {
         $tong_so_nha_cung_cap = NhaCungCap::count();

@@ -10,6 +10,7 @@ use App\Http\Controllers\DichVuController;
 use App\Http\Controllers\HinhAnhDichVuController;
 use App\Http\Controllers\HoiThoaiController;
 use App\Http\Controllers\KhachHangController;
+use App\Http\Controllers\LichLamViecController;
 use App\Http\Controllers\NhaCungCapController;
 use App\Http\Controllers\NhanVienController;
 use App\Http\Controllers\ThanhToanController;
@@ -68,6 +69,9 @@ Route::get('/nha-cung-cap/thong-tin-ca-nhan', [NhaCungCapController::class, 'tho
 Route::post('/nha-cung-cap/check-login', [NhaCungCapController::class, 'checkLogin']); // gửi bearer +token
 Route::post('/nha-cung-cap/update', [NhaCungCapController::class, 'upDate'])->middleware('auth:sanctum'); //lấy thông tin nhà cung cấp đang đăng nhập
 Route::get('/nha-cung-cap/bang-dieu-khien', [NhaCungCapController::class, 'getDataBangDieuKhien']); //lấy dữ liệu hiển thị lên bảng điều khiển của nhà cung cấp
+Route::get('/nha-cung-cap/lich-hen/get-data', [NhaCungCapController::class, 'getDataLichHen']); //lấy dữ liệu hiển thị lên bảng điều khiển của nhà cung cấp
+Route::post('/nha-cung-cap/thoi-gian-lam-viec/update', [NhaCungCapController::class, 'updateThoiGianLamViec']); //cập nhật thời gian làm việc của nhà cung cấp
+Route::get('/nha-cung-cap/thoi-gian-lam-viec/get-data', [NhaCungCapController::class, 'getThoiGianLamViec']); //lấy dữ liệu thời gian làm việc của nhà cung cấp
 
 
 //dịch vụ
@@ -131,7 +135,9 @@ Route::get('/vnpay-payment/return', [ThanhToanController::class, 'handleVnpayRet
 
 //đánh giá
 Route::post('/danh-gia/create', [DanhGiaController::class, 'createDanhGia']);
-Route::get('/danh-gia/dich-vu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByDichVu']);
+Route::get('/danh-gia/dich-vu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByDichVu']); //lấy đánh giá theo id dịch vụ
+Route::get('/danh-gia/thuong-hieu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByThuongHieu']); //lấy đánh giá cho thương hiệu
+
 
 // AI (Gemini)
 Route::post('/ai/assistant', [AiAssistantController::class, 'generate']);
@@ -146,3 +152,9 @@ Route::get('thuong-hieu/get-all-conversations', [HoiThoaiController::class, 'thu
 
 //thoi gian làm việc của nhân viên
 Route::get('/nhan-vien/thoi-gian-lam-viec/{id}', [NhanVienController::class, 'WorkingHours']);
+
+//lịch làm việc thương hiệu
+Route::get('/thuong-hieu/lich-lam-viec/{id_thuong_hieu}', [LichLamViecController::class, 'getWorkingHours']);
+
+//admin thống kê doanh thu
+Route::get('/admin/thong-ke-doanh-thu', [AdminController::class, 'thongKeDoanhThu']);
