@@ -53,9 +53,12 @@ const Dat_lich = () => {
         try {
             const res = await api.get(`/nhan-vien/thoi-gian-lam-viec/${staff || 0}?date=${date}`);
             if (res.data.status) {
+                // LOGIC CẬP NHẬT: Cộng thêm 30 phút giờ đệm vào thời gian kết thúc
+                const bufferTime = 30; 
                 const ranges = res.data.data.map(item => ({
                     start: timeToMinutes(item.gio_bat_dau.substring(0, 5)),
-                    end: timeToMinutes(item.gio_ket_thuc.substring(0, 5))
+                    // Cộng thêm bufferTime vào end
+                    end: timeToMinutes(item.gio_ket_thuc.substring(0, 5)) + bufferTime 
                 }));
                 setBookedRanges(ranges);
             }
@@ -125,7 +128,6 @@ const Dat_lich = () => {
             const res = await api.post('/khach-hang/dat-lich/create', payload);
             if (res.data.status) { 
                 toast.success("Đặt lịch thành công!");
-                // Lấy ID chi tiết đặt lịch từ response của API (giả sử key là id_chi_tiet)
                 const bookingId = res.data.id_chi_tiet_dat_lich ;
                 if (bookingId) {
                     navigate(`/thanh-toan/${bookingId}`);
@@ -159,7 +161,7 @@ const Dat_lich = () => {
                                 <h1 className="text-2xl font-black text-gray-900">{serviceInfo?.ten_dich_vu}</h1>
                                 <div className="flex items-center gap-4 mt-2">
                                     <span className="text-blue-600 font-extrabold text-xl">{new Intl.NumberFormat('vi-VN').format(serviceInfo?.don_gia || 0)} đ</span>
-                                    <span className="text-gray-400 text-sm flex items-center gap-1 font-bold"><Clock size={14}/> 60 phút</span>
+                                    <span className="text-gray-400 text-sm flex items-center gap-1 font-bold"><Clock size={14}/> {serviceInfo?.thoi_gian_du_kien || 0} phút</span>
                                 </div>
                             </div>
                             <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">

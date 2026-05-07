@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LichLamViecRequest;
 use App\Http\Requests\ThemMoiNCCRequest;
 use App\Mail\KichHoatTaiKhoan;
 use App\Mail\KichHoatTaiKhoanNCC;
 use App\Mail\QuenMatKhau;
 use App\Models\KhachHang;
+use App\Models\LichLamViec;
 use App\Models\NhaCungCap;
 use App\Models\ThuongHieu;
 use Illuminate\Http\Request;
@@ -18,6 +20,140 @@ use Illuminate\Support\Facades\Http;
 
 class NhaCungCapController extends Controller
 {
+    public function updateThoiGianLamViec(LichLamViecRequest $request)
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        if (!$nhaCungCap) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy nhà cung cấp!"
+            ], 404);
+        }
+        $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)->first();
+        if (!$thuongHieu) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy thương hiệu!"
+            ], 404);
+        };
+        $lichLamViec = LichLamViec::where('id_thuong_hieu', $thuongHieu->id)->first();
+        if ($lichLamViec) {
+            $lichLamViec->update([
+                'gio_mo_cua' => $request->gio_mo_cua,
+                'gio_dong_cua' => $request->gio_dong_cua,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => "Cập nhật thời gian làm việc thành công!"
+            ]);
+        }
+    }
+    public function getThoiGianLamViec()
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        if (!$nhaCungCap) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy nhà cung cấp!"
+            ], 404);
+        }
+        $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)->first();
+        if (!$thuongHieu) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy thương hiệu!"
+            ], 404);
+        };
+        $data = LichLamViec::where('id_thuong_hieu', $thuongHieu->id)->first();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+    public function getDataLichHen()
+    {
+        $nhaCungCap = $this->isUserNhaCungCap();
+        if (!$nhaCungCap) {
+            return response()->json([
+                'status' => false,
+                'message' => "Không tìm thấy nhà cung cấp!"
+            ], 404);
+        }
+        $tong_lich_hen = NhaCungCap::where('nha_cung_caps.id', $nhaCungCap->id)
+            ->join('thuong_hieus', 'nha_cung_caps.id', '=', 'thuong_hieus.id_nha_cung_cap')
+            ->join('dat_lichs', 'thuong_hieus.id', '=', 'dat_lichs.id_thuong_hieu')
+            ->select(
+                'dat_lichs.id',
+            )
+            ->count();
+        $lich_da_xac_nhan = NhaCungCap::where('nha_cung_caps.id', $nhaCungCap->id)
+            ->join('thuong_hieus', 'nha_cung_caps.id', '=', 'thuong_hieus.id_nha_cung_cap')
+            ->join('dat_lichs', 'thuong_hieus.id', '=', 'dat_lichs.id_thuong_hieu')
+            ->where('dat_lichs.trang_thai_dat_lich', 1)
+            ->select(
+                'dat_lichs.id',
+            )
+            ->count();
+        $lich_da_hoan_thanh = NhaCungCap::where('nha_cung_caps.id', $nhaCungCap->id)
+            ->join('thuong_hieus', 'nha_cung_caps.id', '=', 'thuong_hieus.id_nha_cung_cap')
+            ->join('dat_lichs', 'thuong_hieus.id', '=', 'dat_lichs.id_thuong_hieu')
+            ->where('dat_lichs.trang_thai_dat_lich', 2)
+            ->select(
+                'dat_lichs.id',
+            )
+            ->count();
+        $lich_da_huy = NhaCungCap::where('nha_cung_caps.id', $nhaCungCap->id)
+            ->join('thuong_hieus', 'nha_cung_caps.id', '=', 'thuong_hieus.id_nha_cung_cap')
+            ->join('dat_lichs', 'thuong_hieus.id', '=', 'dat_lichs.id_thuong_hieu')
+            ->where('dat_lichs.trang_thai_dat_lich', 3)
+            ->select(
+                'dat_lichs.id',
+            )
+            ->count();
+
+
+
+
+        $data_DatLich = NhaCungCap::where('nha_cung_caps.id', $nhaCungCap->id)
+            ->join('thuong_hieus', 'nha_cung_caps.id', '=', 'thuong_hieus.id_nha_cung_cap')
+            ->join('dat_lichs', 'thuong_hieus.id', '=', 'dat_lichs.id_thuong_hieu')
+            ->join('khach_hangs', 'dat_lichs.id_khach_hang', '=', 'khach_hangs.id')
+            ->join('chi_tiet_dat_lichs', 'dat_lichs.id', '=', 'chi_tiet_dat_lichs.id_dat_lich')
+            ->join('dich_vus', 'chi_tiet_dat_lichs.id_dich_vu', '=', 'dich_vus.id')
+            ->leftJoin('thanh_toans', 'chi_tiet_dat_lichs.id', '=', 'thanh_toans.id_chi_tiet_dat_lich')
+            ->select(
+                'dat_lichs.id',
+                'dich_vus.ten_dich_vu',
+                'thuong_hieus.ten_thuong_hieu',
+                'chi_tiet_dat_lichs.ma_hoa_don',
+                'chi_tiet_dat_lichs.ngay_dat_lich',
+                'chi_tiet_dat_lichs.gio_bat_dau',
+                'dat_lichs.trang_thai_dat_lich',
+                'thanh_toans.tong_tien_thanh_toan',
+                'thanh_toans.tong_tien_da_nhan',
+                'khach_hangs.avatar',
+                'khach_hangs.ten_khach_hang',
+            )
+            ->get();
+        $data_DatLich->transform(function ($item) {
+            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->avatar, FILTER_VALIDATE_URL)) {
+                $item->avatar = $item->avatar;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->avatar = asset('storage/' . $item->avatar);
+            }
+            return $item;
+        });
+        return response()->json([
+            'status' => true,
+            'data_DatLich' => $data_DatLich,
+            'tong_lich_hen' => $tong_lich_hen,
+            'lich_da_xac_nhan' => $lich_da_xac_nhan,
+            'lich_da_hoan_thanh' => $lich_da_hoan_thanh,
+            'lich_da_huy' => $lich_da_huy,
+        ]);
+    }
     public function updateThuongHieu(Request $request)
     {
         $nhaCungCap = $this->isUserNhaCungCap();
@@ -283,7 +419,7 @@ class NhaCungCapController extends Controller
                 'hash_active'      => Str::uuid(),
             ]);
 
-            ThuongHieu::create([
+             $ThuongHieu =  ThuongHieu::create([
                 'ten_thuong_hieu'     => $request->ten_thuong_hieu,
                 'id_nha_cung_cap'     => $ncc->id,
                 'so_dien_thoai'     => $request->so_dien_thoai,
@@ -293,6 +429,11 @@ class NhaCungCapController extends Controller
                 'tai_khoan_ngan_hang' => $request->tai_khoan_ngan_hang,
                 'dia_chi'             => $request->dia_chi,
                 'logo'                => $logo,
+            ]);
+             LichLamViec::create([
+                'id_thuong_hieu' => $ThuongHieu->id,
+                'gio_mo_cua' => '08:00',
+                'gio_dong_cua' => '17:30',
             ]);
 
             Mail::to($ncc->email)->queue(new KichHoatTaiKhoanNCC($ncc->hash_active, $ncc->ten_nha_cung_cap));

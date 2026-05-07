@@ -274,15 +274,34 @@
 }
 
 .service-rating {
+  /* Các thuộc tính vị trí cũ của bạn giữ nguyên, ví dụ: */
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: white;
-  padding: 4px 10px;
+  top: 10px;
+  right: 10px;
+  background-color: white;
   border-radius: 20px;
-  font-weight: 800;
-  color: #2272f7;
-  font-size: 0.8rem;
+  padding: 4px 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  /* THÊM CÁC DÒNG NÀY ĐỂ NẰM NGANG */
+  display: flex;            /* Kích hoạt flexbox */
+  align-items: center;      /* Căn giữa theo chiều dọc */
+  justify-content: center;  /* Căn giữa theo chiều ngang */
+  gap: 4px;                 /* Khoảng cách giữa sao và số */
+}
+
+/* Đảm bảo con số có màu xanh và font đẹp như ảnh */
+.service-rating span {
+  color: #2563eb;          /* Màu xanh giống trong ảnh bạn gửi */
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;          /* Loại bỏ khoảng trống thừa của dòng */
+}
+
+/* Đảm bảo icon ngôi sao không bị lệch */
+.service-rating svg {
+  display: block;
+  flex-shrink: 0;          /* Không cho icon bị bóp méo */
 }
 
 .service-info {

@@ -20,6 +20,7 @@ class DichVu extends Model
         'mo_ta_dai',
         'so_luong_lich_toi_da',
         'trang_thai',
+        'diem_hai_long',
         'kieu_phuc_vu',
     ];
 }

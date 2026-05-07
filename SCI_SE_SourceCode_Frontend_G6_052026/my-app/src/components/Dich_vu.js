@@ -3,7 +3,7 @@ import '../styles/ServicesPage.css';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { 
-  Send, Sparkles, MessageCircle, X, Minus, Paperclip, ChevronRight 
+  Send, Sparkles, MessageCircle, X, Minus, Paperclip, ChevronRight ,Star
 } from 'lucide-react';
 
 const ServicesPage = () => {
@@ -130,7 +130,10 @@ const ServicesPage = () => {
             <article key={service.id} className="service-card" onClick={() => navigate(`/chi-tiet/${service.id}`)}>
               <div className="service-thumb">
                 <img src={getImageId(service.id)} alt="" />
-                <div className="service-rating">4.8</div>
+                <div className="service-rating">
+                <span>{service.diem_hai_long}</span>
+                <Star size={12} fill="#ffc107" color="#ffc107" strokeWidth={1.5} />
+              </div>
               </div>
               <div className="service-info">
                 <h3>{service.ten_dich_vu}</h3>

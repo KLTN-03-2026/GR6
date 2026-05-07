@@ -45,6 +45,7 @@ class DatLichController extends Controller
                 'dat_lichs.trang_thai_dat_lich',
                 'hinh_anh_dich_vus.hinh_anh',
                 'dich_vus.thoi_gian_du_kien',
+                'dich_vus.id as id_dich_vu',
             )
             ->first();
         if ($data) {

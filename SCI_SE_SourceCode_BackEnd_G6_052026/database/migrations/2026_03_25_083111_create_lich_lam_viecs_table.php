@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('lich_lam_viecs', function (Blueprint $table) {
             $table->id();
             $table->integer('id_thuong_hieu');
-            $table->dateTime('gio_mo_cua');
-            $table->dateTime('gio_dong_cua');
+            $table->time('gio_mo_cua');
+            $table->time('gio_dong_cua');
             $table->timestamps();
         });
     }

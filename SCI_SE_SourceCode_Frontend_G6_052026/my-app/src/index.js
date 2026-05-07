@@ -14,7 +14,6 @@ import Dich_vu from './components/Dich_vu';
 import Chi_tiet_thuong_hieu from './components/Khachhang/Chi_tiet_thuong_hieu';
 import Chi_tiet_dv from './components/Chi_tiet_dv';
 import Dang_nhap_Admin from './components/admin/Dang_nhap_Admin';
-import Quan_ly_nguoi_dung from './components/admin/Quan_ly_nguoi_dung';
 import Quan_ly_danh_muc from './components/admin/Quan_ly_danh_muc';
 import Dat_lich from './components/Khachhang/Dat_lich';
 import Quan_ly_dich_vu from './components/nhacungcap/Quan_ly_dich_vu';
@@ -24,6 +23,11 @@ import Lich_hen from './components/Khachhang/Lich_hen';
 import Chi_tiet_lich_hen from './components/Khachhang/Chi_tiet_lich_hen';
 import Quan_ly_ho_so from './components/Khachhang/Quan_ly_ho_so';
 import Ho_so_thuong_hieu from './components/nhacungcap/Ho_so_thuong_hieu';
+import Quan_ly_lich_hen from './components/nhacungcap/Quan_ly_lich_hen';
+import Danh_gia from './components/Khachhang/Danh_gia';
+import Thong_ke_he_thong from './components/admin/Thong_ke_he_thong';
+import Quan_ly_khach_hang from './components/admin/Quan_ly_khach_hang';
+import Quan_ly_nha_cung_cap from './components/admin/Quan_ly_nha_cung_cap';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -41,7 +45,6 @@ root.render(
         <Route path='chi-tiet-thuong-hieu/:id' element={<Chi_tiet_thuong_hieu />} />
         <Route path='admin/dang-nhap' element={<Dang_nhap_Admin />} />
         <Route path='quan-ly-ho-so' element={<Quan_ly_ho_so />} />
-        <Route path='admin/quan-ly-nguoi-dung' element={<Quan_ly_nguoi_dung />} />
         <Route path='admin/quan-ly-danh-muc' element={<Quan_ly_danh_muc />} />
         <Route path="dat-lich/:id_thuong_hieu/:id_dich_vu" element={<Dat_lich />} />
         <Route path="nha-cung-cap/quan-ly-dich-vu" element={<Quan_ly_dich_vu />} />
@@ -51,6 +54,11 @@ root.render(
         <Route path="chi-tiet-lich-hen/:id" element={<Chi_tiet_lich_hen />} />
         <Route path="quan-ly-ho-so" element={<Quan_ly_ho_so />} />
         <Route path="nha-cung-cap/ho-so-thuong-hieu" element={<Ho_so_thuong_hieu />} />
+        <Route path ="nha-cung-cap/quan-ly-lich-hen" element={<Quan_ly_lich_hen />} />
+        <Route path ="danh-gia/:id" element={<Danh_gia />} />
+        <Route path = "admin/thong-ke-he-thong" element={<Thong_ke_he_thong />} />
+        <Route path ="admin/quan-ly-khach-hang" element={<Quan_ly_khach_hang />} />
+        <Route path ="admin/quan-ly-nha-cung-cap" element={<Quan_ly_nha_cung_cap />} />
       </Routes>
     </App>
   </Router>

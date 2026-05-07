@@ -20,7 +20,12 @@ class KhachHangController extends Controller
 {
     public function getThuongHieuData($id_thuong_hieu)
     {
-        $thuongHieu = ThuongHieu::where('id', $id_thuong_hieu)
+        $thuongHieu = ThuongHieu::where('thuong_hieus.id', $id_thuong_hieu)
+        ->join('nha_cung_caps', 'thuong_hieus.id_nha_cung_cap', '=', 'nha_cung_caps.id')
+        ->select(
+            'thuong_hieus.*',
+            'nha_cung_caps.email',
+        )
         ->first();
         if (!$thuongHieu) {
             return response()->json([

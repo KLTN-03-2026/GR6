@@ -7,6 +7,7 @@
   import { Link, useNavigate, useLocation } from "react-router-dom";
   import api from '../../api/index'; 
 import { toast } from 'react-toastify';
+import MenuAd from './MenuAd';
 
   const Quan_ly_danh_muc = () => {
     const navigate = useNavigate();
@@ -150,19 +151,7 @@ import { toast } from 'react-toastify';
 
     return (
       <div className="min-h-screen bg-gray-50 flex font-sans text-slate-600">
-        <aside className="w-64 bg-white border-r border-gray-100 flex flex-col shrink-0 sticky top-0 h-screen">
-          <nav className="flex-grow px-4 space-y-1 text-slate-600 font-medium mt-4">
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><LayoutDashboard size={18} /> Bảng điều khiển</button>
-            <Link to="/admin/quan-ly-danh-muc"><button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><List size={18} /> Danh mục</button></Link>
-            <Link to="/admin/quan-ly-nguoi-dung"><button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><Users size={18} /> Người dùng</button></Link>
-            <Link to="/admin/quan-ly-nguoi-dung"><button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><Users size={18} /> Nhà cung cấp</button></Link>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><Settings size={18} /> Cài đặt</button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 rounded-xl transition-all"><FileText size={18} /> Báo cáo</button>
-          </nav>
-          <div className="p-4 border-t border-gray-100 space-y-1">
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:bg-gray-50 rounded-xl transition-all"><LogOut size={18} /> Đăng xuất</button>
-          </div>
-        </aside>
+        <MenuAd />
 
         <main className="flex-grow p-10">
           <div className="max-w-7xl mx-auto">

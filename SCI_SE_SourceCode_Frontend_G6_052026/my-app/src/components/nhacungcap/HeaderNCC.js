@@ -17,20 +17,28 @@ const HeaderNCC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const token = localStorage.getItem('token') || localStorage.getItem('admin_access_token');
-    const authRaw = localStorage.getItem('auth') || localStorage.getItem('admin_auth');
+    // 1. Kiểm tra cả 2 loại token (User thường hoặc Admin)
+    const userToken = localStorage.getItem('token');
+    const adminToken = localStorage.getItem('admin_access_token');
+    const token = userToken || adminToken;
+
+    // 2. Kiểm tra cả 2 loại dữ liệu auth
+    const userAuthRaw = localStorage.getItem('auth');
+    const adminAuthRaw = localStorage.getItem('admin_auth');
+    const authRaw = userAuthRaw || adminAuthRaw;
 
     if (token && authRaw) {
       setIsLoggedIn(true);
       try {
         const parsed = JSON.parse(authRaw);
+        // Ưu tiên các trường dữ liệu phổ biến từ API trả về cho cả Admin và NCC
         setUserData({
           ...parsed,
-          name: parsed.username || parsed.name || "Người dùng",
-          avatar: parsed.avatar || null
+          name: parsed.username || parsed.name || parsed.ten_quan_tri || "Quản trị viên",
+          avatar: parsed.avatar || parsed.hinh_anh || null
         });
       } catch (err) {
-        setUserData({ name: "Nhà cung cấp" });
+        setUserData({ name: adminToken ? "Quản trị viên" : "Người dùng" });
       }
     } else {
       setIsLoggedIn(false);
@@ -60,7 +68,12 @@ const HeaderNCC = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('admin_access_token');
-      await api.post('/nha-cung-cap/dang-xuat', {}, {
+      // Tùy chọn: Gọi đúng endpoint logout của admin nếu cần
+      const logoutUrl = localStorage.getItem('admin_access_token') 
+        ? '/admin/dang-xuat' 
+        : '/nha-cung-cap/dang-xuat';
+        
+      await api.post(logoutUrl, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (error) {
@@ -138,6 +151,7 @@ const HeaderNCC = () => {
 
         <div className="h-8 w-px bg-slate-200 mx-1"></div>
 
+        {/* CẢI TIẾN: isLoggedIn sẽ đúng cho cả Admin và User */}
         {!isLoggedIn ? (
           <div className="flex gap-2">
             <button onClick={() => navigate('/dang-nhap')} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600">Đăng nhập</button>
@@ -147,7 +161,9 @@ const HeaderNCC = () => {
           <div className="flex items-center gap-3 pl-2 group relative">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-slate-700 leading-none">{userData?.name}</p>
-              <p className="text-[11px] text-slate-400 mt-1 uppercase font-medium tracking-wider">Tài khoản</p>
+              <p className="text-[11px] text-slate-400 mt-1 uppercase font-medium tracking-wider">
+                {localStorage.getItem('admin_access_token') ? 'Quản trị viên' : 'Tài khoản'}
+              </p>
             </div>
             
             <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 cursor-pointer ring-offset-2 group-hover:ring-2 ring-blue-500 transition-all">
@@ -160,16 +176,18 @@ const HeaderNCC = () => {
 
             <div className="absolute right-0 top-full pt-2 w-52 hidden group-hover:block z-50">
               <div className="bg-white border border-slate-200 rounded-xl shadow-lg py-1 overflow-hidden">
-                {/* CHUYỂN PHẦN ADMIN SANG ĐÂY */}
                 {localStorage.getItem('admin_access_token') && (
                   <Link to="/admin/quan-ly-danh-muc" className="flex items-center gap-2 px-4 py-2 text-sm text-blue-600 font-bold hover:bg-blue-50">
                     <Settings size={16} /> Quản trị hệ thống
                   </Link>
                 )}
                 
-                <Link to="/nha-cung-cap/ho-so-thuong-hieu" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
-                  <User size={16} /> Chi tiết thương hiệu
-                </Link>
+                {/* Chỉ hiện chi tiết thương hiệu nếu không phải admin (hoặc hiện cả hai tùy bạn) */}
+                {!localStorage.getItem('admin_access_token') && (
+                  <Link to="/nha-cung-cap/ho-so-thuong-hieu" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                    <User size={16} /> Chi tiết thương hiệu
+                  </Link>
+                )}
                 
                 <hr className="my-1 border-slate-100" />
                 <button 

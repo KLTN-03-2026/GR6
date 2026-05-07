@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import {
   Clock, Calendar, MapPin, Phone, Mail,
-  User, RefreshCw, XCircle, Navigation
+  User, RefreshCw, XCircle, Navigation, Star
 } from 'lucide-react';
 
 const Chi_tiet_lich_hen = () => {
@@ -16,7 +16,6 @@ const Chi_tiet_lich_hen = () => {
   const fetchDetail = async () => {
     try {
       setLoading(true);
-      // Sử dụng đúng đường dẫn Route Laravel bạn cung cấp
       const response = await api.get(`/khach-hang/chi-tiet-dat-lich/${id}`);
       if (response.data && response.data.status) {
         setAppointment(response.data.data);
@@ -36,11 +35,9 @@ const Chi_tiet_lich_hen = () => {
   const handleCancel = async () => {
     if (window.confirm("Bạn có chắc chắn muốn hủy lịch hẹn này không?")) {
       try {
-        // Sử dụng route: dat-lich/huy/{id_dat_lich}
         const response = await api.get(`dat-lich/huy/${id}`);
         if (response.data.status) {
           alert("Hủy lịch hẹn thành công!");
-          // Tải lại dữ liệu để cập nhật trạng thái UI hoặc quay về trang danh sách
           fetchDetail();
         } else {
           alert(response.data.message || "Không thể hủy lịch vào lúc này.");
@@ -61,12 +58,11 @@ const Chi_tiet_lich_hen = () => {
       2: { label: "Đã hoàn thành", bg: "bg-[#f1f4f9]", text: "text-[#718096]", dot: "bg-[#718096]" },
       3: { label: "Đã hủy", bg: "bg-[#fee2e2]", text: "text-[#ef4444]", dot: "bg-[#ef4444]" }
     };
-    return map[status] || map[0];
+    return map[status] || { label: "Chờ xác nhận", bg: "bg-gray-100", text: "text-gray-500", dot: "bg-gray-500" };
   };
 
   const statusStyle = getStatusInfo(appointment.trang_thai_dat_lich);
-  const tien_con_lai = (appointment.tong_tien_thanh_toan || 0) - (appointment.tong_tien_da_nhan || 0);
-
+  
   return (
     <div className="min-h-screen bg-[#f8fafc] p-4 md:p-10 font-sans text-[#1a202c]">
       <div className="max-w-5xl mx-auto">
@@ -106,7 +102,7 @@ const Chi_tiet_lich_hen = () => {
                 <div className="flex items-center gap-6 text-[#718096] font-medium pt-1">
                   <div className="flex items-center gap-2">
                     <Clock size={18} className="text-[#3182ce]" />
-                    <span>{appointment.thoi_gian_du_kien || 'nope'} phút</span>
+                    <span>{appointment.thoi_gian_du_kien || '0'} phút</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-[#2d3748]">
@@ -135,9 +131,9 @@ const Chi_tiet_lich_hen = () => {
                 <div>
                   <p className="text-[10px] font-bold text-[#a0aec0] uppercase tracking-wider">Thời gian hẹn</p>
                   <p className="font-bold text-lg">
-                    {new Date(appointment.ngay_dat_lich).toLocaleDateString('vi-VN', {
+                    {appointment.ngay_dat_lich ? new Date(appointment.ngay_dat_lich).toLocaleDateString('vi-VN', {
                       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-                    }) || 'Đang cập nhật'}
+                    }) : 'Đang cập nhật'}
                   </p>
                 </div>
               </div>
@@ -161,28 +157,38 @@ const Chi_tiet_lich_hen = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-bold text-[#a0aec0] uppercase tracking-wider">Tổng cộng</p>
+                  <p className="text-[10px] font-bold text-[#a0aec0] uppercase tracking-wider">Tổng Cộng</p>
                   <p className="font-bold text-xl">{new Intl.NumberFormat('vi-VN').format(Math.round(appointment.don_gia))}đ</p>
-                  
                 </div>
               </div>
             </div>
 
             {/* Nhóm nút hành động */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+              
+              {/* Nút Đánh giá (Chỉ hiện khi trạng thái bằng 2) */}
+              {appointment.trang_thai_dat_lich === 2 && (
+                <button
+                  onClick={() => navigate(`/danh-gia/${appointment.id}`)}
+                  className="bg-[#3182ce] hover:bg-[#2b6cb0] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-100"
+                >
+                  <Star size={18} /> Đánh giá dịch vụ
+                </button>
+              )}
 
               <button
                 onClick={handleCancel}
                 disabled={appointment.trang_thai_dat_lich === 3 || appointment.trang_thai_dat_lich === 2}
                 className="bg-white hover:bg-[#fff5f5] text-[#e53e3e] border border-[#fecaca] py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:bg-gray-50"
               >
-                <XCircle size={18} /> {appointment.trang_thai_dat_lich === 3 ? "Lịch đã hủy" : "Hủy lịch hẹn"}
+                <XCircle size={18} /> 
+                {appointment.trang_thai_dat_lich === 3 ? "Lịch đã hủy" : 
+                 appointment.trang_thai_dat_lich === 2 ? "Đã hoàn thành" : "Hủy lịch hẹn"}
               </button>
             </div>
           </div>
 
           <div className="space-y-6">
-
             {/* Support Box */}
             <div className="bg-[#0a1f44] p-8 rounded-[32px] text-white space-y-6 relative overflow-hidden">
               <div className="relative z-10 space-y-2">
@@ -202,7 +208,6 @@ const Chi_tiet_lich_hen = () => {
                     <p className="font-bold text-lg">1900 1234</p>
                   </div>
                 </div>
-                {/* ... (Các phần khác giữ nguyên) */}
               </div>
             </div>
           </div>
