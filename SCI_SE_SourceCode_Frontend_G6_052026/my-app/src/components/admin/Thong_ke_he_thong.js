@@ -156,7 +156,7 @@ const Thong_ke_he_thong = () => {
                 <div key={index} className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                    <span className="text-[11px] text-slate-500 font-medium">{item.ten_danh_muc}</span>
+                    <span className="text-[11px] text-slate-500 font-medium">{item.ten_dich_vu}</span>
                   </div>
                   <span className="text-[11px] font-bold">{formatCurrency(item.doanh_thu)}</span>
                 </div>
@@ -172,7 +172,7 @@ const Thong_ke_he_thong = () => {
               <h3 className="text-lg font-bold text-slate-800">Top 5 đối tác doanh thu cao nhất</h3>
               <p className="text-xs text-slate-400 mt-1">Dựa trên thực tế thanh toán hoàn tất</p>
             </div>
-          </div>
+          </div>  
 
           <div className="overflow-x-auto">
             <table className="w-full">
