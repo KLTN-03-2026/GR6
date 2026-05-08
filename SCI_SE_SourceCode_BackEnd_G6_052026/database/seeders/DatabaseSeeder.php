@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
             ThuongHieuSeeder::class,
             NhanVienSeeder::class,
             LichLamViecSeeder::class,
+            KhachHangSeeder::class,
+            DatLichSeeder::class,
+            DanhGiaSeeder::class,
         ]);
     }
 }

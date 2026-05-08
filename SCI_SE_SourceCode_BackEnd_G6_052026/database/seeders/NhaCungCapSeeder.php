@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class NhaCungCapSeeder extends Seeder
 {
@@ -21,7 +21,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'salontoc@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -29,7 +29,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'spamassage@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -37,7 +37,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'nail@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -45,7 +45,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'clinic@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -53,7 +53,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'dakhoa@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -61,7 +61,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'chuyenkhoa@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -69,7 +69,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'nhakhoa@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -77,7 +77,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'suadien@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -85,7 +85,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'suanuoc@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -93,7 +93,7 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'suachuadientu@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
             [
@@ -101,11 +101,35 @@ class NhaCungCapSeeder extends Seeder
                 'dia_chi' => '123 Đường ABC, Quận 1, TP.HCM',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'chamsocthucung@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ],
-
+            [
+                'ten_nha_cung_cap' => 'Thẩm mỹ viện quốc tế',
+                'dia_chi' => '456 Đường LMN, Quận 3, TP.HCM',
+                'so_dien_thoai' => '0909123456',
+                'email' => 'thammyvien@gmail.com',
+                'password' => Hash::make('12345678'),
+                'is_active' => 1,
+            ],
+            [
+                'ten_nha_cung_cap' => 'Trung tâm Điện lạnh 247',
+                'dia_chi' => '789 Đường GHI, Quận Bình Thạnh, TP.HCM',
+                'so_dien_thoai' => '0908777888',
+                'email' => 'dienlanh247@gmail.com',
+                'password' => Hash::make('12345678'),
+                'is_active' => 1,
+            ],
+            [
+                'ten_nha_cung_cap' => 'Pet Hotel & Spa',
+                'dia_chi' => '321 Đường OPQ, Quận 7, TP.HCM',
+                'so_dien_thoai' => '0907111222',
+                'email' => 'pethotel@gmail.com',
+                'password' => Hash::make('12345678'),
+                'is_active' => 1,
+            ],
         ]);
+
         // Clone acc khách hàng
         DB::table('khach_hangs')->delete();
         DB::table('khach_hangs')->truncate();
@@ -114,20 +138,19 @@ class NhaCungCapSeeder extends Seeder
                 'ten_khach_hang' => 'Khách hàng',
                 'so_dien_thoai' => '0123456789',
                 'email' => 'khachhang@gmail.com',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
                 'is_active' => 1,
             ]
-
         ]);
-        //clone acc admin
+
+        // Clone acc admin
         DB::table('admins')->delete();
         DB::table('admins')->truncate();
         DB::table('admins')->insert([
             [
                 'username' => 'admin',
-                'password' => bcrypt('12345678'),
+                'password' => Hash::make('12345678'),
             ]
-
         ]);
     }
 }

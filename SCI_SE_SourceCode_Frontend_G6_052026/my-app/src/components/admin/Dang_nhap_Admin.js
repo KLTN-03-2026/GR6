@@ -31,7 +31,7 @@ const Dang_nhap_Admin = (props) => {
         localStorage.setItem("auth", JSON.stringify(adminAuth));
 
         toast.success("Xác thực quản trị viên thành công!");
-        navigate("/admin/quan-ly-nguoi-dung"); 
+        navigate("/admin/thong-ke-he-thong"); 
       } else {
         toast.error(response.data?.message || "Tài khoản không có quyền truy cập");
       }
