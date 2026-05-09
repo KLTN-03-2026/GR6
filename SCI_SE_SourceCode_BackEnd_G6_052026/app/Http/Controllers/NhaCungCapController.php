@@ -112,51 +112,7 @@ class NhaCungCapController extends Controller
             )
             ->count();
             
-         $dataChiTiet = ChiTietDatLich::join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
-            ->join('thanh_toans', 'thanh_toans.id_chi_tiet_dat_lich', 'chi_tiet_dat_lichs.id')
-            ->join('dat_lichs', 'dat_lichs.id', 'chi_tiet_dat_lichs.id_dat_lich')
-            ->join('khach_hangs', 'khach_hangs.id', 'dat_lichs.id_khach_hang')
-            ->join('nhan_viens', 'nhan_viens.id', 'chi_tiet_dat_lichs.id_nhan_vien')
-             ->leftJoin('hinh_anh_dich_vus', function ($join) {
-                $join->on('hinh_anh_dich_vus.id_dich_vu', '=', 'dich_vus.id')
-                    ->whereRaw('hinh_anh_dich_vus.id = (select id from hinh_anh_dich_vus where id_dich_vu = dich_vus.id limit 1)');
-            })
-            ->select(
-                'dich_vus.ten_dich_vu',
-                'dich_vus.don_gia',
-                'dich_vus.thoi_gian_du_kien',
-                'hinh_anh_dich_vus.hinh_anh as hinh_anh_dich_vu',
-                'khach_hangs.ten_khach_hang',
-                'chi_tiet_dat_lichs.ngay_dat_lich',
-                'chi_tiet_dat_lichs.gio_bat_dau',
-                'chi_tiet_dat_lichs.gio_ket_thuc',
-                'nhan_viens.ten_nhan_vien',
-                'nhan_viens.hinh_anh as hinh_anh_nhan_vien',
-                'chi_tiet_dat_lichs.ma_hoa_don',
-                'thanh_toans.tong_tien_thanh_toan',
-                'thanh_toans.tong_tien_da_nhan',
-                DB::raw('thanh_toans.tong_tien_thanh_toan - thanh_toans.tong_tien_da_nhan as tong_tien_con_lai'),
-                'dat_lichs.ghi_chu',
-                'chi_tiet_dat_lichs.id as id_chi_tiet_dat_lich',
-                'dat_lichs.id as id_dat_lich'
-
-            )
-            ->get();
-                    $dataChiTiet = $dataChiTiet->map(function ($item) {
-                if ($item->hinh_anh_nhan_vien) {
-                    if (!filter_var($item->hinh_anh_nhan_vien, FILTER_VALIDATE_URL)) {
-                        $item->hinh_anh_nhan_vien = asset('storage/' . $item->hinh_anh_nhan_vien);
-                    }
-                }
-
-                if ($item->hinh_anh_dich_vu) {
-                    if (!filter_var($item->hinh_anh_dich_vu, FILTER_VALIDATE_URL)) {
-                        $item->hinh_anh_dich_vu = asset('storage/' . $item->hinh_anh_dich_vu);
-                    }
-                }
-
-                return $item;
-            });
+      
 
 
 
@@ -203,7 +159,6 @@ class NhaCungCapController extends Controller
             'status' => true,
             'data_DatLich' => $data_DatLich,
             'tong_lich_hen' => $tong_lich_hen,
-             'dataChiTiet' => $dataChiTiet,
             'lich_da_xac_nhan' => $lich_da_xac_nhan,
             'lich_da_hoan_thanh' => $lich_da_hoan_thanh,
             'lich_da_huy' => $lich_da_huy,

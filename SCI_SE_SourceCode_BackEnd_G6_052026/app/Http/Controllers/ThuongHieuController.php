@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NhanVienRequest;
 use App\Models\DatLich;
 use App\Models\DichVu;
 use App\Models\NhanVien;
@@ -134,7 +135,7 @@ class ThuongHieuController extends Controller
     ]);
 }
 
-    public function createNhanVien(Request $request)
+    public function createNhanVien(NhanVienRequest $request)
     {
         $filename = Str::uuid() . '.' . $request->file('hinh_anh')->getClientOriginalExtension();
         $path = $request->file('hinh_anh')->storeAs('hinh_anh_nhan_vien', $filename, 'public');
