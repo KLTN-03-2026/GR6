@@ -9,6 +9,24 @@ use Illuminate\Http\Request;
 
 class DanhGiaController extends Controller
 {
+     public function tinhDiemDanhGia()
+    {
+        $dichVus = DichVu::all();
+        foreach ($dichVus as $dichVu) {
+            $tongDanhGia = DanhGia::where('id_dich_vu', $dichVu->id)
+                ->sum('muc_hai_long');
+            $countDanhGia = DanhGia::where('id_dich_vu', $dichVu->id)
+                ->count();
+            if ($countDanhGia > 0) {
+                $dichVu->diem_hai_long = round($tongDanhGia / $countDanhGia, 1);
+                $dichVu->save();
+            }
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Tính điểm đánh giá thành công!'
+        ]);
+    }  
     public function getDanhGiaByThuongHieu($id)
     {
         $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $id)->first();

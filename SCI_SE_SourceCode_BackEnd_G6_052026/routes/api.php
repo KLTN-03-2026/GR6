@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AiAssistantController;
 use App\Http\Controllers\AiChatbotController;
+use App\Http\Controllers\ChiTietDatLichController;
 use App\Http\Controllers\DanhGiaController;
 use App\Http\Controllers\DanhMucDichVuController;
 use App\Http\Controllers\DatLichController;
@@ -135,6 +136,7 @@ Route::get('/vnpay-payment/return', [ThanhToanController::class, 'handleVnpayRet
 
 //đánh giá
 Route::post('/danh-gia/create', [DanhGiaController::class, 'createDanhGia']);
+Route::get('/danh-gia/tinh-diem-danh-gia', [DanhGiaController::class, 'tinhDiemDanhGia']);
 Route::get('/danh-gia/dich-vu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByDichVu']); //lấy đánh giá theo id dịch vụ
 Route::get('/danh-gia/thuong-hieu/get-data/{id}', [DanhGiaController::class, 'getDanhGiaByThuongHieu']); //lấy đánh giá cho thương hiệu
 
@@ -158,3 +160,5 @@ Route::get('/thuong-hieu/lich-lam-viec/{id_thuong_hieu}', [LichLamViecController
 
 //admin thống kê doanh thu
 Route::get('/admin/thong-ke-doanh-thu', [AdminController::class, 'thongKeDoanhThu']);
+
+Route::get('/chi-tiet-lich-hen/{id_chi_tiet_dat_lich}', [ChiTietDatLichController::class, 'getChiTietLichHen']);

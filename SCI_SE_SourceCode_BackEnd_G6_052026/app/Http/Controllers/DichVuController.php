@@ -352,7 +352,7 @@ class DichVuController extends Controller
     public function chiTietDichVu($id)
     {
         $dichVu = DichVu::where('id', $id)
-            ->select('dich_vus.id', 'dich_vus.ten_dich_vu', 'dich_vus.mo_ta_ngan', 'dich_vus.mo_ta_dai', 'dich_vus.don_gia', 'dich_vus.thoi_gian_du_kien', 'dich_vus.kieu_phuc_vu')
+            ->select('dich_vus.id', 'dich_vus.ten_dich_vu', 'dich_vus.mo_ta_ngan', 'dich_vus.mo_ta_dai', 'dich_vus.don_gia', 'dich_vus.thoi_gian_du_kien', 'dich_vus.kieu_phuc_vu','dich_vus.diem_hai_long')
             ->first();
         $hinhAnhDichVu = HinhAnhDichVu::where('id_dich_vu', $id)
             ->select('hinh_anh_dich_vus.id', 'hinh_anh_dich_vus.id_dich_vu', 'hinh_anh_dich_vus.hinh_anh')

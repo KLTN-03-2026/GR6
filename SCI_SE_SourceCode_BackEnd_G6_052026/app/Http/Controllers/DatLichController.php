@@ -46,8 +46,16 @@ class DatLichController extends Controller
                 'hinh_anh_dich_vus.hinh_anh',
                 'dich_vus.thoi_gian_du_kien',
                 'dich_vus.id as id_dich_vu',
+                'dat_lichs.created_at',
             )
             ->first();
+             if ($data) {
+            if (filter_var($data->hinh_anh, FILTER_VALIDATE_URL)) {
+                $data->hinh_anh = $data->hinh_anh;
+            } else {
+                $data->hinh_anh = asset('storage/' . $data->hinh_anh);
+            }
+        }
         if ($data) {
             return response()->json([
                 'status' => true,
@@ -56,7 +64,8 @@ class DatLichController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'message' => 'Không tìm thấy chi tiết đặt lịch!'
+                'message' => 'Không tìm thấy chi tiết đặt lịch!',
+                'data' => $data
             ], 404);
         }
     }
@@ -278,6 +287,9 @@ class DatLichController extends Controller
                 'hinh_anh_dich_vus.hinh_anh', // Lấy cột hinh_anh từ bảng riêng
                'thanh_toans.tong_tien_thanh_toan',
                'thanh_toans.tong_tien_da_nhan',
+               'dich_vus.id as id_dich_vu',
+                'chi_tiet_dat_lichs.id as id_chi_tiet_dat_lich',
+
                 
             )
             ->get();

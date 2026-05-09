@@ -12,11 +12,24 @@ const Chi_tiet_lich_hen = () => {
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // --- HÀM ĐỊNH DẠNG THỜI GIAN THEO image_85590a.png ---
+  const formatCreatedAt = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${hours}:${minutes}, ${day}/${month}/${year}`;
+  };
+
   // 1. Lấy chi tiết lịch hẹn
   const fetchDetail = async () => {
     try {
       setLoading(true);
       const response = await api.get(`/khach-hang/chi-tiet-dat-lich/${id}`);
+      console.log("Chi tiết lịch hẹn:", response.data);
       if (response.data && response.data.status) {
         setAppointment(response.data.data);
       }
@@ -72,7 +85,7 @@ const Chi_tiet_lich_hen = () => {
             onClick={() => navigate(-1)}
             className="text-sm text-[#3182ce] font-bold mb-4 flex items-center gap-1 hover:underline"
           >
-            ← Quay lại
+            &larr; Quay lại
           </button>
           <h1 className="text-3xl font-extrabold mb-3">Chi tiết lịch hẹn </h1>
           <div className="flex items-center gap-4">
@@ -80,7 +93,10 @@ const Chi_tiet_lich_hen = () => {
               <span className={`w-2 h-2 ${statusStyle.dot} rounded-full animate-pulse`}></span>
               {statusStyle.label}
             </span>
-            <span className="text-[#718096] text-sm">Mã đơn: {appointment.ma_hoa_don || 'N/A'}</span>
+            {/* CẬP NHẬT HIỂN THỊ THEO image_85590a.png */}
+            <span className="text-[#718096] text-sm">
+                Đặt lúc: {formatCreatedAt(appointment.created_at)}
+            </span>
           </div>
         </header>
 

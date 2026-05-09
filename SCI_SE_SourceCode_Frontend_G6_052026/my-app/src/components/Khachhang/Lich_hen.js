@@ -75,19 +75,17 @@ const Lich_hen = () => {
         <div className="flex flex-col gap-5">
           {filteredAppointments.length > 0 ? filteredAppointments.map((item) => {
             const status = getStatusDetail(item.trang_thai_dat_lich);
-            
-            // LOGIC CẬP NHẬT: Nếu trạng thái là 2 (Đã xong) thì reset về 0
             const tien_con_lai = Number(item.trang_thai_dat_lich) === 2 
               ? 0 
               : (item.tong_tien_thanh_toan || 0) - (item.tong_tien_da_nhan || 0);
-              
             const isCancelled = item.trang_thai_dat_lich === 3;
 
             return (
               <div 
                 key={item.id} 
-                className={`bg-white rounded-[24px] p-5 flex gap-7 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-white hover:border-[#e2e8f0] transition-all group ${isCancelled ? 'opacity-80' : ''}`}
+                className={`bg-white rounded-[24px] p-5 flex gap-7 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-white hover:border-[#e2e8f0] transition-all group relative ${isCancelled ? 'opacity-80' : ''}`}
               >
+                {/* ẢNH */}
                 <div className="w-[200px] h-[135px] flex-shrink-0 rounded-[20px] overflow-hidden border border-[#edf2f7]">
                   <img 
                     src={item.hinh_anh || "https://via.placeholder.com/200x135"} 
@@ -96,70 +94,65 @@ const Lich_hen = () => {
                   />
                 </div>
 
+                {/* NỘI DUNG CHÍNH (CĂN GIỮA THEO CHIỀU DỌC ẢNH) */}
                 <div className="flex-1 flex flex-col justify-between py-1">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className={`text-xl font-bold mb-1 ${isCancelled ? 'text-[#a0aec0]' : 'text-[#2d3748]'}`}>
-                        {item.ten_dich_vu}
-                      </h3>
-                      <p className="text-[#4299e1] font-semibold text-sm mb-3">{item.ten_thuong_hieu}</p>
-                    </div>
-                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${status.class}`}>
-                      {status.label}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-8 text-[#718096]">
-                    <div className="flex items-center gap-2">
-                      <Calendar size={18} className="text-[#a0aec0]" />
-                      <span className="text-[15px]">{item.ngay_dat_lich}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock size={18} className="text-[#a0aec0]" />
-                      <span className="text-[15px]">{item.gio_bat_dau}</span>
-                    </div>
-                    
-                    {!isCancelled && (
-                      <div className="flex flex-col items-end ml-auto group/money">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#a0aec0] mb-1">
-                          Số tiền còn lại
-                        </span>
-
-                        <div className={`
-                          flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-300
-                          ${tien_con_lai > 0 
-                            ? "bg-orange-50 text-orange-600 ring-1 ring-orange-200" 
-                            : "bg-green-50 text-green-600 ring-1 ring-green-200"}
-                        `}>
-                          <Wallet size={16} className={tien_con_lai > 0 ? "text-orange-400" : "text-green-400"} />
-                          <span className="text-[18px] font-black tracking-tight">
-                            {new Intl.NumberFormat('vi-VN').format(tien_con_lai)}
-                            <span className="text-[14px] ml-0.5">đ</span>
-                          </span>
-                          {tien_con_lai > 0 && (
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                            </span>
-                          )}
-                        </div>
-                        
-                        {tien_con_lai <= 0 && (
-                          <span className="text-[10px] text-green-500 font-medium mt-1">Đã hoàn tất thanh toán</span>
-                        )}
+                  <div>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className={`text-xl font-bold mb-1 ${isCancelled ? 'text-[#a0aec0]' : 'text-[#2d3748]'}`}>
+                          {item.ten_dich_vu}
+                        </h3>
+                        <p className="text-[#4299e1] font-semibold text-sm mb-3">{item.ten_thuong_hieu}</p>
                       </div>
-                    )}
+                      <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${status.class}`}>
+                        {status.label}
+                      </span>
+                    </div>
+
+                    {/* DÒNG NGÀY GIỜ: Luôn nằm cố định ở đây */}
+                    <div className="flex items-center gap-8 text-[#718096]">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={18} className="text-[#a0aec0]" />
+                        <span className="text-[15px]">{item.ngay_dat_lich}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock size={18} className="text-[#a0aec0]" />
+                        <span className="text-[15px]">{item.gio_bat_dau}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-4 border-t border-[#f7fafc] pt-4">
+                  {/* CHI TIẾT: Luôn nằm ở đáy cột bên cạnh ảnh */}
+                  <div className="mt-auto">
                     <button 
-                      onClick={() => navigate(`/chi-tiet-lich-hen/${item.id}`)}
+                      onClick={() => navigate(`/chi-tiet-lich-hen/${item.id_chi_tiet_dat_lich}`)}
                       className="flex items-center text-[#4299e1] text-[14px] font-bold hover:translate-x-1 transition-transform"
                     >
                       Chi tiết lịch hẹn <ChevronRight size={16} className="ml-1" />
                     </button>
                   </div>
                 </div>
+
+                {/* PHẦN TIỀN: Đưa ra ngoài luồng nội dung chính bằng absolute để không làm lệch dòng ngày giờ */}
+                {!isCancelled && (
+                  <div className="absolute right-6 bottom-5 flex flex-col items-end group/money">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#a0aec0] mb-1">
+                      Số tiền còn lại
+                    </span>
+                    <div className={`
+                      flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-300
+                      ${tien_con_lai > 0 
+                        ? "bg-orange-50 text-orange-600 ring-1 ring-orange-200" 
+                        : "bg-green-50 text-green-600 ring-1 ring-green-200"}
+                    `}>
+                      <Wallet size={14} className={tien_con_lai > 0 ? "text-orange-400" : "text-green-400"} />
+                      <span className="text-[16px] font-black tracking-tight">
+                        {new Intl.NumberFormat('vi-VN').format(tien_con_lai)}
+                        <span className="text-[12px] ml-0.5">đ</span>
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           }) : (
@@ -168,14 +161,6 @@ const Lich_hen = () => {
             </div>
           )}
         </div>
-
-        {filteredAppointments.length > 0 && (
-          <div className="flex justify-center mt-12 pb-10">
-            <button className="flex items-center gap-2 px-8 py-3 bg-[#f1f5f9] text-[#4a5568] font-bold text-sm rounded-full hover:bg-[#e2e8f0] transition-colors">
-              Tải thêm lịch hẹn <ChevronDown size={18} />
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
