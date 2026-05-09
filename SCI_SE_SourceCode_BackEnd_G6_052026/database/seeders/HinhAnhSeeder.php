@@ -92,10 +92,26 @@ class HinhAnhSeeder extends Seeder
                 'id_dich_vu' => 19,
                 'hinh_anh' => 'https://vethospital.vnua.edu.vn/wp-content/uploads/2019/11/zUZ7fot.jpg',
             ],
-
-
-
-
+            [
+                'id_dich_vu' => 20,
+                'hinh_anh' => 'https://vitaclinic.vn/storage/app/media/lieu-trinh-nang-co-mat-13.jpg',
+            ],
+            [
+                'id_dich_vu' => 21,
+                'hinh_anh' => 'https://kbeauty.fpt.edu.vn/wp-content/uploads/2025/04/FPT-Polytechnic-HCM.jpg',
+            ],
+            [
+                'id_dich_vu' => 22,
+                'hinh_anh' => 'https://dienlanhthaigia.com/wp-content/uploads/ve-sinh-may-giat-5.jpg',
+            ],
+            [
+                'id_dich_vu' => 23,
+                'hinh_anh' => 'https://shop.nagakawa.com.vn/media/news/1504_cach-nap-ga-dieu-hoa-1.png',
+            ],
+            [
+                'id_dich_vu' => 24,
+                'hinh_anh' => 'https://thepet.vn/wp-content/uploads/2025/05/khach-san-cho-meo-gia-re-3.jpg',
+            ],
 
         ]);
     }
