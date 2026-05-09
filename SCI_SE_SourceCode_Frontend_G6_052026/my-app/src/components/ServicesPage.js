@@ -23,6 +23,21 @@ const ServicesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [serviceImages, setServiceImages] = useState([]);
 
+  // --- LOGIC PHÂN TRANG ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = displayServices.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(displayServices.length / itemsPerPage);
+
+  // Reset về trang 1 khi thay đổi danh mục hoặc kết quả tìm kiếm
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [displayServices]);
+  // ------------------------
+
   // AI Assistant States
   const [assistantQuery, setAssistantQuery] = useState('');
   const [assistantSuggestions, setAssistantSuggestions] = useState([]);
@@ -59,10 +74,11 @@ const ServicesPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [resCate, resServ, resImg] = await Promise.all([
+        const [resCate, resServ, resImg, resRating] = await Promise.all([
           api.get('/danh-muc/get-data'),
           api.get('/dich-vu/get-data'),
-          api.get('/hinh-anh-dich-vu/get-data-hinh-anh')
+          api.get('/hinh-anh-dich-vu/get-data-hinh-anh'),
+          api.get('/danh-gia/tinh-diem-danh-gia')
         ]);
 
         if (resCate.data.status) {
@@ -76,9 +92,15 @@ const ServicesPage = () => {
           setAllServices(servData);
           setDisplayServices(servData);
         }
+        
         if (resImg.data.status) {
           setServiceImages(resImg.data.data);
         }
+
+        if (resRating.data.status) {
+          console.log("Hệ thống:", resRating.data.message);
+        }
+
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -203,7 +225,6 @@ const ServicesPage = () => {
 
   return (
     <main className="services-main">
-      {/* GLOBAL TOAST XÁC NHẬN PHỦ PHÍA TRÊN */}
       {showDeleteConfirm && (
         <div className="global-toast-overlay">
           <div className="global-toast">
@@ -305,7 +326,7 @@ const ServicesPage = () => {
         )}
       </section>
 
-      {/* CATEGORY & SERVICES GRID */}
+      {/* CATEGORY CONTAINER */}
       <section className="category-container">
         <div className="category-row">
           <span className={`category-pill ${selectedCategoryId === null ? 'active' : ''}`} onClick={() => handleCategoryClick(null)}>Tất cả</span>
@@ -327,23 +348,86 @@ const ServicesPage = () => {
         </div>
       </section>
 
+      {/* SERVICES GRID (Đã giới hạn currentItems) */}
       <section className="services-grid">
-        {isLoading ? <div>Đang tải...</div> : displayServices.map(service => (
-          <article key={service.id} className="service-card" onClick={() => navigate(`/chi-tiet/${service.id}`)}>
-            <div className="service-thumb">
-              <img src={getImageByServiceId(service.id)} alt="" />
-              <div className="service-rating">
-                <span>{service.diem_hai_long}</span>
-                <Star size={12} fill="#ffc107" color="#ffc107" strokeWidth={1.5} />
+        {isLoading ? (
+          <div>Đang tải...</div>
+        ) : currentItems.length > 0 ? (
+          currentItems.map(service => (
+            <article key={service.id} className="service-card" onClick={() => navigate(`/chi-tiet/${service.id}`)}>
+              <div className="service-thumb">
+                <img src={getImageByServiceId(service.id)} alt="" />
+                <div className="service-rating">
+                  <span>{service.diem_hai_long}</span>
+                  <Star size={12} fill="#ffc107" color="#ffc107" strokeWidth={1.5} />
+                </div>
               </div>
-            </div>
-            <div className="service-info">
-              <h3>{service.ten_dich_vu}</h3>
-              <div className="service-bottom"><span className="service-price">{formatPrice(service.don_gia)}</span></div>
-            </div>
-          </article>
-        ))}
+              <div className="service-info">
+                <h3>{service.ten_dich_vu}</h3>
+                <div className="service-bottom">
+                  <span className="service-price">{formatPrice(service.don_gia)}</span>
+                </div>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="no-services-msg">Không có dịch vụ nào trong danh mục này.</div>
+        )}
       </section>
+
+      {/* PHÂN TRANG (PAGINATION) UI */}
+      {totalPages > 1 && (
+        <div className="pagination-wrapper" style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px', paddingBottom: '40px' }}>
+          <button 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '12px', 
+              border: '1px solid #e2e8f0',
+              background: '#fff',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              opacity: currentPage === 1 ? 0.5 : 1
+            }}
+          >
+            Trang trước
+          </button>
+          
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                background: currentPage === i + 1 ? '#3182ce' : '#fff',
+                color: currentPage === i + 1 ? '#fff' : '#4a5568',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button 
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            style={{ 
+              padding: '8px 16px', 
+              borderRadius: '12px', 
+              border: '1px solid #e2e8f0',
+              background: '#fff',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              opacity: currentPage === totalPages ? 0.5 : 1
+            }}
+          >
+            Trang sau
+          </button>
+        </div>
+      )}
 
       {/* CHATBOT HELI */}
       <button className="chat-bubble" onClick={() => setIsChatOpen(!isChatOpen)}>

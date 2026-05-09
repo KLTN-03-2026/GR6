@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { User, Clock, Calendar as CalendarIcon, ChevronLeft } from 'lucide-react';
+import { User, Clock, Calendar as CalendarIcon, ChevronLeft, AlertCircle } from 'lucide-react';
 import api from '../../api';
 import { toast } from 'react-toastify';
 
@@ -17,6 +17,9 @@ const Dat_lich = () => {
     
     const [bookedRanges, setBookedRanges] = useState([]);
     const [currentTime, setCurrentTime] = useState(new Date());
+    
+    // State cho Dialog xác nhận đặt trùng
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
     const days = Array.from({ length: 14 }, (_, i) => {
         const d = new Date();
@@ -49,15 +52,12 @@ const Dat_lich = () => {
     const fetchBookedTimes = async (date, staff) => {
         setIsFetchingTimes(true);
         setBookedRanges([]);
-        
         try {
             const res = await api.get(`/nhan-vien/thoi-gian-lam-viec/${staff || 0}?date=${date}`);
             if (res.data.status) {
-                // LOGIC CẬP NHẬT: Cộng thêm 30 phút giờ đệm vào thời gian kết thúc
                 const bufferTime = 30; 
                 const ranges = res.data.data.map(item => ({
                     start: timeToMinutes(item.gio_bat_dau.substring(0, 5)),
-                    // Cộng thêm bufferTime vào end
                     end: timeToMinutes(item.gio_ket_thuc.substring(0, 5)) + bufferTime 
                 }));
                 setBookedRanges(ranges);
@@ -105,11 +105,33 @@ const Dat_lich = () => {
         }
     }, [selectedDate, selectedStaff]);
 
-    const handleBooking = async () => {
+    // Hàm xử lý kiểm tra trước khi đặt
+    const handleBookingClick = async () => {
         if (!selectedTime) { 
             toast.warning("Vui lòng chọn khung giờ!"); 
             return; 
         }
+
+        try {
+            // Lấy danh sách lịch hẹn để kiểm tra xem đã đặt dịch vụ này chưa
+            const res = await api.get('/khach-hang/dat-lich/get-data'); 
+            const existingBooking = res.data.data?.find(item => 
+                item.id_dich_vu === parseInt(id_dich_vu) && 
+                (item.trang_thai_dat_lich === 1 || item.trang_thai_dat_lich === 2) 
+            );
+
+            if (existingBooking) {
+                setShowConfirmDialog(true);
+            } else {
+                executeBooking();
+            }
+        } catch (error) {
+            // Nếu lỗi check thì cho đặt bình thường
+            executeBooking();
+        }
+    };
+
+    const executeBooking = async () => {
         setIsSubmitting(true);
         const payload = {
             id_thuong_hieu, 
@@ -128,26 +150,33 @@ const Dat_lich = () => {
             const res = await api.post('/khach-hang/dat-lich/create', payload);
             if (res.data.status) { 
                 toast.success("Đặt lịch thành công!");
-                const bookingId = res.data.id_chi_tiet_dat_lich ;
-                if (bookingId) {
-                    navigate(`/thanh-toan/${bookingId}`);
-                } else {
-                    navigate('/thanh-toan');
-                }
+                const bookingId = res.data.id_chi_tiet_dat_lich;
+                navigate(bookingId ? `/thanh-toan/${bookingId}` : '/thanh-toan');
             } else { 
                 toast.error(res.data.message); 
             }
         } catch (error) { 
             toast.error("Lỗi kết nối!"); 
         } finally { 
-            setIsSubmitting(false); 
+            setIsSubmitting(false);
+            setShowConfirmDialog(false);
         }
     };
+     const handleReset = () => {
+            // Reset các state về giá trị mặc định
+            setSelectedDate(days[0].fullDate);
+            setSelectedStaff(null);
+            setSelectedTime(null);
+            setGhiChu('');
+            
+            // Thông báo cho người dùng
+            toast.info("Đã xóa các thông tin đã chọn");
+        };
 
     if (isLoading) return <div className="p-20 text-center font-bold text-blue-600 animate-pulse">Đang tải...</div>;
 
     return (
-        <div className="bg-[#F3F4F6] min-h-screen pb-20 font-sans text-gray-800">
+        <div className="bg-[#F3F4F6] min-h-screen pb-20 font-sans text-gray-800 relative">
             <div className="max-w-6xl mx-auto px-4 pt-6">
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 hover:text-blue-600 mb-6 font-bold transition-all">
                     <ChevronLeft size={20}/> Quay lại
@@ -273,17 +302,64 @@ const Dat_lich = () => {
                                 <p className="text-sm text-gray-400 font-bold">Tổng cộng</p>
                                 <p className="text-2xl font-black text-blue-600">{new Intl.NumberFormat('vi-VN').format(serviceInfo?.don_gia || 0)} đ</p>
                             </div>
-                            <button 
-                                onClick={handleBooking}
-                                disabled={isSubmitting || !selectedTime}
-                                className={`w-full py-5 rounded-2xl font-black text-lg transition-all ${isSubmitting || !selectedTime ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-                            >
-                                {isSubmitting ? "ĐANG XỬ LÝ..." : "XÁC NHẬN ĐẶT LỊCH"}
-                            </button>
+                            <div className="flex flex-col gap-4 mt-6"> {/* Bọc 2 button và tạo khoảng cách gap-4 */}
+                                <button 
+                                    onClick={handleBookingClick}
+                                    disabled={isSubmitting || !selectedTime}
+                                    className={`w-full py-5 rounded-2xl font-black text-lg transition-all shadow-md ${
+                                        isSubmitting || !selectedTime 
+                                        ? 'bg-gray-300 cursor-not-allowed' 
+                                        : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]'
+                                    }`}
+                                >
+                                    {isSubmitting ? "ĐANG XỬ LÝ..." : "XÁC NHẬN ĐẶT LỊCH"}
+                                </button>
+
+                                <button 
+                                    type="button"
+                                    onClick={handleReset}
+                                    disabled={isSubmitting}
+                                    className="w-full py-4 rounded-2xl font-black text-sm transition-all
+                                        bg-white border-2 border-red-500 text-red-500
+                                        hover:bg-red-500 hover:text-white shadow-sm hover:shadow-red-200
+                                        active:scale-[0.97] disabled:opacity-50"
+                                >
+                                    HỦY BỎ
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Dialog xác nhận đặt thêm dịch vụ trùng */}
+            {showConfirmDialog && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-[40px] p-8 max-w-sm w-full shadow-2xl scale-in-center overflow-hidden border border-white">
+                        <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <AlertCircle size={40} strokeWidth={2.5}/>
+                        </div>
+                        <h3 className="text-2xl font-black text-center text-gray-900 mb-3">Xác nhận đặt thêm?</h3>
+                        <p className="text-gray-500 text-center font-bold text-sm leading-relaxed mb-8">
+                            Bạn đã đặt dịch vụ này rồi. Bạn chắc chắn muốn đặt thêm một lịch mới nữa không?
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <button 
+                                onClick={executeBooking}
+                                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                            >
+                                CHẮC CHẮN ĐẶT
+                            </button>
+                            <button 
+                                onClick={() => setShowConfirmDialog(false)}
+                                className="w-full py-4 bg-gray-100 text-gray-500 rounded-2xl font-black text-lg hover:bg-gray-200 transition-all"
+                            >
+                                ĐỂ SAU
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
