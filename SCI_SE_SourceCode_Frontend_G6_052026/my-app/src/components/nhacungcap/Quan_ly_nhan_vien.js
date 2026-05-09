@@ -114,9 +114,21 @@ const Quan_ly_nhan_vien = () => {
         toast.success(isEditMode ? "Cập nhật nhân viên thành công!" : "Thêm nhân viên thành công!");
       }
     } catch (err) {
-      console.error("Lỗi lưu nhân viên:", err);
-      toast.error("Lỗi khi lưu nhân viên. Vui lòng thử lại.");
-    }
+  const errorData = err.response?.data?.message;
+
+  if (Array.isArray(errorData)) {
+    // Nếu server trả về mảng: ["Email đã tồn tại", "Mật khẩu quá ngắn"]
+    const combinedMessage = errorData.join(" / "); 
+    toast.error(combinedMessage);
+  } else if (typeof errorData === 'object') {
+    // Nếu server trả về object: {email: "Sai định dạng", phone: "Phải là số"}
+    const messages = Object.values(errorData).join(" / ");
+    toast.error(messages);
+  } else {
+    // Trường hợp còn lại (string hoặc lỗi lạ)
+    toast.error(errorData || "Đã có lỗi xảy ra!");
+  }
+}
   };
 
   // Cập nhật hàm handleDelete để mở Modal
