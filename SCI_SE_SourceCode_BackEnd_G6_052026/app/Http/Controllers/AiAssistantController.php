@@ -27,6 +27,21 @@ class AiAssistantController extends Controller
                 'message' => 'Từ khóa không hợp lệ'
             ]);
         }
+
+        $keywordLower = mb_strtolower($keyword, 'UTF-8');
+        $locationKeywords = ['gần tôi', 'gần đây', 'xung quanh đây', 'gần nhất', 'vị trí của tôi', 'địa chỉ của tôi'];
+        
+        foreach ($locationKeywords as $loc) {
+            if (str_contains($keywordLower, $loc)) {
+                return response()->json([
+                    'ok' => true,
+                    'data' => [],
+                    'message' => 'location_not_supported',
+                    'detected_keyword' => $keyword
+                ]);
+            }
+        }
+        
         if (mb_strlen($keyword) > 10) {
             $prompt = "Bạn là máy lọc từ khóa dịch vụ. Từ câu: '$input', hãy chỉ trả về duy nhất tên dịch vụ cốt lõi nhất bằng tiếng Việt. "
                 . "Ví dụ: 'gợi ý cho mình cắt tóc nam' -> 'cắt tóc nam'. "

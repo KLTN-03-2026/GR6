@@ -322,272 +322,34 @@
   font-size: 1.1rem;
 }
 
-/* --- CHATBOT --- */
-.chat-bubble {
-  position: fixed;
-  bottom: 25px;
-  right: 25px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #2272f7;
-  color: white;
-  border: none;
-  cursor: pointer;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 20px rgba(34, 114, 247, 0.4);
-}
 
-.heli-chat-window {
-  position: fixed;
-  bottom: 95px;
-  right: 25px;
-  width: 360px;
-  height: 500px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
 
-.heli-header {
-  background: #2272f7;
-  color: white;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.heli-info { display: flex; align-items: center; gap: 12px; }
-
-.heli-body {
-  flex: 1;
-  background: #f8faff;
-  padding: 15px;
-  overflow-y: auto;
-}
-
-.msg-bubble {
-  background: white;
-  padding: 10px 15px;
-  border-radius: 15px;
-  border-bottom-left-radius: 2px;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-  max-width: 85%;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.msg-row.user {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-  width: 100%;
-}
-
-.msg-row.user .msg-bubble {
- background: #2272f7;
-  color: white;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 2px;
-}
-
-.msg-row.bot {
-  margin-bottom: 12px;
-}
-
-.heli-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid #e5e7eb;
-  background: white;
-}
-
-.heli-input input {
-  flex: 1;
-  border: 1px solid #d1d5db;
+.assistant-error-container {
+  background: #fff5f5;
+  padding: 12px 16px;
   border-radius: 12px;
-  padding: 10px 14px;
-  font-size: 0.9rem;
-  outline: none;
-  height: 40px;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
+  margin-top: 15px;
+  border: 1px solid #feb2b2;
+  animation: fadeIn 0.3s ease-in-out;
+  text-align: left;
 }
 
-.heli-input input:focus {
-  border-color: #2272f7;
-}
-
-.heli-input button {
-  background: #2272f7;
-  border: none;
-  color: white;
-  width: 40px; 
-  height: 40px;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;    
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;    
-  transition: all 0.2s;
-}
-
-.heli-input button:hover {
-  background: #1a56c5;
-  transform: scale(1.05); 
-}
-
-.heli-input button:disabled {
-  background: #cbd5e1;
-  cursor: not-allowed;
-}
-
-/* MINI CARDS TRONG CHAT */
-.chat-services-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-}
-
-.chat-service-mini-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fdfdfd;
-  border: 1px solid #edf2f7;
-  border-radius: 10px;
-  padding: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.chat-service-mini-card:hover {
-  background: #fff;
-  border-color: #2272f7;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.chat-service-mini-card img {
-  width: 54px;
-  height: 54px;
-  border-radius: 6px;
-  object-fit: cover;
-}
-
-.mini-card-info .mini-title {
-  margin: 0;
-  font-size: 0.85rem;
+.assistant-error-container strong {
+  display: block;
   font-weight: 700;
-  color: #2d3748;
+  color: #c53030;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
 }
 
-.mini-card-info .mini-price {
-  margin: 2px 0 0;
-  font-size: 0.78rem;
-  color: #2272f7;
-  font-weight: 600;
+.assistant-error-container p {
+  margin: 0 !important; 
+  font-size: 0.85rem;
+  color: #744242;
+  line-height: 1.4;
 }
 
-/* --- TOAST XÁC NHẬN PHỦ PHÍA TRÊN --- */
-.global-toast-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 50px;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.global-toast {
-  background: white;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  animation: slideDown 0.3s ease-out;
-}
-
-.toast-content {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.toast-icon {
-  font-size: 24px;
-}
-
-.toast-text p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #1e293b;
-}
-
-.toast-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.toast-actions button {
-  padding: 8px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-no {
-  background: #f1f5f9;
-  color: #475569;
-}
-
-.btn-no:hover {
-  background: #e2e8f0;
-}
-
-.btn-yes {
-  background: #ef4444;
-  color: white;
-}
-
-.btn-yes:hover {
-  background: #dc2626;
-}
-
-/* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
