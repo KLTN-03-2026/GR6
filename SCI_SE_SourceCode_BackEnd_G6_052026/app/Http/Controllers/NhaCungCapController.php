@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LichLamViecRequest;
 use App\Http\Requests\ThemMoiNCCRequest;
+use App\Http\Requests\ThuongHieuRequest;
 use App\Mail\KichHoatTaiKhoan;
 use App\Mail\KichHoatTaiKhoanNCC;
 use App\Mail\QuenMatKhau;
@@ -164,7 +165,7 @@ class NhaCungCapController extends Controller
             'lich_da_huy' => $lich_da_huy,
         ]);
     }
-    public function updateThuongHieu(Request $request)
+    public function updateThuongHieu(ThuongHieuRequest $request)
     {
         $nhaCungCap = $this->isUserNhaCungCap();
         $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhaCungCap->id)->first();

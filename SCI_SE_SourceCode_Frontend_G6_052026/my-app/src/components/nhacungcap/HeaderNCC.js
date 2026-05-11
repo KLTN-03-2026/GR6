@@ -101,53 +101,11 @@ const HeaderNCC = () => {
       <div className="h-full w-px bg-slate-100 mx-2"></div>
 
       <div className="flex-1 flex justify-center px-8 relative">
-        <div className="relative w-full max-w-2xl">
-          {isSearching ? (
-            <Loader2 className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 animate-spin" size={18} />
-          ) : (
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          )}
-          <input 
-            type="text" 
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Tìm kiếm dịch vụ, liệu trình..." 
-            className="w-full pl-12 pr-4 py-2.5 bg-[#f1f5f9] border-none rounded-full text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 outline-none"
-          />
-
-          {keyword && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-[60]">
-              {isSearching ? (
-                <div className="px-4 py-3 text-sm text-slate-500">Đang tìm...</div>
-              ) : searchResults.length > 0 ? (
-                searchResults.map((item) => (
-                  <div 
-                    key={item.id} 
-                    className="px-4 py-3 hover:bg-slate-50 cursor-pointer flex justify-between items-center border-b border-slate-50 last:border-none"
-                    onClick={() => {
-                      navigate(`/chi-tiet/${item.id}`);
-                      setKeyword('');
-                    }}
-                  >
-                    <span className="text-sm text-slate-700">{item.ten_dich_vu}</span>
-                    <span className="text-xs font-semibold text-blue-600">
-                      {new Intl.NumberFormat('vi-VN').format(item.don_gia)}đ
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className="px-4 py-3 text-sm text-slate-500">Không tìm thấy kết quả</div>
-              )}
-            </div>
-          )}
-        </div>
+        
       </div>
 
       <div className="flex items-center gap-4 shrink-0">
-        <button className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
-          <Bell size={20} strokeWidth={1.5} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
+        
 
         <div className="h-8 w-px bg-slate-200 mx-1"></div>
 

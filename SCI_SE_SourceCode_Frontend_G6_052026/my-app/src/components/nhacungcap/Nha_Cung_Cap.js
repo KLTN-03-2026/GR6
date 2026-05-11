@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { MoreVertical, Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx"; // 1. Import thư viện Excel
 import Menu from "./Menu";
 import api from "../../api";
 
-// Giữ nguyên chartData fake vì API hiện tại chưa trả về dữ liệu biểu đồ theo tháng
 const chartData = [
   { month: "T1", doanh_thu: 15, nguoi_dung: 10 },
   { month: "T2", doanh_thu: 25, nguoi_dung: 18 },
@@ -41,12 +41,10 @@ export default function Nha_Cung_Cap() {
 
       if (res.data.status) {
         setDataList(res.data.data);
-        // Tính tổng doanh thu từ dữ liệu thực tế
         const total = res.data.data
-        .filter(item => Number(item.trang_thai_dat_lich) !== 3) // Loại bỏ các đơn có trạng thái là 3
-        .reduce((sum, item) => sum + Number(item.tong_tien_thanh_toan), 0);
-
-setTotalRevenue(total);
+          .filter(item => Number(item.trang_thai_dat_lich) !== 3)
+          .reduce((sum, item) => sum + Number(item.tong_tien_thanh_toan), 0);
+        setTotalRevenue(total);
       }
     } catch (error) {
       toast.error("Không thể tải dữ liệu bảng điều khiển");
@@ -56,17 +54,41 @@ setTotalRevenue(total);
     }
   };
 
-  // Hàm helper format tiền tệ
+  // 2. Hàm xử lý xuất Excel
+  const handleExportExcel = () => {
+    if (dataList.length === 0) {
+      toast.warning("Không có dữ liệu để xuất!");
+      return;
+    }
+
+    // Định dạng lại dữ liệu trước khi xuất (đổi key Tiếng Anh sang Tiếng Việt cho đẹp)
+    const excelData = dataList.map((item) => ({
+      "Mã Hóa Đơn": item.ma_hoa_don,
+      "Khách Hàng": item.ten_khach_hang,
+      "Dịch Vụ": item.ten_dich_vu,
+      "Trạng Thái": getStatusInfo(item.trang_thai_dat_lich).text,
+      "Tổng Tiền (VNĐ)": Number(item.tong_tien_thanh_toan),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "BaoCaoDoanhThu");
+
+    // Xuất file
+    XLSX.writeFile(workbook, `Bao_Cao_Nha_Cung_Cap_${new Date().getTime()}.xlsx`);
+    toast.success("Xuất file Excel thành công!");
+  };
+
   const formatVND = (amount) => {
     return new Intl.NumberFormat("vi-VN").format(amount);
   };
 
-  // Hàm xử lý hiển thị trạng thái
   const getStatusInfo = (status) => {
     switch (status) {
       case 1: return { text: "ĐÃ XÁC NHẬN", color: "bg-blue-100 text-blue-700" };
       case 2: return { text: "HOÀN THÀNH", color: "bg-green-100 text-green-700" };
       case 3: return { text: "ĐÃ HỦY", color: "bg-red-100 text-red-700" };
+      default: return { text: "KHÔNG XÁC ĐỊNH", color: "bg-gray-100 text-gray-700" };
     }
   };
 
@@ -90,7 +112,11 @@ setTotalRevenue(total);
               Chào mừng trở lại, đây là tóm tắt hệ thống của bạn hôm nay.
             </p>
           </div>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+          {/* 3. Gắn sự kiện vào nút Xuất báo cáo */}
+          <button 
+            onClick={handleExportExcel}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+          >
             Xuất báo cáo
           </button>
         </div>
@@ -106,7 +132,7 @@ setTotalRevenue(total);
           </div>
         </div>
 
-        {/* CHART (Giữ nguyên giao diện của bạn) */}
+        {/* CHART */}
         <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-6">
             <div>
@@ -125,7 +151,6 @@ setTotalRevenue(total);
             </div>
           </div>
           <svg viewBox="0 0 800 250" className="w-full" style={{ height: "200px" }}>
-            {/* ... SVG content giữ nguyên từ code của bạn ... */}
             {chartData.map((d, i) => (
               <text key={`month-${i}`} x={50 + i * 55} y="230" fontSize="10" fill="#999" textAnchor="middle">{d.month}</text>
             ))}
@@ -172,10 +197,9 @@ setTotalRevenue(total);
                         </td>
                         <td className="p-4 text-gray-600">{item.ten_dich_vu}</td>
                         <td className="p-4">
-                         <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider ${getStatusInfo(item.trang_thai_dat_lich).color}`}>
-  {getStatusInfo(item.trang_thai_dat_lich).text}
-</span>
-
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider ${status.color}`}>
+                            {status.text}
+                          </span>
                         </td>
                         <td className="p-4 text-right font-bold text-gray-800">
                           {formatVND(item.tong_tien_thanh_toan)} đ
