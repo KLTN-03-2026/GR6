@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DichVuRequest;
+use App\Models\ChiTietDatLich;
 use App\Models\DichVu;
 use App\Models\HinhAnhDichVu;
 use App\Models\NhaCungCap;
@@ -39,6 +40,25 @@ class DichVuController extends Controller
                 'dich_vus.trang_thai'
             )
             ->get();
+        $HinhAnh = HinhAnhDichVu::whereIn('id_dich_vu', $dichVu->pluck('id'))->get();
+        $HinhAnh->transform(function ($item) {
+            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
+                $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->hinh_anh = asset('storage/' . $item->hinh_anh);
+            }
+            return $item;
+        });
+        $groupHinhAnh = $HinhAnh->groupBy('id_dich_vu');
+
+        $dichVu->transform(function ($item) use ($groupHinhAnh) {
+
+        $item->hinh_anh = $groupHinhAnh[$item->id] ?? [];   
+
+    return $item;
+});
         if (!$dichVu) {
             return response()->json([
                 'status' => false,
@@ -47,7 +67,8 @@ class DichVuController extends Controller
         } else {
             return response()->json([
                 'status' => true,
-                'data' => $dichVu
+                'data' => $dichVu,
+                'data_hinh_anh' => $HinhAnh
             ]);
         }
     }
@@ -158,12 +179,12 @@ class DichVuController extends Controller
         |--------------------------------------------------------------------------
         */
             // Ví dụ:
-            // if (ChiTietDatLich::where('id_dich_vu', $dichVu->id)->exists()) {
-            //     return response()->json([
-            //         'status' => false,
-            //         'message' => 'Dịch vụ đã có lịch đặt, không thể xóa'
-            //     ], 400);
-            // }
+            if (ChiTietDatLich::where('id_dich_vu', $dichVu->id)->exists()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Dịch vụ đã có lịch đặt, không thể xóa'
+                ], 400);
+            }
 
             /*
         |--------------------------------------------------------------------------
@@ -188,7 +209,7 @@ class DichVuController extends Controller
             ], 500);
         }
     }
-    public function updateDichVu(Request $request)
+    public function updateDichVu(DichVuRequest $request)
     {
         DB::beginTransaction();
 

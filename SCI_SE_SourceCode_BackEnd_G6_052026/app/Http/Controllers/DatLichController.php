@@ -23,6 +23,7 @@ class DatLichController extends Controller
             ->join('dich_vus', 'dich_vus.id', 'chi_tiet_dat_lichs.id_dich_vu')
             ->join('nhan_viens', 'nhan_viens.id', 'chi_tiet_dat_lichs.id_nhan_vien')
             ->join('thuong_hieus', 'thuong_hieus.id', 'dat_lichs.id_thuong_hieu')
+            ->join('nha_cung_caps', 'nha_cung_caps.id', 'thuong_hieus.id_nha_cung_cap')
              ->leftJoin('hinh_anh_dich_vus', function($join) {
                 $join->on('hinh_anh_dich_vus.id_dich_vu', '=', 'dich_vus.id')
                      ->whereRaw('hinh_anh_dich_vus.id = (select id from hinh_anh_dich_vus where id_dich_vu = dich_vus.id limit 1)');
@@ -42,11 +43,14 @@ class DatLichController extends Controller
                 'khach_hangs.ten_khach_hang',
                 'khach_hangs.so_dien_thoai',
                 'khach_hangs.email',
+                'dat_lichs.id as id_dat_lich',
                 'dat_lichs.trang_thai_dat_lich',
                 'hinh_anh_dich_vus.hinh_anh',
                 'dich_vus.thoi_gian_du_kien',
                 'dich_vus.id as id_dich_vu',
                 'dat_lichs.created_at',
+                'nha_cung_caps.so_dien_thoai as so_dien_thoai_nha_cung_cap',
+                'nha_cung_caps.email as email_nha_cung_cap',
             )
             ->first();
              if ($data) {

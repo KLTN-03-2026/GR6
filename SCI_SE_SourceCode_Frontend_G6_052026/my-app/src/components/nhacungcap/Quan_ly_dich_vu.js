@@ -14,11 +14,9 @@ const Quan_ly_dich_vu = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentService, setCurrentService] = useState(null);
   
-  // State quản lý xóa
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-  // State quản lý form
   const [formData, setFormData] = useState({
     ten_dich_vu: '',
     id_danh_muc_dich_vu: '',
@@ -47,6 +45,7 @@ const Quan_ly_dich_vu = () => {
   };
 
   useEffect(() => { loadData(); }, []);
+
   const handleOpenDelete = (id) => {
     setDeleteId(id);
     setIsDeleteModalOpen(true);
@@ -66,7 +65,6 @@ const Quan_ly_dich_vu = () => {
     }
   };
 
-  // --- LOGIC THÊM/SỬA ---
   const handleOpenAdd = () => {
     setCurrentService(null);
     setFormData({
@@ -86,26 +84,29 @@ const Quan_ly_dich_vu = () => {
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = async (service) => {
+  // --- TỐI ƯU HÀM SỬA: Lấy ảnh trực tiếp từ dữ liệu list ---
+  const handleOpenEdit = (service) => {
     setCurrentService(service);
+    
+    // Lấy danh sách URL ảnh từ mảng hinh_anh của service (theo ảnh bạn chụp)
+    const urlAnhCu = service.hinh_anh ? service.hinh_anh.map(img => img.hinh_anh) : [];
+
     setFormData({
       id: service.id,
       ten_dich_vu: service.ten_dich_vu,
-      id_danh_muc_dich_vu: service.id_danh_muc_dich_vu ,
+      id_danh_muc_dich_vu: service.id_danh_muc_dich_vu,
       don_gia: service.don_gia,
       thoi_gian_du_kien: service.thoi_gian_du_kien,
       mo_ta_ngan: service.mo_ta_ngan,
       mo_ta_dai: service.mo_ta_dai || '',
       id_thuong_hieu: service.id_thuong_hieu || '1',
       kieu_phuc_vu: service.kieu_phuc_vu || '1',
-      so_luong_lich_toi_da: service.so_luong_lich_toi_da ,
+      so_luong_lich_toi_da: service.so_luong_lich_toi_da,
       trang_thai: service.trang_thai,
-      hinh_anh: [] 
+      hinh_anh: urlAnhCu // Nạp ảnh cũ vào formData
     });
-    try {
-       const res = await serviceApi.chiTietDichVu(service.id);
-       if(res.data.status) setPreviewImages(res.data.data_hinh_anh.map(img => img.hinh_anh));
-    } catch (err) { setPreviewImages([]); }
+
+    setPreviewImages(urlAnhCu); // Hiển thị ảnh cũ lên UI
     setIsModalOpen(true);
   };
 
@@ -129,14 +130,18 @@ const Quan_ly_dich_vu = () => {
       }
     });
     
-    formData.hinh_anh.forEach((file) => {
-      if (file instanceof File) data.append('hinh_anh[]', file);
+    formData.hinh_anh.forEach((item) => {
+      if (item instanceof File) {
+        data.append('hinh_anh[]', item);
+      } else if (typeof item === 'string') {
+        data.append('hinh_anh_cu[]', item); 
+      }
     });
 
     try {
       let res = currentService ? await serviceApi.update(data) : await serviceApi.create(data);
       if (res.data.status) {
-          toast.success(currentService ? "Cập nhật dịch vụ thành công!" : "Thêm dịch vụ thành công!");
+        toast.success(currentService ? "Cập nhật dịch vụ thành công!" : "Thêm dịch vụ thành công!");
         setIsModalOpen(false);
         loadData();
       }
@@ -147,10 +152,8 @@ const Quan_ly_dich_vu = () => {
 
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
-      {/* SIDEBAR */}
       <Menu />
 
-      {/* MAIN CONTENT */}
       <main className="flex-1 p-8">
         <div className="flex justify-between items-end mb-6">
           <div>
@@ -162,7 +165,6 @@ const Quan_ly_dich_vu = () => {
           </button>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-4 gap-6 mb-8">
           <StatCard icon={<div className="w-6 h-6 border-2 border-current rounded-full flex items-center justify-center text-[10px]">✓</div>} label="HOẠT ĐỘNG" value={services.length} color="blue" />
           <StatCard icon={<BarChart3 size={20} />} label="DANH MỤC" value="--" color="orange" />
@@ -170,7 +172,6 @@ const Quan_ly_dich_vu = () => {
           <StatCard icon={<BarChart3 size={20} />} label="ĐANG CHỜ" value="--" color="red" />
         </div>
 
-        {/* Table List */}
         <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center text-blue-600 font-bold">
             <div className="flex items-center gap-2"><ClipboardList size={20} /> Danh sách dịch vụ</div>
@@ -211,7 +212,6 @@ const Quan_ly_dich_vu = () => {
         </div>
       </main>
 
-      {/* MODAL THÊM/SỬA */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
           <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -236,7 +236,6 @@ const Quan_ly_dich_vu = () => {
                   <input type="number" required className="w-full mt-1.5 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none" value={formData.thoi_gian_du_kien} onChange={(e) => setFormData({...formData, thoi_gian_du_kien: e.target.value})} />
                 </div>
 
-                {/* MÔ TẢ NGẮN (Đã phục hồi) */}
                 <div className="col-span-2">
                   <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Mô tả ngắn</label>
                   <textarea rows="2" className="w-full mt-1.5 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none resize-none focus:bg-white transition-all" value={formData.mo_ta_ngan} onChange={(e) => setFormData({...formData, mo_ta_ngan: e.target.value})} />
@@ -292,7 +291,6 @@ const Quan_ly_dich_vu = () => {
         </div>
       )}
 
-      {/* MODAL XÁC NHẬN XÓA */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsDeleteModalOpen(false)}></div>
@@ -302,22 +300,10 @@ const Quan_ly_dich_vu = () => {
                 <AlertTriangle className="text-red-500" size={40} />
               </div>
               <h2 className="text-2xl font-bold mb-3 text-gray-800">Xác nhận xóa</h2>
-              <p className="text-gray-500 mb-8">
-                Bạn có chắc chắn muốn xóa dịch vụ này? <br/> Hành động này không thể hoàn tác.
-              </p>
+              <p className="text-gray-500 mb-8">Bạn có chắc chắn muốn xóa dịch vụ này? <br/> Hành động này không thể hoàn tác.</p>
               <div className="flex gap-3">
-                <button 
-                  onClick={() => setIsDeleteModalOpen(false)} 
-                  className="flex-1 py-4 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 transition-colors"
-                >
-                  Quay lại
-                </button>
-                <button 
-                  onClick={confirmDelete}
-                  className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg hover:bg-red-600 hover:scale-[1.02] transition-all"
-                >
-                  Đồng ý xóa
-                </button>
+                <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-4 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 transition-colors">Quay lại</button>
+                <button onClick={confirmDelete} className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg hover:bg-red-600 hover:scale-[1.02] transition-all">Đồng ý xóa</button>
               </div>
             </div>
           </div>
@@ -326,17 +312,6 @@ const Quan_ly_dich_vu = () => {
     </div>
   );
 };
-
-const SidebarItem = ({ icon, text, active }) => (
-  <div
-    className={`flex items-center gap-2 p-2 rounded-lg text-sm cursor-pointer ${
-      active ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"
-    }`}
-  >
-    {icon}
-    {text}
-  </div>
-);
 
 const StatCard = ({ icon, label, value, color }) => {
   const colors = {

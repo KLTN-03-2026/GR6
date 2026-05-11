@@ -6,13 +6,16 @@ import {
 } from 'lucide-react';
 import api from '../../api'; // Đảm bảo đường dẫn này đúng với project của bạn
 import { toast } from 'react-toastify';
+import { useSearchParams } from 'react-router-dom';
 
 const Thanh_toan = () => {
   const { id } = useParams(); 
   const [paymentMethod, setPaymentMethod] = useState('full');
   const [bookingData, setBookingData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false); // Trạng thái khi đang gọi API thanh toán
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [searchParams] = useSearchParams();
+  const status = searchParams.get('status');
 
   useEffect(() => {
     const fetchBookingDetail = async () => {
@@ -34,6 +37,9 @@ const Thanh_toan = () => {
     };
 
     if (id) fetchBookingDetail();
+    if(status === 'false') {
+    toast.error("Thanh toán thất bại hoặc đã bị hủy!");
+  }
   }, [id]);
 
   // Tính toán số tiền trước để dùng cho cả UI và API
@@ -46,22 +52,19 @@ const Thanh_toan = () => {
   const handlePayment = async () => {
     try {
       setIsProcessing(true);
-      
-      // Xác định số tiền thực tế cần gửi dựa trên phương thức khách chọn
       const amountToPay = paymentMethod === 'full' ? subTotal : depositAmount;
 
       // Gọi đến Route Backend
       const res = await api.post('/vnpay-payment', {
         id_chi_tiet_dat_lich: id,
         payment_type: paymentMethod, 
-        so_tien: amountToPay // POST số tiền thực tế lên đây
+        so_tien: amountToPay 
       });
 
       if (res.data.status && res.data.payment_url) {
-        // Chuyển hướng sang trang thanh toán của VNPay
         window.location.href = res.data.payment_url;
       } else {
-        toast.error(res.data.message || "Không thể tạo liên kết thanh toán");
+        toast.error(res.data.message);
       }
     } catch (error) {
       console.error("Payment error:", error);
@@ -71,6 +74,7 @@ const Thanh_toan = () => {
       setIsProcessing(false);
     }
   };
+  
 
   const formatVND = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);

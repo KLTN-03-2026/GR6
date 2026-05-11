@@ -57,7 +57,8 @@ class ThanhToanController extends Controller
 
             $thanhToan = ChiTietDatLich::where('ma_hoa_don', $txnRef)
                 ->first();
-
+            $Payment = ThanhToan::where('id_chi_tiet_dat_lich', $thanhToan->id)
+                ->first();
             if (!$thanhToan) {
                 return response()->json([
                     'status' => false,
@@ -74,14 +75,20 @@ class ThanhToanController extends Controller
                 ]);
                 
                 // Điều hướng về trang danh sách lịch hẹn trên React
-                return redirect('http://localhost:3000/lich-hen');
-            }
-
+                return redirect('http://localhost:3000/lich-hen?status=true');
+            }else{   
+                $Payment->update([
+                    'tong_tien_da_nhan' => 0,
+                ]); 
+               // Điều hướng về trang danh sách lịch hẹn trên React
+                return redirect('http://localhost:3000/thanh-toan/' . $thanhToan->id. '?status=false');            
             return response()->json([
                 'status' => false,
                 'message' => 'Thanh toán thất bại',
                 'code' => $responseCode
             ]);
+            
+            }
 
         } catch (\Exception $e) {
             return response()->json([
