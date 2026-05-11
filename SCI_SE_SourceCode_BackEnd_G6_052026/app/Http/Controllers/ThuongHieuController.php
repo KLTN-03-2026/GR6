@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\NhanVienRequest;
+use App\Models\ChiTietDatLich;
 use App\Models\DatLich;
 use App\Models\DichVu;
 use App\Models\NhanVien;

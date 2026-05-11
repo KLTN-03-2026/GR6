@@ -171,11 +171,11 @@ const Quan_ly_lich_hen = () => {
                 <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-50">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><Calendar size={16} /></div>
-                    <div><p className="text-[10px] text-gray-400 font-bold uppercase">Ngày đặt</p><p className="text-[13px] font-bold text-gray-700">{app.ngay_thuc_hien}</p></div>
+                    <div><p className="text-[10px] text-gray-400 font-bold uppercase">Ngày đặt</p><p className="text-[13px] font-bold text-gray-700">{app.ngay_dat_lich}</p></div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><Clock size={16} /></div>
-                    <div><p className="text-[10px] text-gray-400 font-bold uppercase">Giờ hẹn</p><p className="text-[13px] font-bold text-gray-700">{app.gio_bat_dau}</p></div>
+                    <div><p className="text-[10px] text-gray-400 font-bold uppercase">Giờ hẹn</p><p className="text-[13px] font-bold text-gray-700">{app.gio_bat_dau?.slice(0, 5)}</p></div>
                   </div>
                 </div>
                 <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-50 gap-4">

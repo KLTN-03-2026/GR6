@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, ChevronRight, ChevronDown, Wallet } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Lich_hen = () => {
   const [activeTab, setActiveTab] = useState('Tất cả');
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+    const status = searchParams.get('status');
 
   const fetchAppointments = async () => {
     try {
@@ -25,6 +29,9 @@ const Lich_hen = () => {
 
   useEffect(() => {
     fetchAppointments();
+     if(status === 'true') {
+        toast.error("Thanh toán thất bại hoặc đã bị hủy!");
+      }
   }, []);
 
   const getStatusDetail = (status) => {

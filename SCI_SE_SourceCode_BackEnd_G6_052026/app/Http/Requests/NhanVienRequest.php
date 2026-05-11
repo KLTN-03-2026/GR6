@@ -25,7 +25,7 @@ class NhanVienRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ten_nhan_vien' => 'required|string|max:255|min:6| regex:/^[a-zA-Z\s]+$/',
+            'ten_nhan_vien' => 'required|string|max:255|min:6|regex:/^[\pL\s]+$/u',
             'mo_ta_ngan'    => 'required|string|max:255',
             'hinh_anh'      => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
