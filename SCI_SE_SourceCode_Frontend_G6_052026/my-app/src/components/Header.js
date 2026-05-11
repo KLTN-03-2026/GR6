@@ -144,10 +144,6 @@ const Header = () => {
           </div>
         ) : (
           <div className="flex items-center gap-3 group relative">
-             <button className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
-              <Bell size={20} strokeWidth={1.5} />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
 
             <div className="h-8 w-px bg-slate-200 mx-1"></div>
 

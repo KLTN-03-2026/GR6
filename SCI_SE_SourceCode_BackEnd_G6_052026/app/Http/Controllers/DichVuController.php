@@ -103,6 +103,14 @@ class DichVuController extends Controller
                      ->whereRaw('hinh_anh_dich_vus.id = (select id from hinh_anh_dich_vus where id_dich_vu = dich_vus.id limit 1)');
             })
             ->get();
+            $dichVu->transform(function ($item) {
+                if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
+                    $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
+                } else {
+                    $item->hinh_anh = asset('storage/' . $item->hinh_anh);
+                }
+                return $item;
+            });
         if (!$dichVu) {
             return response()->json([
                 'status' => false,

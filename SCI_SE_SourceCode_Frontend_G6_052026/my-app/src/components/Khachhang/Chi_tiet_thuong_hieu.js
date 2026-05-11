@@ -125,7 +125,7 @@ const Chi_tiet_thuong_hieu = () => {
                               <Clock size={14}/> {sv.thoi_gian_du_kien} phút
                             </span>
                             <button onClick={() => navigate(`/chi-tiet/${sv.id}`)} className="text-white text-xs font-bold px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm">
-                              Đặt ngay
+                              Chi tiết
                             </button>
                           </div>
                         </div>

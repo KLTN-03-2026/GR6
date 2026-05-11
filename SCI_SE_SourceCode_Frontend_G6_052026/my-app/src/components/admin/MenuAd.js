@@ -35,17 +35,7 @@ const MenuAd = ({ onLogout }) => {
       name: 'Nhà cung cấp',
       icon: <Users size={18} />,
       path: '/admin/quan-ly-nha-cung-cap',
-    },
-    {
-      name: 'Cài đặt',
-      icon: <Settings size={18} />,
-      path: '/admin/cai-dat',
-    },
-    {
-      name: 'Báo cáo',
-      icon: <FileText size={18} />,
-      path: '/admin/bao-cao',
-    },
+    }
   ];
 
   return (
