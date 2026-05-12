@@ -54,23 +54,19 @@ const Quan_ly_khach_hang = () => {
   const stats = [
     { 
       label: "TỔNG KHÁCH HÀNG", 
-      value: statsData?.tong_so_khach_hang || 0, 
-      icon: <Users className="text-blue-500" />, color: "bg-blue-50" 
+      value: statsData?.tong_so_khach_hang || 0
     },
     { 
       label: "ĐANG HOẠT ĐỘNG", 
-      value: statsData?.khach_hang_da_active || 0, 
-      icon: <UserCheck className="text-blue-500" />, color: "bg-white", border: true 
+      value: statsData?.khach_hang_da_active || 0
     },
     { 
       label: "MỚI TRONG THÁNG", 
-      value: statsData?.khach_hang_moi_trong_thang || 0, 
-      trend: "Tháng này", color: "bg-white", border: true 
+      value: statsData?.khach_hang_moi_trong_thang || 0
     },
     { 
       label: "TÀI KHOẢN BỊ KHÓA", 
-      value: statsData?.khach_hang_block || 0, 
-      icon: <UserX className="text-red-500" />, color: "bg-white", border: true 
+      value: statsData?.khach_hang_block || 0
     },
   ];
 
@@ -94,8 +90,19 @@ const Quan_ly_khach_hang = () => {
                 {s.icon && <div className="p-2 bg-blue-50/50 rounded-lg">{s.icon}</div>}
               </div>
               <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-black text-gray-900">{s.value}</span>
+                
+                <span
+                  className={`text-3xl font-black 
+                  ${i === 0 ? 'text-blue-600' : ''}
+                  ${i === 3 ? 'text-red-500' : ''}
+                  ${i !== 0 && i !== 3 ? 'text-gray-900' : ''}
+  `             }
+                //đoạn ni
+                >
+                  {s.value}
+                </span>
                 {s.trend && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-500">{s.trend}</span>}
+
               </div>
             </div>
           ))}
@@ -104,7 +111,6 @@ const Quan_ly_khach_hang = () => {
         <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center">
             <div className="flex gap-4 font-bold text-xs text-gray-600 uppercase">Danh sách khách hàng</div>
-            <span className="text-xs text-gray-400 font-medium">Đang hiển thị {dataList.length} thành viên</span>
           </div>
 
           <table className="w-full text-left">
@@ -113,7 +119,7 @@ const Quan_ly_khach_hang = () => {
                 <th className="px-8 py-5 font-black">ID</th>
                 <th className="px-8 py-5 font-black">HỌ VÀ TÊN</th>
                 <th className="px-8 py-5 font-black">EMAIL</th>
-                <th className="px-8 py-5 font-black">VAI TRÒ</th>
+                <th className="px-8 py-5 font-black text-left ">VAI TRÒ</th>
                 <th className="px-8 py-5 font-black">TRẠNG THÁI</th>
                 <th className="px-8 py-5 text-right font-black">HÀNH ĐỘNG</th>
               </tr>
@@ -132,17 +138,17 @@ const Quan_ly_khach_hang = () => {
                   </td>
                   <td className="px-8 py-5 text-sm text-gray-500">{u.email}</td>
                   <td className="px-8 py-5">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-tight">CUSTOMER</span>
+                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-tight">Khách Hàng</span>
                   </td>
-                  <td className="px-8 py-5">
+                  <td className="px-8 py-5 text-center">
                     <div className="flex items-center gap-1.5">
                       <div className={`w-2 h-2 rounded-full ${u.is_blocked === 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
                       <span className={`text-xs font-bold ${u.is_blocked === 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {u.is_blocked === 0 ? 'Active' : 'Banned'}
+                        {u.is_blocked === 0 ? 'Hoạt động' : 'Tạm khóa'}
                       </span>
                     </div>
                   </td>
-                  <td className="px-8 py-5 text-right">
+                  <td className="px-8 py-5 text-center">
                     <div className="flex justify-end gap-2">
                       <button onClick={() => handleToggleBlock(u.id)} className={`p-2 rounded-lg transition-all ${u.is_blocked === 1 ? 'text-green-500 bg-green-50 hover:bg-green-100' : 'text-red-500 bg-red-50 hover:bg-red-100'}`}>
                         {u.is_blocked === 1 ? <Check size={16} /> : <X size={16} />}
