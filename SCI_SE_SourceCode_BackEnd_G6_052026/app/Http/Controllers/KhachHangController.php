@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ThemMoiKhachHangRequest;
+use App\Http\Requests\UpdateKhachHangRequest;
 use App\Mail\KichHoatTaiKhoan;
 use App\Mail\QuenMatKhau;
 use App\Models\DatLich;
@@ -84,7 +85,7 @@ class KhachHangController extends Controller
             ]);
         }
     }
-       public function update(Request $request)
+       public function update(UpdateKhachHangRequest $request)
 {
     $KhachHang = $this->isUserKhachHang();
 
@@ -116,6 +117,12 @@ class KhachHangController extends Controller
         }
 
         $KhachHang->avatar = $path;
+    }else if ($request->avatar == null) {
+        // Nếu client gửi avatar là null, xóa avatar cũ
+        if ($KhachHang->avatar && Storage::disk('public')->exists($KhachHang->avatar)) {
+            Storage::disk('public')->delete($KhachHang->avatar);
+        }
+        $KhachHang->avatar = 0;
     }
 
     $KhachHang->save();

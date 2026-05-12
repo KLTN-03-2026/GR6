@@ -26,7 +26,7 @@ class ThuongHieuRequest extends FormRequest
     {
         return [
             'ten_thuong_hieu'     => 'required|string|max:255',
-            'so_dien_thoai'       => 'required|numeric|digits_between:10,11',
+            'so_dien_thoai'       => 'required|numeric|digits:10',
             'id_danh_muc_dich_vu' => 'required|exists:danh_muc_dich_vus,id',
             'ma_so_thue'          => 'nullable|string|max:50',
             'ma_bin_ngan_hang'    => 'nullable|string|max:20',
@@ -41,8 +41,7 @@ class ThuongHieuRequest extends FormRequest
     {
         return [
             'ten_thuong_hieu.required'     => 'Tên thương hiệu không được để trống.',
-            'so_dien_thoai.required'       => 'Số điện thoại không được để trống.',
-            'so_dien_thoai.numeric'        => 'Số điện thoại phải là định dạng số.',
+            'so_dien_thoai.*'               => 'Số điện thoại phải là định dạng số và có đúng 10 chữ số.',
             'id_danh_muc_dich_vu.exists'   => 'Danh mục dịch vụ không tồn tại.',
             'dia_chi.required'             => 'Địa chỉ không được để trống.',
             'logo.image'                   => 'Logo phải là định dạng hình ảnh.',
