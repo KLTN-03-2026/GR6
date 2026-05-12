@@ -163,7 +163,7 @@ export default function Nha_Cung_Cap() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex justify-between items-center p-4 font-semibold border-b">
             <span>Đặt chỗ mới nhất</span>
-            <a href="#" className="text-blue-600 text-sm font-normal hover:underline">Xem tất cả</a>
+            <a href="/nha-cung-cap/quan-ly-lich-hen" className="text-blue-600 text-sm font-normal hover:underline">Xem tất cả</a>
           </div>
 
           <div className="overflow-x-auto">

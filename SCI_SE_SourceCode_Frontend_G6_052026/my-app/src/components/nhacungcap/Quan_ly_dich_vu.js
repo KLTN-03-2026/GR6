@@ -166,7 +166,16 @@ const Quan_ly_dich_vu = () => {
         </div>
 
         <div className="grid grid-cols-4 gap-6 mb-8">
-          <StatCard icon={<div className="w-6 h-6 border-2 border-current rounded-full flex items-center justify-center text-[10px]">✓</div>} label="HOẠT ĐỘNG" value={services.length} color="blue" />
+         <StatCard 
+  icon={
+    <div className="w-6 h-6 border-2 border-current rounded-full flex items-center justify-center text-[10px]">
+      ✓
+    </div>
+  } 
+  label="HOẠT ĐỘNG" 
+  value={services.filter(item => item.ten_dich_vu).length} 
+  color="blue" 
+/>
           <StatCard icon={<BarChart3 size={20} />} label="DANH MỤC" value="--" color="orange" />
           <StatCard icon={<div className="w-5 h-5 border-2 border-current rounded-full relative"></div>} label="ĐANG ẨN" value="--" color="gray" />
           <StatCard icon={<BarChart3 size={20} />} label="ĐANG CHỜ" value="--" color="red" />
@@ -185,29 +194,62 @@ const Quan_ly_dich_vu = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {loading ? (
-                <tr><td colSpan="3" className="px-6 py-10 text-center text-gray-400">Đang tải dữ liệu...</td></tr>
-              ) : services.map((item) => (
-                <tr key={item.id} className="hover:bg-blue-50/30 transition-colors group">
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500">
-                        <ClipboardList size={20} />
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-800 text-sm">{item.ten_dich_vu}</p>
-                        <p className="text-[11px] text-gray-400">{item.mo_ta_ngan}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-sm font-bold text-blue-600">{new Intl.NumberFormat('vi-VN').format(item.don_gia)}đ</td>
-                  <td className="px-6 py-5 flex justify-center gap-2">
-                    <button onClick={() => handleOpenEdit(item)} className="p-2 border border-gray-100 rounded-lg text-gray-400 hover:text-blue-600 transition-all shadow-sm"><Pencil size={16}/></button>
-                    <button onClick={() => handleOpenDelete(item.id)} className="p-2 border border-gray-100 rounded-lg text-gray-400 hover:text-red-600 transition-all shadow-sm"><Trash2 size={16}/></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {loading ? (
+    <tr>
+      <td colSpan="3" className="px-6 py-10 text-center text-gray-400">
+        Đang tải dữ liệu...
+      </td>
+    </tr>
+  ) : services.filter(item => item.ten_dich_vu).length === 0 ? (
+    <tr>
+      <td colSpan="3" className="px-6 py-10 text-center text-gray-400">
+        Chưa có dịch vụ nào
+      </td>
+    </tr>
+  ) : (
+    services
+      .filter(item => item.ten_dich_vu)
+      .map((item) => (
+        <tr key={item.id} className="hover:bg-blue-50/30 transition-colors group">
+          <td className="px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500">
+                <ClipboardList size={20} />
+              </div>
+              <div>
+                <p className="font-bold text-gray-800 text-sm">
+                  {item.ten_dich_vu}
+                </p>
+                <p className="text-[11px] text-gray-400">
+                  {item.mo_ta_ngan}
+                </p>
+              </div>
+            </div>
+          </td>
+
+          <td className="px-6 py-5 text-sm font-bold text-blue-600">
+            {new Intl.NumberFormat('vi-VN').format(item.don_gia)}đ
+          </td>
+
+          <td className="px-6 py-5 flex justify-center gap-2">
+            <button
+              onClick={() => handleOpenEdit(item)}
+              className="p-2 border border-gray-100 rounded-lg text-gray-400 hover:text-blue-600 transition-all shadow-sm"
+            >
+              <Pencil size={16}/>
+            </button>
+
+            <button
+              onClick={() => handleOpenDelete(item.id)}
+              className="p-2 border border-gray-100 rounded-lg text-gray-400 hover:text-red-600 transition-all shadow-sm"
+            >
+              <Trash2 size={16}/>
+            </button>
+          </td>
+        </tr>
+      ))
+  )}
+</tbody>
           </table>
         </div>
       </main>
