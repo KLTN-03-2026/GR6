@@ -30,7 +30,7 @@ const Lich_hen = () => {
   useEffect(() => {
     fetchAppointments();
      if(status === 'true') {
-        toast.error("Thanh toán thất bại hoặc đã bị hủy!");
+        toast.success("Thanh toán thành công!");
       }
   }, []);
 

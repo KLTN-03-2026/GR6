@@ -245,13 +245,13 @@ const DangKyNhaCungCap = () => {
 
             {/* Ngân hàng (Lấy BIN) */}
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Ngân hàng (Mã BIN)</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Ngân hàng</label>
               <div className="relative">
                 <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <select name="bankBin" value={formData.bankBin} onChange={handleChange} required className="w-full pl-12 pr-10 py-3.5 bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none text-slate-600">
                   <option value="">Chọn ngân hàng</option>
                   {banks.map(bank => (
-                    <option key={bank.id} value={bank.bin}>{bank.shortName} - BIN: {bank.bin}</option>
+                    <option key={bank.id} value={bank.bin}>{bank.shortName} - {bank.name}</option>
                   ))}
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">

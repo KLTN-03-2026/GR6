@@ -200,7 +200,10 @@ const Quan_ly_nhan_vien = () => {
               <tbody className="divide-y divide-slate-50">
                 {loading ? (
                   <tr><td colSpan="3" className="py-20 text-center text-slate-400">Đang tải danh sách...</td></tr>
-                ) : employees.map((emp) => (
+                ) : employees.filter(emp => emp.ten_nhan_vien).length > 0 ? (
+  employees
+    .filter(emp => emp.ten_nhan_vien)
+    .map((emp) => (
                   <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-4">
@@ -232,7 +235,14 @@ const Quan_ly_nhan_vien = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+) : (
+  <tr>
+    <td colSpan="3" className="py-20 text-center text-slate-400">
+      Chưa có nhân viên nào
+    </td>
+  </tr>
+)}
               </tbody>
             </table>
           </div>

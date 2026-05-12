@@ -112,13 +112,35 @@ const Quan_ly_ho_so = () => {
           window.location.reload();
         }, 1000);
       }
-    } catch (error) {
-      console.error("Lỗi cập nhật:", error);
-      toast.error("Cập nhật thất bại. Vui lòng thử lại.");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+        } catch (error) {
+        console.error("Lỗi cập nhật:", error);
+
+        const errorData = error.response?.data;
+
+        // Nếu backend trả object errors
+        if (errorData?.errors) {
+          Object.values(errorData.errors).forEach((messages) => {
+            if (Array.isArray(messages)) {
+              messages.forEach((msg) => toast.error(msg));
+            } else {
+              toast.error(messages);
+            }
+          });
+        }
+
+        // Nếu backend trả message thường
+        else if (errorData?.message) {
+          toast.error(errorData.message);
+        }
+
+        // Fallback
+        else {
+          toast.error("Cập nhật thất bại. Vui lòng thử lại.");
+        }
+      } finally {
+            setIsUpdating(false);
+          }
+        };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -140,7 +162,7 @@ const Quan_ly_ho_so = () => {
             <div className="flex items-center gap-6 mb-10 pb-8 border-b border-[#f1f5f9]">
               <div className="w-24 h-24 bg-[#ffedd5] rounded-full flex items-center justify-center overflow-hidden border border-[#e2e8f0]">
                 <img 
-                  src={profile.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} 
+                  src={profile.avatar === "0" ? "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" : profile.avatar} 
                   alt="Avatar" 
                   className="w-full h-full object-cover"
                 />
@@ -162,13 +184,26 @@ const Quan_ly_ho_so = () => {
                   >
                     <Upload size={14} /> CHỌN ẢNH MỚI
                   </button>
-                  <button 
-                    type="button"
-                    onClick={() => setProfile({...profile, avatar: ''})}
-                    className="bg-[#f1f5f9] text-[#64748b] text-xs font-bold px-4 py-2 rounded-lg hover:bg-gray-200"
-                  >
-                    GỠ BỎ
-                  </button>
+                 <button 
+                  type="button"
+                  onClick={() => setProfile({ ...profile, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' })}
+                  disabled={!profile.avatar || profile.avatar === "0"}
+                  className="
+                    bg-[#f1f5f9] 
+                    text-[#64748b] 
+                    text-xs 
+                    font-bold 
+                    px-4 
+                    py-2 
+                    rounded-lg 
+                    hover:bg-gray-200
+                    disabled:opacity-50
+                    disabled:cursor-not-allowed
+                    disabled:hover:bg-[#f1f5f9]
+                  "
+                >
+                  GỠ BỎ
+                </button>
                 </div>
                 <p className="text-[10px] text-[#94a3b8] uppercase tracking-widest">JPG, PNG. Tối đa 5MB</p>
               </div>
@@ -208,6 +243,7 @@ const Quan_ly_ho_so = () => {
                 </label>
                 <input 
                   name="email"
+                  disabled
                   value={profile.email} 
                   onChange={handleChange}
                   placeholder="email@vidu.com"
