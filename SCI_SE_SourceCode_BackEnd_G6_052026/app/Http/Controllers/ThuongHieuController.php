@@ -153,46 +153,73 @@ class ThuongHieuController extends Controller
         ]);
     }
     public function getDataNhanVien()
-    {
-        $nhacungcap = $this->isUserNhaCungCap();
-        if (!$nhacungcap) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Bạn không phải nhà cung cấp!'
-            ], 403);
-        }
-        $data = ThuongHieu::where('thuong_hieus.id', $nhacungcap->id)
-            ->join('nhan_viens', 'nhan_viens.id_thuong_hieu', 'thuong_hieus.id')
-            ->select(
-                'nhan_viens.id',
-                'nhan_viens.ten_nhan_vien',
-                'nhan_viens.hinh_anh',
-                'nhan_viens.mo_ta_ngan',
-                'nhan_viens.trang_thai_lam_viec',
-                'nhan_viens.id_thuong_hieu'
-            )
-            ->get();
+{
+    $nhacungcap = $this->isUserNhaCungCap();
+
+    if (!$nhacungcap) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Bạn không phải nhà cung cấp!'
+        ], 403);
+    }
+
+    // Lấy thương hiệu của nhà cung cấp
+    $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhacungcap->id)->first();
+
+    if (!$thuongHieu) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Nhà cung cấp chưa có thương hiệu.'
+        ], 404);
+    }
+
+    // Lấy nhân viên
+    $data = NhanVien::where('id_thuong_hieu', $thuongHieu->id)
+        ->select(
+            'id',
+            'ten_nhan_vien',
+            'hinh_anh',
+            'mo_ta_ngan',
+            'trang_thai_lam_viec',
+            'id_thuong_hieu'
+        )
+        ->get();
+
+    // Nếu chưa có nhân viên thì trả về object giả
+    if ($data->count() == 0) {
+
+        $data = collect([
+            [
+                'id_thuong_hieu' => $thuongHieu->id,
+            ]
+        ]);
+
+    } else {
+
         $data->transform(function ($item) {
-            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
-            if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
-                $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
-            } else {
-                // Ngược lại, coi như đường dẫn local trong disk 'public'
+
+            // Nếu hinh_anh là URL
+            if (
+                $item->hinh_anh &&
+                filter_var($item->hinh_anh, FILTER_VALIDATE_URL)
+            ) {
+
+                $item->hinh_anh = $item->hinh_anh;
+
+            } else if ($item->hinh_anh) {
+
+                // Ảnh local
                 $item->hinh_anh = asset('storage/' . $item->hinh_anh);
             }
+
             return $item;
         });
-        if ($data->isEmpty()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy nhân viên nào cho dịch vụ với ID đã cho.'
-            ], 404);
-        } else {
-            return response()->json([
-                'status' => true,
-                'data' => $data
-            ]);
-        }
     }
+
+    return response()->json([
+        'status' => true,
+        'data' => $data
+    ]);
+}
 
 }

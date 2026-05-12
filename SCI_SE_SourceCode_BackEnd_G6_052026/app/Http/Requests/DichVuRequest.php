@@ -44,7 +44,7 @@ class DichVuRequest extends FormRequest
             // vẫn giữ >=1 để tránh lỗi logic
             'so_luong_lich_toi_da' => 'required|integer|min:1',
 
-            'hinh_anh' => 'nullable|array',
+            'hinh_anh' => 'nullable|array|max:5',
             'hinh_anh.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
@@ -85,6 +85,7 @@ class DichVuRequest extends FormRequest
         'so_luong_lich_toi_da.min' => 'Số lượng lịch tối đa phải lớn hơn 0',
 
         'hinh_anh.array' => 'Hình ảnh không hợp lệ',
+        'hinh_anh.max' => 'Chỉ được phép tải lên tối đa 5 hình ảnh',
 
         'hinh_anh.*.image' => 'File tải lên phải là hình ảnh',
         'hinh_anh.*.mimes' => 'Hình ảnh phải có định dạng jpg, jpeg, png hoặc webp',

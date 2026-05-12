@@ -15,63 +15,83 @@ use Illuminate\Support\Str;
 
 class DichVuController extends Controller
 {
-    public function getDichVuByNCC()
-    {
-        $nhacungcap = $this->isUserNhaCungCap();
-        if (!$nhacungcap) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Bạn không có quyền truy cập dữ liệu này.'
-            ], 403);
-        }
-        $dichVu = ThuongHieu::where('id_nha_cung_cap', $nhacungcap->id)
-            ->join('dich_vus', 'dich_vus.id_thuong_hieu', 'thuong_hieus.id')
-            ->select(
-                'dich_vus.id',
-                'dich_vus.ten_dich_vu',
-                'dich_vus.mo_ta_ngan',
-                'dich_vus.mo_ta_dai',
-                'dich_vus.don_gia',
-                'dich_vus.thoi_gian_du_kien',
-                'dich_vus.kieu_phuc_vu',
-                'dich_vus.id_thuong_hieu',
-                'dich_vus.id_danh_muc_dich_vu',
-                'dich_vus.so_luong_lich_toi_da',
-                'dich_vus.trang_thai'
-            )
-            ->get();
+   public function getDichVuByNCC()
+{
+    $nhacungcap = $this->isUserNhaCungCap();
+
+    if (!$nhacungcap) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Bạn không có quyền truy cập dữ liệu này.'
+        ], 403);
+    }
+
+    // Lấy thương hiệu của nhà cung cấp
+    $thuongHieu = ThuongHieu::where('id_nha_cung_cap', $nhacungcap->id)->first();
+
+    if (!$thuongHieu) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Nhà cung cấp chưa có thương hiệu.'
+        ], 404);
+    }
+
+    // Lấy dịch vụ
+    $dichVu = DichVu::where('id_thuong_hieu', $thuongHieu->id)
+        ->select(
+            'id',
+            'ten_dich_vu',
+            'mo_ta_ngan',
+            'mo_ta_dai',
+            'don_gia',
+            'thoi_gian_du_kien',
+            'kieu_phuc_vu',
+            'id_thuong_hieu',
+            'id_danh_muc_dich_vu',
+            'so_luong_lich_toi_da',
+            'trang_thai'
+        )
+        ->get();
+
+    // Nếu chưa có dịch vụ thì trả về object giả
+    if ($dichVu->count() == 0) {
+
+        $dichVu = collect([
+            [
+                'id_thuong_hieu' => $thuongHieu->id,
+                'id_danh_muc_dich_vu' => $thuongHieu->id_danh_muc_dich_vu,
+            ]
+        ]);
+    } else {
+
         $HinhAnh = HinhAnhDichVu::whereIn('id_dich_vu', $dichVu->pluck('id'))->get();
+
         $HinhAnh->transform(function ($item) {
-            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
+
             if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
-                $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
+                $item->hinh_anh = $item->hinh_anh;
             } else {
-                // Ngược lại, coi như đường dẫn local trong disk 'public'
                 $item->hinh_anh = asset('storage/' . $item->hinh_anh);
             }
+
             return $item;
         });
+
         $groupHinhAnh = $HinhAnh->groupBy('id_dich_vu');
 
         $dichVu->transform(function ($item) use ($groupHinhAnh) {
 
-        $item->hinh_anh = $groupHinhAnh[$item->id] ?? [];   
+            $item->hinh_anh = $groupHinhAnh[$item->id] ?? [];
 
-    return $item;
-});
-        if (!$dichVu) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy dịch vụ với ID đã cho.'
-            ], 404);
-        } else {
-            return response()->json([
-                'status' => true,
-                'data' => $dichVu,
-                'data_hinh_anh' => $HinhAnh
-            ]);
-        }
+            return $item;
+        });
     }
+
+    return response()->json([
+        'status' => true,
+        'data' => $dichVu
+    ]);
+}
     public function getDichVubyID($id)
     {
         // $nhacungcap = $this->isUserNhaCungCap();
@@ -303,7 +323,6 @@ class DichVuController extends Controller
     public function createDichVu(DichVuRequest $request)
     {
         DB::beginTransaction();
-
         try {
             // 1. Lưu dịch vụ trước
             $dichVu = DichVu::create([
