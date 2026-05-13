@@ -310,7 +310,7 @@ const Chi_tiet_lich_hen = () => {
 
               {appointment.trang_thai_dat_lich === 2 && (
                 <button
-                  onClick={() => navigate(`/danh-gia/${appointment.id}`)}
+                  onClick={() => navigate(`/danh-gia/${appointment.id}`)}cd
                   className="bg-[#3182ce] hover:bg-[#2b6cb0] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-100"
                 >
                   <Star size={18} />

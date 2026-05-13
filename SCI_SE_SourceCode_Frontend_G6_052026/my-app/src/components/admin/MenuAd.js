@@ -63,13 +63,6 @@ const MenuAd = ({ onLogout }) => {
       </nav>
 
       <div className="p-4 border-t border-gray-100 space-y-1">
-        <button 
-          onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all"
-        >
-          <LogOut size={18} /> 
-          Đăng xuất
-        </button>
       </div>
     </aside>
   );
