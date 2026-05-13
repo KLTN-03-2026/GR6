@@ -156,6 +156,26 @@ class NhaCungCapController extends Controller
             }
             return $item;
         });
+         $data_DatLich->transform(function ($item) {
+            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->hinh_anh_dich_vu, FILTER_VALIDATE_URL)) {
+                $item->hinh_anh_dich_vu = $item->hinh_anh_dich_vu;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->hinh_anh_dich_vu = asset('storage/' . $item->hinh_anh_dich_vu);
+            }
+            return $item;
+        });
+         $data_DatLich->transform(function ($item) {
+            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
+            if (filter_var($item->hinh_anh_nhan_vien, FILTER_VALIDATE_URL)) {
+                $item->hinh_anh_nhan_vien = $item->hinh_anh_nhan_vien;  // giữ nguyên link
+            } else {
+                // Ngược lại, coi như đường dẫn local trong disk 'public'
+                $item->hinh_anh_nhan_vien = asset('storage/' . $item->hinh_anh_nhan_vien);
+            }
+            return $item;
+        });
         return response()->json([
             'status' => true,
             'data_DatLich' => $data_DatLich,
