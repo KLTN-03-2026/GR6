@@ -14,7 +14,7 @@ const Quen_mat_khau = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await api.post('/khach-hang/quen-mat-khau', { email });
+      const response = await api.post('/quen-mat-khau', { email });
       setMessage({ 
         type: 'success', 
         text: 'Liên kết đặt lại mật khẩu đã được gửi vào email của bạn!' 
