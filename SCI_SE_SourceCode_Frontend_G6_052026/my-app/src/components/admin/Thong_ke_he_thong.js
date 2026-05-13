@@ -50,7 +50,7 @@ const Thong_ke_he_thong = () => {
 
   // Xử lý dữ liệu biểu đồ tròn để tránh bị trắng (ép kiểu Number)
   const pieData = data?.doanh_thu_theo_danh_muc?.map(item => ({
-    name: item.ten_danh_muc,
+    name: item.ten_dich_vu,
     value: Number(item.doanh_thu)
   })) || [];
 

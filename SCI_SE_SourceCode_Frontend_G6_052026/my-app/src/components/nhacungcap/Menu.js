@@ -53,10 +53,7 @@ const Menu = () => {
         </div>
       </div>
 
-      <div className="text-sm text-gray-400 border-t pt-4">
-        <div className="cursor-pointer hover:text-black transition-colors px-2">Hỗ trợ</div>
-        <div className="cursor-pointer hover:text-red-600 mt-2 transition-colors px-2">Đăng xuất</div>
-      </div>
+      
     </aside>
   );
 };
