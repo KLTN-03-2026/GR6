@@ -45,7 +45,31 @@ const Quan_ly_dich_vu = () => {
   };
 
   useEffect(() => { loadData(); }, []);
+const changeStatus = async (id) => {
+  try {
+    const res = await serviceApi.changeStatus(id);
 
+    if (res.data.status) {
+      toast.success(res.data.message || "Đổi trạng thái thành công!");
+
+      setServices((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                trang_thai: item.trang_thai === 1 ? 0 : 1,
+              }
+            : item
+        )
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error(
+      err.response?.data?.message || "Đã có lỗi xảy ra."
+    );
+  }
+};
   const handleOpenDelete = (id) => {
     setDeleteId(id);
     setIsDeleteModalOpen(true);
@@ -83,6 +107,7 @@ const Quan_ly_dich_vu = () => {
     setPreviewImages([]);
     setIsModalOpen(true);
   };
+  
 
   // --- TỐI ƯU HÀM SỬA: Lấy ảnh trực tiếp từ dữ liệu list ---
   const handleOpenEdit = (service) => {
@@ -189,7 +214,9 @@ const Quan_ly_dich_vu = () => {
             <thead className="bg-[#F8FAFC]">
               <tr>
                 <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Tên dịch vụ</th>
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Danh mục</th>
                 <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Giá niêm yết</th>
+                <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Trạng thái</th>
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wider">Thao tác</th>
               </tr>
             </thead>
@@ -226,10 +253,29 @@ const Quan_ly_dich_vu = () => {
               </div>
             </div>
           </td>
-
+          <td className="px-6 py-5 text-sm font-bold text-blue-600">
+                    {item.ten_danh_muc_dich_vu}
+                  </td>
           <td className="px-6 py-5 text-sm font-bold text-blue-600">
             {new Intl.NumberFormat('vi-VN').format(item.don_gia)}đ
           </td>
+             <td className="px-6 py-5 text-sm font-bold text-blue-600">
+  {item.trang_thai === 1 ? (
+    <span
+      onClick={() => changeStatus(item.id)}
+      className="px-2 py-1 bg-green-100 text-green-600 rounded-full text-xs cursor-pointer"
+    >
+      hoạt động
+    </span>
+  ) : (
+    <span
+      onClick={() => changeStatus(item.id)}
+      className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs cursor-pointer"
+    >
+      Đang dừng
+    </span>
+  )}
+</td>
 
           <td className="px-6 py-5 flex justify-center gap-2">
             <button
