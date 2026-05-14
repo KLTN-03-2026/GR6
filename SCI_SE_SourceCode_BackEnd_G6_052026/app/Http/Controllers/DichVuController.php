@@ -37,19 +37,22 @@ class DichVuController extends Controller
     }
 
     // Lấy dịch vụ
-    $dichVu = DichVu::where('id_thuong_hieu', $thuongHieu->id)
+    $dichVu = DichVu::where('dich_vus.id_thuong_hieu', $thuongHieu->id)
+        ->join('thuong_hieus', 'thuong_hieus.id', 'dich_vus.id_thuong_hieu')
+        ->join('danh_muc_dich_vus', 'danh_muc_dich_vus.id', 'dich_vus.id_danh_muc_dich_vu')
         ->select(
-            'id',
-            'ten_dich_vu',
-            'mo_ta_ngan',
-            'mo_ta_dai',
-            'don_gia',
-            'thoi_gian_du_kien',
-            'kieu_phuc_vu',
-            'id_thuong_hieu',
-            'id_danh_muc_dich_vu',
-            'so_luong_lich_toi_da',
-            'trang_thai'
+            'dich_vus.id',
+            'dich_vus.ten_dich_vu',
+            'dich_vus.mo_ta_ngan',
+            'dich_vus.mo_ta_dai',
+            'dich_vus.don_gia',
+            'dich_vus.thoi_gian_du_kien',
+            'dich_vus.kieu_phuc_vu',
+            'dich_vus.id_thuong_hieu',
+            'dich_vus.id_danh_muc_dich_vu',
+            'dich_vus.so_luong_lich_toi_da',
+            'dich_vus.trang_thai',
+            'danh_muc_dich_vus.ten_dich_vu as ten_danh_muc_dich_vu',
         )
         ->get();
 

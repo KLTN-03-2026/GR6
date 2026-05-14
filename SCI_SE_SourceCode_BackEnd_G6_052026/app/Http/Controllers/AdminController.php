@@ -159,7 +159,7 @@ class AdminController extends Controller
         $nha_cung_cap_block = NhaCungCap::where('is_blocked', 1)->count();
         $nha_cung_cap_khong_block = NhaCungCap::where('is_blocked', 0)->count();
         $nha_cung_cap_chua_active = NhaCungCap::where('is_active', 0)->count();
-        $nha_cung_cap_da_active = NhaCungCap::where('is_active', 1)->count();
+        $nha_cung_cap_da_active = NhaCungCap::where('is_active', 1)->where('is_blocked', 0)->count();
         $nha_cung_cap_moi_trong_thang = NhaCungCap::where('created_at', '>=', now()->subMonth())->count();
         return response()->json([
             'status' => true,
@@ -179,7 +179,7 @@ class AdminController extends Controller
         $khach_hang_block = KhachHang::where('is_blocked', 1)->count();
         $khach_hang_khong_block = KhachHang::where('is_blocked', 0)->count();
         $khach_hang_chua_active = KhachHang::where('is_active', 0)->count();
-        $khach_hang_da_active = KhachHang::where('is_active', 1)->count();
+        $khach_hang_da_active = KhachHang::where('is_active', 1)->where('is_blocked', 0)->count();
         $khach_hang_moi_trong_thang = KhachHang::where('created_at', '>=', now()->subMonth())->count();
         return response()->json([
             'status' => true,
