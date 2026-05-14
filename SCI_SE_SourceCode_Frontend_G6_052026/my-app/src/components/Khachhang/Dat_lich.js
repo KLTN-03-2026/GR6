@@ -90,7 +90,8 @@ const Dat_lich = () => {
                 
                 await fetchBookedTimes(selectedDate, selectedStaff);
             } catch (error) {
-                toast.error("Lỗi tải dữ liệu");
+                toast.error("Bạn phải đăng nhập để đặt lịch!");
+                navigate('/dang-nhap');
             } finally {
                 setIsLoading(false);
             }
