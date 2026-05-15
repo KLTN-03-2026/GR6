@@ -240,89 +240,6 @@ class DichVuController extends Controller
             ], 500);
         }
     }
-    public function updateDichVu(DichVuRequest $request)
-    {
-        DB::beginTransaction();
-
-        try {
-            // 1. Tìm dịch vụ
-            $dichVu = DichVu::where('id', $request->id)->first();
-
-            if (!$dichVu) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Dịch vụ không tồn tại'
-                ], 404);
-            }
-
-            // 2. Update thông tin dịch vụ
-            $dichVu->update([
-                'ten_dich_vu'          => $request->ten_dich_vu,
-                'mo_ta_ngan'           => $request->mo_ta_ngan,
-                'don_gia'              => $request->don_gia,
-                'thoi_gian_du_kien'    => $request->thoi_gian_du_kien,
-                'id_thuong_hieu'       => $request->id_thuong_hieu,
-                'so_luong_lich_toi_da' => $request->so_luong_lich_toi_da,
-            ]);
-
-            /*
-        |--------------------------------------------------------------------------
-        | 3. Nếu có upload ảnh mới
-        |--------------------------------------------------------------------------
-        | Cách này:
-        | - Xóa toàn bộ ảnh cũ
-        | - Upload lại toàn bộ ảnh mới
-        */
-
-            if ($request->hasFile('hinh_anh')) {
-
-                // Lấy danh sách ảnh cũ
-                $oldImages = HinhAnhDichVu::where('id_dich_vu', $dichVu->id)->get();
-
-                // Xóa file + DB cũ
-                foreach ($oldImages as $oldImage) {
-
-                    if (Storage::disk('public')->exists($oldImage->hinh_anh)) {
-                        Storage::disk('public')->delete($oldImage->hinh_anh);
-                    }
-
-                    $oldImage->delete();
-                }
-
-                // Thêm ảnh mới
-                foreach ($request->file('hinh_anh') as $image) {
-
-                    $fileName = Str::uuid() . '.' . $image->getClientOriginalExtension();
-
-                    $path = $image->storeAs(
-                        'hinh_anh_dich_vu',
-                        $fileName,
-                        'public'
-                    );
-
-                    HinhAnhDichVu::create([
-                        'id_dich_vu' => $dichVu->id,
-                        'hinh_anh'   => $path,
-                    ]);
-                }
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'status'  => true,
-                'message' => 'Cập nhật dịch vụ thành công'
-            ]);
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            return response()->json([
-                'status'  => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
     public function createDichVu(DichVuRequest $request)
     {
         DB::beginTransaction();
@@ -368,6 +285,74 @@ class DichVuController extends Controller
             ], 500);
         }
     }
+
+    public function updateDichVu(DichVuRequest $request)
+        {
+            DB::beginTransaction();
+            try {
+                $dichVu = DichVu::where('id', $request->id)->first();
+                if (!$dichVu) {
+                    return response()->json(['status' => false, 'message' => 'Dịch vụ không tồn tại'], 404);
+                }
+
+                // 1. Cập nhật thông tin text
+                $dichVu->update([
+                    'ten_dich_vu'          => $request->ten_dich_vu,
+                    'mo_ta_ngan'           => $request->mo_ta_ngan,
+                    'mo_ta_dai'            => $request->mo_ta_dai,
+                    'don_gia'              => $request->don_gia,
+                    'thoi_gian_du_kien'    => $request->thoi_gian_du_kien,
+                    'id_thuong_hieu'       => $request->id_thuong_hieu,
+                    'so_luong_lich_toi_da' => $request->so_luong_lich_toi_da,
+                ]);
+
+                // 2. Lấy toàn bộ dữ liệu từ key hinh_anh[] (bao gồm URL string và File)
+                // Lưu ý: Dùng input() để lấy được mảng bao gồm cả chuỗi
+                $dataHinhAnh = $request->input('hinh_anh', []);
+                
+                // 3. Lọc ra danh sách các ảnh cũ mà người dùng muốn giữ lại
+                $danhSachAnhGiuLai = [];
+                foreach ($dataHinhAnh as $item) {
+                    if (is_string($item)) {
+                        // Tách lấy path thực tế từ URL. 
+                        // Ví dụ: từ "http://.../storage/hinh_anh_dich_vu/abc.png" lấy "hinh_anh_dich_vu/abc.png"
+                        $parts = explode('/storage/', $item);
+                        $danhSachAnhGiuLai[] = end($parts);
+                    }
+                }
+
+                // 4. Xóa những ảnh có trong DB nhưng KHÔNG có trong danh sách giữ lại
+                $anhTrongDB = HinhAnhDichVu::where('id_dich_vu', $dichVu->id)->get();
+                foreach ($anhTrongDB as $anh) {
+                    if (!in_array($anh->hinh_anh, $danhSachAnhGiuLai)) {
+                        // Xóa file vật lý và xóa record
+                        if (Storage::disk('public')->exists($anh->hinh_anh)) {
+                            Storage::disk('public')->delete($anh->hinh_anh);
+                        }
+                        $anh->delete();
+                    }
+                }
+
+                // 5. Upload các file mới (binary)
+                if ($request->hasFile('hinh_anh')) {
+                    foreach ($request->file('hinh_anh') as $file) {
+                        $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                        $path = $file->storeAs('hinh_anh_dich_vu', $fileName, 'public');
+
+                        HinhAnhDichVu::create([
+                            'id_dich_vu' => $dichVu->id,
+                            'hinh_anh'   => $path,
+                        ]);
+                    }
+                }
+
+                DB::commit();
+                return response()->json(['status' => true, 'message' => 'Cập nhật thành công']);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            }
+        }
     public function getThuongHieu($id)
     {
         $NhaCungCap = $this->isUserNhaCungCap();

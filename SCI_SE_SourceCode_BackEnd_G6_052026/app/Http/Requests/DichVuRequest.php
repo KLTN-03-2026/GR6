@@ -44,8 +44,8 @@ class DichVuRequest extends FormRequest
             // vẫn giữ >=1 để tránh lỗi logic
             'so_luong_lich_toi_da' => 'required|integer|min:1',
 
-            'hinh_anh' => 'nullable|array|max:5',
-            'hinh_anh.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'hinh_anh'   => 'nullable|array',
+            'hinh_anh.*' => 'nullable',
         ];
     }
 
