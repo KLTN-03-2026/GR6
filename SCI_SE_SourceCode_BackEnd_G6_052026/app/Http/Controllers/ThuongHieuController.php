@@ -91,7 +91,7 @@ class ThuongHieuController extends Controller
             ]);
         }
     }
-    public function updateNhanVien(Request $request)
+    public function updateNhanVien(NhanVienRequest $request)
 {
     $nhanVien = NhanVien::find($request->id);
 
