@@ -15,6 +15,8 @@ function App(props) {
   const hideLayoutRoutes = ["/dang-nhap", "/dang-ky", "/dang-ky-ncc", "/quen-mat-khau", "/admin/dang-nhap"];
   const isHideLayout = hideLayoutRoutes.includes(location.pathname);
 
+  const isCustomerInterface = !isHideLayout && userRole !== "nha_cung_cap" && userRole !== "admin";
+
   const renderHeader = () => {
     if (isHideLayout) return null;
     if ((isLogin && userRole === "nha_cung_cap") || userRole === "admin") {
@@ -30,7 +32,10 @@ function App(props) {
         {props.children}
       </div>
 
-      {!isHideLayout && (<><Footer /><HeliChatbot /></>)}
+      {!isHideLayout && <Footer />}
+
+      {isCustomerInterface && <HeliChatbot />}
+
       <ToastContainer />
     </div>
   );
