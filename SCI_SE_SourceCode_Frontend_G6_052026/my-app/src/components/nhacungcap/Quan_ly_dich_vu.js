@@ -145,9 +145,11 @@ const changeStatus = async (id) => {
     e.preventDefault();
     const data = new FormData();
     
+    // 1. Append các thông tin text/number
     Object.keys(formData).forEach(key => {
       if (key !== 'hinh_anh') {
         let value = formData[key];
+        // Đảm bảo các giá trị số được ép kiểu đúng
         if (['don_gia', 'thoi_gian_du_kien', 'so_luong_lich_toi_da', 'id_thuong_hieu', 'id_danh_muc_dich_vu'].includes(key)) {
           value = value !== '' ? Math.floor(Number(value)) : 0;
         }
@@ -155,16 +157,16 @@ const changeStatus = async (id) => {
       }
     });
     
+    // 2. GỘP CHUNG: Cả File object và String URL (http://...) đều đẩy vào 'hinh_anh[]'
+    // Lưu ý: Key phải có dấu [] để backend nhận diện là một mảng
     formData.hinh_anh.forEach((item) => {
-      if (item instanceof File) {
-        data.append('hinh_anh[]', item);
-      } else if (typeof item === 'string') {
-        data.append('hinh_anh_cu[]', item); 
-      }
+      data.append('hinh_anh[]', item);
     });
 
     try {
+      // Gọi API (giữ nguyên logic serviceApi của bạn)
       let res = currentService ? await serviceApi.update(data) : await serviceApi.create(data);
+      
       if (res.data.status) {
         toast.success(currentService ? "Cập nhật dịch vụ thành công!" : "Thêm dịch vụ thành công!");
         setIsModalOpen(false);

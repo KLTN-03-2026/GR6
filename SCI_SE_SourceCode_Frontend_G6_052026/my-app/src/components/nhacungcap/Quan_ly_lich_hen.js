@@ -66,7 +66,6 @@ const Quan_ly_lich_hen = () => {
   const openConfirmModal = (id) => { setSelectedId(id); setIsModalOpen(true); };
   const openDetailModal = (app) => { setSelectedApp(app); setDetailModalOpen(true); };
   
-  // Mở modal hủy từ modal chi tiết
   const openCancelModalFromDetail = () => {
     setSelectedId(selectedApp.id);
     setIsCancelModalOpen(true);
@@ -154,20 +153,22 @@ const Quan_ly_lich_hen = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             {filteredAppointments.map((app, idx) => (
               <div key={idx} className="bg-white rounded-[28px] p-6 shadow-sm border border-gray-100 flex flex-col relative transition-all hover:shadow-xl hover:-translate-y-1">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-[56px] h-[56px] bg-gray-100 rounded-[18px] overflow-hidden border border-gray-50 shadow-inner">
+                {/* PHẦN SỬA LỖI TRÀN VIỀN Ở ĐÂY */}
+                <div className="flex justify-between items-start mb-6 gap-2">
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="w-[50px] h-[50px] sm:w-[56px] sm:h-[56px] bg-gray-100 rounded-[18px] overflow-hidden border border-gray-50 shadow-inner flex-shrink-0">
                       <img src={app.avatar && app.avatar.includes('/storage/0') ? `https://ui-avatars.com/api/?name=${app.ten_khach_hang}&background=random` : (app.avatar || `https://ui-avatars.com/api/?name=${app.ten_khach_hang}&background=random`)} className="w-full h-full object-cover" alt="" />
                     </div>
-                    <div>
-                      <h3 className="text-[16px] font-bold text-gray-800 truncate max-w-[120px]">{app.ten_khach_hang}</h3>
-                      <p className="text-[12px] text-gray-400 font-medium truncate max-w-[120px]">{app.ten_dich_vu}</p>
+                    <div className="min-w-0">
+                      <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-800 truncate">{app.ten_khach_hang}</h3>
+                      <p className="text-[11px] sm:text-[12px] text-gray-400 font-medium truncate">{app.ten_dich_vu}</p>
                     </div>
                   </div>
-                  <div className={`${STATUS_THEMES[STATUS_MAP[app.trang_thai_dat_lich]]} px-3 py-1.5 rounded-[10px] text-[10px] font-black uppercase tracking-tighter`}>
+                  <div className={`${STATUS_THEMES[STATUS_MAP[app.trang_thai_dat_lich]]} px-2.5 py-1.5 rounded-[10px] text-[9px] sm:text-[10px] font-black uppercase tracking-tighter whitespace-nowrap flex-shrink-0`}>
                     {STATUS_MAP[app.trang_thai_dat_lich]}
                   </div>
                 </div>
+
                 <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-50">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><Calendar size={16} /></div>
@@ -193,7 +194,7 @@ const Quan_ly_lich_hen = () => {
         </div>
       </main>
 
-      {/* MODAL CHI TIẾT (UI Giữ Nguyên 100%) */}
+      {/* MODAL CHI TIẾT */}
       {detailModalOpen && selectedApp && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setDetailModalOpen(false)}></div>
@@ -241,7 +242,6 @@ const Quan_ly_lich_hen = () => {
                 </div>
               </div>
               
-              {/* THAY ĐỔI: Nút HỦY LỊCH (Chỉ hiện khi trạng thái là Đã xác nhận) */}
               {selectedApp.trang_thai_dat_lich === 1 && (
                 <button 
                   onClick={openCancelModalFromDetail} 
@@ -252,22 +252,22 @@ const Quan_ly_lich_hen = () => {
               )}
             </div>
             <div className="w-full md:w-[300px] bg-[#EEF2F6] p-8 border-l border-gray-200">
-               <p className="text-[11px] font-bold text-gray-400 uppercase mb-1">Mã hóa đơn</p>
-               <p className="text-xl font-black text-gray-800 mb-6">#{selectedApp.ma_hoa_don}</p>
-               <div className="pt-4 border-t border-gray-300">
-                  <div className="flex justify-between mb-2">
-                     <span className="text-gray-500">Thanh toán:</span>
-                     <span className="font-black text-blue-600">{Number(selectedApp.tong_tien_da_nhan).toLocaleString()} đ</span>
-                  </div>
-                  <div className="flex justify-between mb-2">
-                     <span className="text-gray-500">Còn lại:</span>
-                     <span className="font-black text-blue-600">{Number(selectedApp.tong_tien_thanh_toan - selectedApp.tong_tien_da_nhan).toLocaleString()} đ</span>
-                  </div>
-                  <div className="flex justify-between mb-2">
-                     <span className="text-gray-500">Tổng tiền:</span>
-                     <span className="font-black text-blue-600">{Number(selectedApp.tong_tien_thanh_toan).toLocaleString()} đ</span>
-                  </div>
-               </div>
+                <p className="text-[11px] font-bold text-gray-400 uppercase mb-1">Mã hóa đơn</p>
+                <p className="text-xl font-black text-gray-800 mb-6">#{selectedApp.ma_hoa_don}</p>
+                <div className="pt-4 border-t border-gray-300">
+                   <div className="flex justify-between mb-2">
+                      <span className="text-gray-500">Thanh toán:</span>
+                      <span className="font-black text-blue-600">{Number(selectedApp.tong_tien_da_nhan).toLocaleString()} đ</span>
+                   </div>
+                   <div className="flex justify-between mb-2">
+                      <span className="text-gray-500">Còn lại:</span>
+                      <span className="font-black text-blue-600">{Number(selectedApp.tong_tien_thanh_toan - selectedApp.tong_tien_da_nhan).toLocaleString()} đ</span>
+                   </div>
+                   <div className="flex justify-between mb-2">
+                      <span className="text-gray-500">Tổng tiền:</span>
+                      <span className="font-black text-blue-600">{Number(selectedApp.tong_tien_thanh_toan).toLocaleString()} đ</span>
+                   </div>
+                </div>
             </div>
           </div>
         </div>

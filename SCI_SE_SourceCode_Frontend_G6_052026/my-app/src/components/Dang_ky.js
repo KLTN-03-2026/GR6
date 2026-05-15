@@ -24,7 +24,7 @@ const Dang_ky = (props) => {
       const payload = { ten_khach_hang, email, so_dien_thoai, address, password };
       const response = await api.post("khach-hang/dang-ky", payload);
       if (response.data?.status === true) {
-        toast.success(response.data.message || "Đăng ký thành công ");
+        toast.success(response.data.message || "Đăng ký thành công, vui lòng kiểm Email! ");
         setName("");
         setEmail("");
         setPhone("");

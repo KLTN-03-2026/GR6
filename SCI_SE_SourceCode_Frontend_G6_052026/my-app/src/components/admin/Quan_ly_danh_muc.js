@@ -128,6 +128,7 @@ import MenuAd from './MenuAd';
 
       setPreviewImage(cat.hinh_anh);
       setEditingId(cat.id);
+      setSelectedFatherId(cat.id_father);
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -158,8 +159,8 @@ import MenuAd from './MenuAd';
             
             <div className="flex justify-between items-center mb-10">
               <div>
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Cấu hình danh mục</h1>
-                <p className="text-gray-400 text-sm mt-1 font-medium italic">Chỉ cần tên, ID cha và hình ảnh.</p>
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Quản lý danh mục</h1>
+                <p className="text-gray-400 text-sm mt-1 font-medium italic">Sắp xếp, phân loại và thêm nhiều dịch vụ</p>
               </div>
               <button onClick={handleReset} className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all">
                 <Plus size={20} /> Thêm danh mục
