@@ -153,7 +153,7 @@ const ServicesPage = () => {
       <section className="assistant-card">
         <div className="assistant-header">
           <Sparkles size={16} fill="currentColor" />
-          <span>AI ASSISTANT</span>
+          <span>MATCHI ASSISTANT</span>
         </div>
         <div className="assistant-prompt">Trợ lý ServiceHub gợi ý cho bạn</div>
         <p className="assistant-welcome-text">Chào bạn, tôi sẽ gợi ý các dịch vụ phù hợp nhất với yêu cầu của bạn!</p>
@@ -161,7 +161,7 @@ const ServicesPage = () => {
         <div className="assistant-input-wrap">
           <input
             type="text"
-            placeholder="Gợi ý cho tôi..."
+            placeholder="Matchi ơi, gợi ý cho tôi..."
             value={assistantQuery}
             onChange={(e) => {
               const val = e.target.value;
