@@ -17,7 +17,7 @@ class ThanhToanController extends Controller
     {
         try {
             // 1. Cấu hình Secret Key (Đảm bảo khớp hoàn toàn với bên createPayment)
-            $vnp_HashSecret = 'XPWENN9TUUHLQNPNLQ729ARKOEUNR4H3';
+            $vnp_HashSecret = 'OYOCYCCX1N5IL578C735YLXTCQMDVPJ3';
 
             $inputData = $request->all();
 
@@ -131,8 +131,8 @@ class ThanhToanController extends Controller
             // 2. Cấu hình VNPay
             $vnp_Url         = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
             $vnp_Returnurl   = "http://127.0.0.1:8000/api/vnpay-payment/return"; 
-            $vnp_TmnCode     = '6HYFPQQ6';
-            $vnp_HashSecret  = 'XPWENN9TUUHLQNPNLQ729ARKOEUNR4H3';
+            $vnp_TmnCode     = 'E1AMDOMU';
+            $vnp_HashSecret  = 'OYOCYCCX1N5IL578C735YLXTCQMDVPJ3';
 
             $vnp_TxnRef      = $chiTietDatLich->ma_hoa_don; 
             $vnp_Amount      = $thanhToan->tong_tien_da_nhan * 100;
