@@ -99,6 +99,15 @@ const ServicesPage = () => {
   const handleAssistantSubmit = async () => {
     const q = assistantQuery.trim();
     if (!q || assistantLoading || q.length > 300) return;
+    
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    if (urlRegex.test(q)) {
+      setAssistantSuggestions([]);
+      setAssistantEmptyHint(false);
+      setAssistantError('Hệ thống không hỗ trợ xử lý liên kết (Link). Bạn vui lòng nhập tên dịch vụ cụ thể nhé!');
+      return;
+    }
+
     const hasAlphaNumeric = /[\p{L}\p{N}]/u.test(q);
     if (!hasAlphaNumeric) {
       setAssistantSuggestions([]);
