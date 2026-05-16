@@ -91,7 +91,6 @@ Route::post('/dich-vu/change-status/{id}', [DichVuController::class, 'changeStat
 //hình ảnh dịch vụ
 Route::get('/hinh-anh-dich-vu/get-data-hinh-anh', [HinhAnhDichVuController::class, 'getDichVuHinhAnh']); //lấy toàn bộ hình ảnh và id dịch vụ của hình ảnh đó
 Route::get('/hinh-anh-dich-vu/get-data-hinh-anh-by-dich-vu/{id}', [HinhAnhDichVuController::class, 'getDichVuHinhAnhById']); //lấy toàn bộ hình ảnh theo id dịch vụ
-// Route::post('/hinh-anh-dich-vu/create', [HinhAnhDichVuController::class, 'create']);
 
 
 //mail kích hoạt
@@ -146,11 +145,11 @@ Route::post('/ai/assistant', [AiAssistantController::class, 'generate']);
 Route::post('/ai/chat', [AiChatbotController::class, 'chat']);
 
 //gửi tin nhắn realtime
-Route::post('/send-message', [HoiThoaiController::class, 'sendMessage']);
-Route::post('/get-or-create', [HoiThoaiController::class, 'getOrCreate']);
-Route::get('/get-all-messages/{id}', [HoiThoaiController::class, 'getAllMessages']);
-Route::get('khach-hang/get-all-conversations', [HoiThoaiController::class, 'khachHangGetAllConversations']);
-Route::get('thuong-hieu/get-all-conversations', [HoiThoaiController::class, 'thuongHieuGetAllConversations']);
+// Route::post('/send-message', [HoiThoaiController::class, 'sendMessage']);
+// Route::post('/get-or-create', [HoiThoaiController::class, 'getOrCreate']);
+// Route::get('/get-all-messages/{id}', [HoiThoaiController::class, 'getAllMessages']);
+// Route::get('khach-hang/get-all-conversations', [HoiThoaiController::class, 'khachHangGetAllConversations']);
+// Route::get('thuong-hieu/get-all-conversations', [HoiThoaiController::class, 'thuongHieuGetAllConversations']);
 
 //thoi gian làm việc của nhân viên
 Route::get('/nhan-vien/thoi-gian-lam-viec/{id}', [NhanVienController::class, 'WorkingHours']);

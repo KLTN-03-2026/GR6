@@ -26,7 +26,6 @@ class AdminController extends Controller
         // Doanh thu theo danh mục
        $doanhThuTheoDanhMuc = DanhMucDichVu::from('danh_muc_dich_vus as cha')
 
-    // join danh mục con
     ->leftJoin(
         'danh_muc_dich_vus as con',
         'con.id_father',
@@ -34,7 +33,6 @@ class AdminController extends Controller
         'cha.id'
     )
 
-    // dịch vụ thuộc danh mục con
     ->leftJoin(
         'dich_vus',
         'dich_vus.id_danh_muc_dich_vu',
@@ -83,7 +81,6 @@ class AdminController extends Controller
     )
 
     ->get();
-        // TOP 5 đối tác doanh thu cao nhất
          // TOP 5 đối tác doanh thu cao nhất
         $topNCC = NhaCungCap::join(
             'thuong_hieus',
