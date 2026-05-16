@@ -10,9 +10,6 @@ use Illuminate\Http\Request;
 
 class ThanhToanController extends Controller
 {
-    /**
-     * Xử lý kết quả trả về từ VNPay (Return URL)
-     */
     public function handleVnpayReturn(Request $request)
     {
         try {
@@ -98,32 +95,24 @@ class ThanhToanController extends Controller
         }
     }
 
-    /**
-     * Tạo URL thanh toán VNPay
-     */
     public function createPayment(PaymentRequest $request)
 {
     try {
-        // 1. Kiểm tra chi tiết đặt lịch
         $chiTietDatLich = ChiTietDatLich::find($request->id_chi_tiet_dat_lich);
         if (!$chiTietDatLich) {
             return response()->json(['status' => false, 'message' => 'Không tìm thấy chi tiết đặt lịch!'], 400);
         }
 
-        // 2. Kiểm tra thông tin thanh toán
         $thanhToan = ThanhToan::where('id_chi_tiet_dat_lich', $request->id_chi_tiet_dat_lich)->first();
         
         if (!$thanhToan) {
             return response()->json(['status' => false, 'message' => 'Không tìm thấy thông tin thanh toán!'], 400);
         }
 
-        // 3. Kiểm tra nếu đã thanh toán rồi (tránh thanh toán đè)
         if ($thanhToan->trang_thai == 1) {
             return response()->json(['status' => false, 'message' => 'Đơn hàng này đã được thanh toán hoàn tất!'], 400);
         }
 
-        // 4. Cập nhật số tiền khách muốn thanh toán đợt này vào cột tạm thời hoặc xử lý logic cọc
-        // Lưu ý: React gửi lên là 'so_tien', nên ta dùng $request->so_tien
         $thanhToan->update([
             'tong_tien_da_nhan' => $request->so_tien 
         ]);

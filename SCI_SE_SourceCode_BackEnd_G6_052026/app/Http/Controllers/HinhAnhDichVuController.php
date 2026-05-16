@@ -20,31 +20,7 @@ class HinhAnhDichVuController extends Controller
         ]);
     }
 
-    public function create(Request $request)
-    {
-        $request->validate([
-            // 'id_dich_vu' => 'required|exists:dich_vus,id',
-            'hinh_anh.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-
-        foreach ($request->file('hinh_anh') as $file) {
-
-            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-
-            $path = $file->storeAs('hinh_anh_dich_vu', $filename, 'public');
-
-            HinhAnhDichVu::create([
-                'id_dich_vu' => 1, // tạm thời gán id_dich_vu là 1, bạn có thể thay đổi logic này để lấy id_dich_vu từ request nếu cần
-                'hinh_anh'   => $path
-            ]);
-        }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Upload ảnh thành công',
-        ]);
-    }
+    
     public function getDichVuHinhAnh()
     {
         $data = HinhAnhDichVu::select('id_dich_vu', 'hinh_anh')->get();

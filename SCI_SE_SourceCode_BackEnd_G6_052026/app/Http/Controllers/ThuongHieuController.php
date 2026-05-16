@@ -185,7 +185,6 @@ class ThuongHieuController extends Controller
         )
         ->get();
 
-    // Nếu chưa có nhân viên thì trả về object giả
     if ($data->count() == 0) {
 
         $data = collect([
@@ -198,7 +197,6 @@ class ThuongHieuController extends Controller
 
         $data->transform(function ($item) {
 
-            // Nếu hinh_anh là URL
             if (
                 $item->hinh_anh &&
                 filter_var($item->hinh_anh, FILTER_VALIDATE_URL)
@@ -208,7 +206,6 @@ class ThuongHieuController extends Controller
 
             } else if ($item->hinh_anh) {
 
-                // Ảnh local
                 $item->hinh_anh = asset('storage/' . $item->hinh_anh);
             }
 

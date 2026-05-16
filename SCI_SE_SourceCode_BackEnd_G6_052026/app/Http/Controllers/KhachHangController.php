@@ -96,17 +96,14 @@ class KhachHangController extends Controller
         ]);
     }
 
-    // update basic info
     $KhachHang->ten_khach_hang = $request->ten_khach_hang;
     $KhachHang->so_dien_thoai  = $request->so_dien_thoai;
     $KhachHang->email          = $request->email;
 
-    // password (chỉ khi có nhập)
     if ($request->password) {
         $KhachHang->password = bcrypt($request->password);
     }
 
-    // avatar
     if ($request->hasFile('avatar')) {
         $file = $request->file('avatar');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
@@ -118,7 +115,6 @@ class KhachHangController extends Controller
 
         $KhachHang->avatar = $path;
     }else if ($request->avatar == null) {
-        // Nếu client gửi avatar là null, xóa avatar cũ
         if ($KhachHang->avatar && Storage::disk('public')->exists($KhachHang->avatar)) {
             Storage::disk('public')->delete($KhachHang->avatar);
         }
@@ -127,7 +123,6 @@ class KhachHangController extends Controller
 
     $KhachHang->save();
 
-    // Quan trọng: Trả về link ảnh mới qua biến 'new_avatar'
     return response()->json([
         'message'    => 'Cập nhật thông tin thành công!',
         'status'     => true,
@@ -166,7 +161,6 @@ class KhachHangController extends Controller
         'avatar'         => $KhachHang->avatar,
     ];
 
-    // xử lý avatar
     if ($data['avatar']) {
         if (!filter_var($data['avatar'], FILTER_VALIDATE_URL)) {
             $data['avatar'] = asset('storage/' . $data['avatar']);

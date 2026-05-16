@@ -56,7 +56,6 @@ class DichVuController extends Controller
         )
         ->get();
 
-    // Nếu chưa có dịch vụ thì trả về object giả
     if ($dichVu->count() == 0) {
 
         $dichVu = collect([
@@ -186,11 +185,6 @@ class DichVuController extends Controller
                 ], 404);
             }
 
-            /*
-        |--------------------------------------------------------------------------
-        | 2. Xóa toàn bộ ảnh liên quan
-        |--------------------------------------------------------------------------
-        */
             $hinhAnhs = HinhAnhDichVu::where('id_dich_vu', $dichVu->id)->get();
 
             foreach ($hinhAnhs as $hinhAnh) {
@@ -204,12 +198,6 @@ class DichVuController extends Controller
                 $hinhAnh->delete();
             }
 
-            /*
-        |--------------------------------------------------------------------------
-        | 3. Nếu có bảng liên quan như chi_tiet_dat_lich thì nên check trước
-        |--------------------------------------------------------------------------
-        */
-            // Ví dụ:
             if (ChiTietDatLich::where('id_dich_vu', $dichVu->id)->exists()) {
                 return response()->json([
                     'status' => false,
@@ -217,11 +205,6 @@ class DichVuController extends Controller
                 ], 400);
             }
 
-            /*
-        |--------------------------------------------------------------------------
-        | 4. Xóa dịch vụ
-        |--------------------------------------------------------------------------
-        */
             $dichVu->delete();
 
             DB::commit();
@@ -306,26 +289,19 @@ class DichVuController extends Controller
                     'so_luong_lich_toi_da' => $request->so_luong_lich_toi_da,
                 ]);
 
-                // 2. Lấy toàn bộ dữ liệu từ key hinh_anh[] (bao gồm URL string và File)
-                // Lưu ý: Dùng input() để lấy được mảng bao gồm cả chuỗi
                 $dataHinhAnh = $request->input('hinh_anh', []);
                 
-                // 3. Lọc ra danh sách các ảnh cũ mà người dùng muốn giữ lại
                 $danhSachAnhGiuLai = [];
                 foreach ($dataHinhAnh as $item) {
                     if (is_string($item)) {
-                        // Tách lấy path thực tế từ URL. 
-                        // Ví dụ: từ "http://.../storage/hinh_anh_dich_vu/abc.png" lấy "hinh_anh_dich_vu/abc.png"
                         $parts = explode('/storage/', $item);
                         $danhSachAnhGiuLai[] = end($parts);
                     }
                 }
 
-                // 4. Xóa những ảnh có trong DB nhưng KHÔNG có trong danh sách giữ lại
                 $anhTrongDB = HinhAnhDichVu::where('id_dich_vu', $dichVu->id)->get();
                 foreach ($anhTrongDB as $anh) {
                     if (!in_array($anh->hinh_anh, $danhSachAnhGiuLai)) {
-                        // Xóa file vật lý và xóa record
                         if (Storage::disk('public')->exists($anh->hinh_anh)) {
                             Storage::disk('public')->delete($anh->hinh_anh);
                         }
@@ -333,7 +309,6 @@ class DichVuController extends Controller
                     }
                 }
 
-                // 5. Upload các file mới (binary)
                 if ($request->hasFile('hinh_anh')) {
                     foreach ($request->file('hinh_anh') as $file) {
                         $fileName = Str::uuid() . '.' . $file->getClientOriginalExtension();
@@ -394,11 +369,9 @@ class DichVuController extends Controller
             ->select('hinh_anh_dich_vus.id', 'hinh_anh_dich_vus.id_dich_vu', 'hinh_anh_dich_vus.hinh_anh')
             ->get();
         $hinhAnhDichVu->transform(function ($item) {
-            // Nếu hinh_anh đã là URL (bắt đầu bằng http:// hoặc https://)
             if (filter_var($item->hinh_anh, FILTER_VALIDATE_URL)) {
                 $item->hinh_anh = $item->hinh_anh;  // giữ nguyên link
             } else {
-                // Ngược lại, coi như đường dẫn local trong disk 'public'
                 $item->hinh_anh = asset('storage/' . $item->hinh_anh);
             }
             return $item;
