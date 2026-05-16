@@ -17,8 +17,6 @@ const Dat_lich = () => {
     
     const [bookedRanges, setBookedRanges] = useState([]);
     const [currentTime, setCurrentTime] = useState(new Date());
-    
-    // State cho Dialog xác nhận đặt trùng
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
     const days = Array.from({ length: 14 }, (_, i) => {
@@ -105,8 +103,6 @@ const Dat_lich = () => {
             fetchBookedTimes(selectedDate, selectedStaff);
         }
     }, [selectedDate, selectedStaff]);
-
-    // Hàm xử lý kiểm tra trước khi đặt
     const handleBookingClick = async () => {
         if (!selectedTime) { 
             toast.warning("Vui lòng chọn khung giờ!"); 
@@ -114,7 +110,6 @@ const Dat_lich = () => {
         }
 
         try {
-            // Lấy danh sách lịch hẹn để kiểm tra xem đã đặt dịch vụ này chưa
             const res = await api.get('/khach-hang/dat-lich/get-data'); 
             const existingBooking = res.data.data?.find(item => 
                 item.id_dich_vu === parseInt(id_dich_vu) && 
@@ -127,7 +122,6 @@ const Dat_lich = () => {
                 executeBooking();
             }
         } catch (error) {
-            // Nếu lỗi check thì cho đặt bình thường
             executeBooking();
         }
     };
@@ -164,13 +158,10 @@ const Dat_lich = () => {
         }
     };
      const handleReset = () => {
-            // Reset các state về giá trị mặc định
             setSelectedDate(days[0].fullDate);
             setSelectedStaff(null);
             setSelectedTime(null);
             setGhiChu('');
-            
-            // Thông báo cho người dùng
             toast.info("Đã xóa các thông tin đã chọn");
         };
 
@@ -332,8 +323,6 @@ const Dat_lich = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Dialog xác nhận đặt thêm dịch vụ trùng */}
             {showConfirmDialog && (
                 <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="bg-white rounded-[40px] p-8 max-w-sm w-full shadow-2xl scale-in-center overflow-hidden border border-white">

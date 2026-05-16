@@ -16,15 +16,13 @@ const Quan_ly_lich_hen = () => {
   });
 
   // Modals
-  const [isModalOpen, setIsModalOpen] = useState(false); // Hoàn thành
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false); // Hủy
-  const [detailModalOpen, setDetailModalOpen] = useState(false); // Chi tiết
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
   
   const [selectedId, setSelectedId] = useState(null);
   const [selectedApp, setSelectedApp] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // --- CONFIG (Giữ nguyên UI Style) ---
   const STATUS_MAP = { 1: 'ĐÃ XÁC NHẬN', 2: 'HOÀN THÀNH', 3: 'ĐÃ HỦY' };
   const STATUS_THEMES = {
     'ĐÃ XÁC NHẬN': 'bg-[#E0E9F7] text-[#3D78D8]',
@@ -38,8 +36,6 @@ const Quan_ly_lich_hen = () => {
     { label: 'Hoàn thành', value: '2' },
     { label: 'Đã hủy', value: '3' }
   ];
-
-  // --- FUNCTIONS ---
   const fetchData = async () => {
     try {
       setLoading(true);

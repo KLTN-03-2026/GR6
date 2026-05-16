@@ -5,7 +5,7 @@ import { Star, Briefcase } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const Danh_gia = () => {
-  const { id } = useParams(); // id này là id_dat_lich từ URL
+  const { id } = useParams();
   const navigate = useNavigate();
   
   const [rating, setRating] = useState(5);
@@ -13,15 +13,13 @@ const Danh_gia = () => {
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [appointmentDetail, setAppointmentDetail] = useState(null);
-
-  // 1. Lấy thông tin chi tiết lịch hẹn để lấy id_dich_vu
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
         const response = await api.get(`/khach-hang/chi-tiet-dat-lich/${id}`);
         if (response.data && response.data.status) {
           setAppointmentDetail(response.data.data);
-          console.log("Dữ liệu lịch hẹn:", response.data.data); // Kiểm tra xem có id_dich_vu chưa
+          console.log("Dữ liệu lịch hẹn:", response.data.data);
         }
       } catch (error) {
         console.error("Lỗi khi lấy thông tin dịch vụ:", error);
@@ -31,7 +29,6 @@ const Danh_gia = () => {
   }, [id]);
 
   const handleSubmit = async () => {
-    // Kiểm tra nếu dữ liệu chưa tải xong hoặc thiếu id_dich_vu
     if (!appointmentDetail || !appointmentDetail.id_dich_vu) {
       alert("Đang tải thông tin dịch vụ, vui lòng đợi trong giây lát!");
       return;
@@ -44,15 +41,12 @@ const Danh_gia = () => {
 
     try {
       setIsSubmitting(true);
-
-      // PAYLOAD KHỚP 100% VỚI REQUEST LARAVEL CỦA BẠN
       const payload = {
-        id_dich_vu: appointmentDetail.id_dich_vu, // Lấy ID dịch vụ từ chi tiết lịch hẹn
-        muc_hai_long: rating,                     // Gửi số sao (1-5)
-        noi_dung: comment,                        // Gửi nội dung text
+        id_dich_vu: appointmentDetail.id_dich_vu, 
+        muc_hai_long: rating,
+        noi_dung: comment, 
       };
 
-      // Lưu ý: api.post sẽ tự động đính kèm Token nếu bạn đã setup axios interceptor
       const response = await api.post('/danh-gia/create', payload);
 
       if (response.data.status) {
@@ -63,7 +57,6 @@ const Danh_gia = () => {
       }
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error);
-      // Nếu Backend trả về 401 (chưa đăng nhập)
       const errorMsg = error.response?.data?.message || "Không thể gửi đánh giá. Vui lòng kiểm tra lại kết nối!";
       toast.error(errorMsg);
     } finally {
@@ -74,8 +67,6 @@ const Danh_gia = () => {
   return (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 font-sans">
       <div className="bg-white w-full max-w-[500px] rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#f1f5f9]">
-        
-        {/* Icon & Tiêu đề */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-14 h-14 bg-[#eff6ff] rounded-2xl flex items-center justify-center mb-6">
             <Briefcase className="text-[#3b82f6]" size={28} strokeWidth={2.5} />
@@ -87,8 +78,6 @@ const Danh_gia = () => {
             Phản hồi của bạn giúp chúng tôi cải thiện chất lượng tốt hơn.
           </p>
         </div>
-
-        {/* Chọn Rating */}
         <div className="flex flex-col items-center mb-8">
           <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-[1.5px] mb-4">
             CHỌN XẾP HẠNG
@@ -114,8 +103,6 @@ const Danh_gia = () => {
             ))}
           </div>
         </div>
-
-        {/* Viết nhận xét */}
         <div className="mb-6">
           <label className="block text-[15px] font-bold text-[#334155] mb-2">
             Viết nhận xét của bạn

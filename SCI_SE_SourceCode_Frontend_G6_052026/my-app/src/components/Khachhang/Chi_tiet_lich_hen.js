@@ -14,7 +14,6 @@ const Chi_tiet_lich_hen = () => {
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
 
@@ -51,8 +50,6 @@ const Chi_tiet_lich_hen = () => {
   useEffect(() => {
     fetchDetail();
   }, [id]);
-
-  // Hủy lịch
   const handleCancel = async (id_dat_lich) => {
     if (!id_dat_lich) {
       toast.error("Không tìm thấy mã đặt lịch!");
@@ -304,8 +301,6 @@ const Chi_tiet_lich_hen = () => {
 
               </div>
             </div>
-
-            {/* ACTION */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
 
               {appointment.trang_thai_dat_lich === 2 && (
@@ -337,8 +332,6 @@ const Chi_tiet_lich_hen = () => {
 
             </div>
           </div>
-
-          {/* RIGHT */}
           <div className="space-y-6">
 
             <div className="bg-[#0a1f44] p-8 rounded-[32px] text-white space-y-6 relative overflow-hidden">
@@ -383,8 +376,6 @@ const Chi_tiet_lich_hen = () => {
           </div>
         </div>
       </div>
-
-      {/* MODAL */}
       {openCancelModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
 
@@ -407,9 +398,6 @@ const Chi_tiet_lich_hen = () => {
               </div>
 
             </div>
-
-            
-
             <div className="flex justify-end gap-3">
 
               <button

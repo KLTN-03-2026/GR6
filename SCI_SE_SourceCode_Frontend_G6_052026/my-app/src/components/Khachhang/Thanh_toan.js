@@ -4,7 +4,7 @@ import {
   Calendar, Clock, MapPin, User, Mail, Phone, 
   MessageSquare, ShieldCheck, Lock, Check 
 } from 'lucide-react';
-import api from '../../api'; // Đảm bảo đường dẫn này đúng với project của bạn
+import api from '../../api';
 import { toast } from 'react-toastify';
 import { useSearchParams } from 'react-router-dom';
 
@@ -41,20 +41,14 @@ const Thanh_toan = () => {
     toast.error("Thanh toán thất bại hoặc đã bị hủy!");
   }
   }, [id]);
-
-  // Tính toán số tiền trước để dùng cho cả UI và API
   const price = bookingData?.don_gia || 0;
   const quantity = bookingData?.so_luong || 1;
   const subTotal = price * quantity;
-  const depositAmount = subTotal * 0.3; // 30% cọc
-
-  // Hàm xử lý thanh toán khi click nút
+  const depositAmount = subTotal * 0.3;
   const handlePayment = async () => {
     try {
       setIsProcessing(true);
       const amountToPay = paymentMethod === 'full' ? subTotal : depositAmount;
-
-      // Gọi đến Route Backend
       const res = await api.post('/vnpay-payment', {
         id_chi_tiet_dat_lich: id,
         payment_type: paymentMethod, 

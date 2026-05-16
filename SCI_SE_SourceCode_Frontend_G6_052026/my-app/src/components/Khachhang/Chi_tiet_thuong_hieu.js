@@ -58,7 +58,6 @@ const Chi_tiet_thuong_hieu = () => {
 
   return (
     <div className="bg-white min-h-screen font-sans">
-      {/* --- HERO SECTION --- */}
       <section className="relative h-[400px]">
         <img src={brandData.banner} alt="banner" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/30"></div> 
@@ -76,8 +75,6 @@ const Chi_tiet_thuong_hieu = () => {
           </div>
         </div>
       </section>
-
-      {/* --- TAB NAVIGATION --- */}
       <div className="border-b border-gray-100 mt-12 md:mt-16">
         <div className="container mx-auto px-6">
           <div className="flex gap-8">
@@ -96,8 +93,6 @@ const Chi_tiet_thuong_hieu = () => {
           </div>
         </div>
       </div>
-
-      {/* --- MAIN CONTENT --- */}
       <main className="container mx-auto px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
@@ -169,8 +164,6 @@ const Chi_tiet_thuong_hieu = () => {
               </div>
             )}
           </div>
-
-          {/* CỘT PHẢI - FIX THẲNG HÀNG BÊN TRÁI 100% */}
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm sticky top-6">
               <h3 className="text-xl font-bold mb-8 text-gray-900 border-b pb-4">Thông tin liên hệ</h3>
@@ -197,8 +190,6 @@ const Chi_tiet_thuong_hieu = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Số điện thoại */}
                 <div className="flex gap-4">
                   <Phone className="text-blue-500 mt-1 shrink-0" size={24} />
                   <div>
@@ -216,8 +207,6 @@ const Chi_tiet_thuong_hieu = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Mô tả */}
               <div className="mt-12 pt-8 border-t border-gray-50">
                 <p className="font-bold text-gray-400 italic text-sm mb-4">Mô tả:</p>
                 <p className="text-gray-600 text-[15px] leading-relaxed">

@@ -7,8 +7,6 @@ import {
   Calendar,
   Briefcase,
 } from "lucide-react";
-
-// Component con cho từng item trong menu
 const SidebarItem = ({ icon, text, to, active }) => (
   <Link to={to}>
     <div
@@ -23,7 +21,7 @@ const SidebarItem = ({ icon, text, to, active }) => (
 );
 
 const Menu = () => {
-  const location = useLocation(); // Lấy đường dẫn hiện tại để tự động active menu
+  const location = useLocation();
 
   const menuItems = [
     { icon: <LayoutDashboard size={18} />, text: "Bảng điều khiển", to: "/nha-cung-cap" },

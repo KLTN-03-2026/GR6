@@ -11,7 +11,7 @@ const Chi_tiet_dv = () => {
   const [imagesBE, setImagesBE] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [thuonghieu, setThuonghieu] = useState([]);
-  const [listDanhGia, setListDanhGia] = useState([]); // State mới cho đánh giá
+  const [listDanhGia, setListDanhGia] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +22,7 @@ const Chi_tiet_dv = () => {
           api.get(`/dich-vu/chi-tiet-dich-vu/${id}`),
           getHinhAnhDichVu(),
           getThuongHieus(id),
-          api.get(`/danh-gia/dich-vu/get-data/${id}`) // API mới của bạn
+          api.get(`/danh-gia/dich-vu/get-data/${id}`)
         ]);
 
         if (resDetail.data.status) {
@@ -133,7 +133,6 @@ const Chi_tiet_dv = () => {
               </div>
             </div>
 
-            {/* PHẦN HIỂN THỊ ĐÁNH GIÁ TỪ API */}
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Đánh giá từ khách hàng ({listDanhGia.length})</h2>
@@ -172,8 +171,6 @@ const Chi_tiet_dv = () => {
               </div>
             </div>
           </div>
-
-          {/* ... Phần Sidebar giữ nguyên ... */}
           <div className="lg:col-span-4">
             <div className="sticky top-28 space-y-6">
               <div className="bg-white p-6 rounded-[32px] shadow-xl shadow-blue-100/50 border border-gray-100">
@@ -184,7 +181,6 @@ const Chi_tiet_dv = () => {
                     ĐẶT NGAY
                   </button>
                 </Link>
-                {/* ... Thông tin thương hiệu ... */}
                 <div className="mt-8 pt-6 border-t border-gray-100">
                   <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-4">Thương Hiệu</p>
                   <div 

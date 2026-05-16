@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MoreVertical, Loader2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import * as XLSX from "xlsx"; // 1. Import thư viện Excel
+import * as XLSX from "xlsx";
 import Menu from "./Menu";
 import api from "../../api";
 
@@ -53,15 +53,11 @@ export default function Nha_Cung_Cap() {
       setLoading(false);
     }
   };
-
-  // 2. Hàm xử lý xuất Excel
   const handleExportExcel = () => {
     if (dataList.length === 0) {
       toast.warning("Không có dữ liệu để xuất!");
       return;
     }
-
-    // Định dạng lại dữ liệu trước khi xuất (đổi key Tiếng Anh sang Tiếng Việt cho đẹp)
     const excelData = dataList.map((item) => ({
       "Mã Hóa Đơn": item.ma_hoa_don,
       "Khách Hàng": item.ten_khach_hang,
@@ -112,7 +108,6 @@ export default function Nha_Cung_Cap() {
               Chào mừng trở lại, đây là tóm tắt hệ thống của bạn hôm nay.
             </p>
           </div>
-          {/* 3. Gắn sự kiện vào nút Xuất báo cáo */}
           <button 
             onClick={handleExportExcel}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
@@ -120,8 +115,6 @@ export default function Nha_Cung_Cap() {
             Xuất báo cáo
           </button>
         </div>
-
-        {/* CARD DOANH THU THẬT */}
         <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
           <p className="text-xs text-gray-400 mb-2 font-semibold">TỔNG DOANH THU THỰC TẾ</p>
           <h2 className="text-4xl font-bold text-gray-800">
@@ -131,8 +124,6 @@ export default function Nha_Cung_Cap() {
             <span className="font-bold">↑ 12.5%</span> so với tháng trước
           </div>
         </div>
-
-        {/* CHART */}
         <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-6">
             <div>
@@ -158,8 +149,6 @@ export default function Nha_Cung_Cap() {
             <polyline points={chartData.map((d, i) => `${50 + i * 55},${200 - d.nguoi_dung * 1.6}`).join(" ")} fill="none" stroke="#d1d5db" strokeWidth="2" strokeDasharray="5,5" />
           </svg>
         </div>
-
-        {/* TABLE DỮ LIỆU THẬT */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex justify-between items-center p-4 font-semibold border-b">
             <span>Đặt chỗ mới nhất</span>
