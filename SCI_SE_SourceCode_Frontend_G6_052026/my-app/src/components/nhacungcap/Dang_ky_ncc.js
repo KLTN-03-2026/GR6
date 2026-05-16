@@ -52,8 +52,6 @@ const DangKyNhaCungCap = () => {
     password: "",
     confirmPassword: "",
   });
-
-  // 1. Fetch dữ liệu Ngân hàng (VietQR) và Danh mục (Backend)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,11 +59,7 @@ const DangKyNhaCungCap = () => {
         const bankRes = await fetch("https://api.vietqr.io/v2/banks");
         const bankData = await bankRes.json();
         if (bankData.code === "00") setBanks(bankData.data);
-
-        // Lấy danh mục dịch vụ từ backend theo Route đã cung cấp
         const cateRes = await api.get('/danh-muc/get-data');
-        
-        // Dựa trên image_f30641.png: cấu trúc là res.data.data và lọc id_father !== 0
         if (cateRes.data && cateRes.data.status) {
           const allData = cateRes.data.data;
           const filtered = allData.filter(item => item.id_father !== 0);
@@ -199,7 +193,7 @@ const DangKyNhaCungCap = () => {
               </div>
             </div>
 
-            {/* Danh mục dịch vụ (Dựa trên image_f30641.png) */}
+            {/* Danh mục dịch vụ */}
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Danh mục dịch vụ</label>
               <div className="relative">
@@ -243,7 +237,7 @@ const DangKyNhaCungCap = () => {
               </div>
             </div>
 
-            {/* Ngân hàng (Lấy BIN) */}
+            {/* Ngân hàng */}
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Ngân hàng</label>
               <div className="relative">

@@ -11,12 +11,10 @@ const Ho_so_thuong_hieu = () => {
     const [banks, setBanks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
-    // State lưu lịch làm việc từ API
     const [workingHours, setWorkingHours] = useState([]);
 
     const [formData, setFormData] = useState({
-        id: '', // Thêm id để gọi API lịch làm việc
+        id: '', 
         ten_thuong_hieu: '',
         so_dien_thoai: '',
         id_danh_muc_dich_vu: '',
@@ -33,7 +31,6 @@ const Ho_so_thuong_hieu = () => {
         anh_bia: null
     });
 
-    // 1. Lấy danh sách ngân hàng
     useEffect(() => {
         axios.get("https://api.vietqr.io/v2/banks")
             .then(res => {
@@ -43,8 +40,6 @@ const Ho_so_thuong_hieu = () => {
             })
             .catch(err => console.error("Lỗi lấy danh sách ngân hàng:", err));
     }, []);
-
-    // 2. Lấy dữ liệu thương hiệu và lịch làm việc
     const fetchThuongHieu = async () => {
         try {
             setLoading(true);
@@ -67,8 +62,6 @@ const Ho_so_thuong_hieu = () => {
                     logo: item.logo,
                     anh_bia: item.anh_bia,
                 });
-
-                // Tự động gọi API lịch làm việc sau khi có id_thuong_hieu
                 fetchLichLamViec(item.id);
             }
         } catch (err) {
@@ -138,8 +131,6 @@ const Ho_so_thuong_hieu = () => {
             </div>
         );
     }
-
-    // Lấy giờ mở/đóng (Giả định lấy bản ghi đầu tiên từ mảng lịch)
     const gio_mo = workingHours.length > 0 ? workingHours[0].gio_mo_cua : "Chưa cập nhật";
     const gio_dong = workingHours.length > 0 ? workingHours[0].gio_dong_cua : "Chưa cập nhật";
 
@@ -246,8 +237,6 @@ const Ho_so_thuong_hieu = () => {
                                         <input type="text" name="dia_chi" value={formData.dia_chi} onChange={handleChange} className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-12 pr-4 py-4 text-sm font-bold text-gray-800 focus:bg-white focus:ring-2 focus:ring-blue-500/10 outline-none transition-all" />
                                     </div>
                                 </div>
-
-                                {/* GIỜ LÀM VIỆC - ĐÃ CẬP NHẬT DATA TỪ API */}
                                 <div>
                                     <label className="text-[11px] font-bold text-gray-400 tracking-[0.15em] block mb-4 uppercase">Giờ làm việc</label>
                                     <div className="grid grid-cols-2 gap-4">

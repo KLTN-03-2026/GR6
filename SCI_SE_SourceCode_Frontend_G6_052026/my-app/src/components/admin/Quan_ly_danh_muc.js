@@ -12,9 +12,6 @@ import MenuAd from './MenuAd';
   const Quan_ly_danh_muc = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    
-    
-    // States cho dữ liệu
     const [categories, setCategories] = useState([]);
     const [selectedFatherId, setSelectedFatherId] = useState(0); 
     const [loading, setLoading] = useState(false);
@@ -202,7 +199,6 @@ import MenuAd from './MenuAd';
                       {/* Menu sổ xuống (Pop-over) */}
                       {isOpen && (
                         <>
-                          {/* Lớp phủ để click ra ngoài thì đóng menu */}
                           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)}></div>
                           
                           <div className="absolute z-20 w-full mt-2 bg-white border border-gray-100 rounded-[24px] shadow-xl shadow-blue-900/5 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">

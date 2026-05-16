@@ -76,13 +76,9 @@ const Quan_ly_ho_so = () => {
       formData.append('ten_khach_hang', profile.ten_khach_hang);
       formData.append('so_dien_thoai', profile.so_dien_thoai);
       formData.append('email', profile.email);
-      
-      // Chỉ gửi mật khẩu nếu người dùng có nhập mới
       if (profile.password) {
         formData.append('password', profile.password);
       }
-      
-      // Lấy file ảnh từ input qua ref
       const file = fileInputRef.current.files[0];
       if (file) {
         formData.append('avatar', file);
@@ -93,12 +89,10 @@ const Quan_ly_ho_so = () => {
       });
 
       if (response.data.status) {
-        // Cập nhật LocalStorage để đồng bộ ảnh/tên trên Header ngay lập tức
         const authData = localStorage.getItem('auth');
         if (authData) {
           let auth = JSON.parse(authData);
           auth.name = profile.ten_khach_hang;
-          // Lấy link ảnh từ BE trả về (phải sửa BE để trả về new_avatar)
           if (response.data.new_avatar) {
             auth.avatar = response.data.new_avatar;
           }
@@ -106,8 +100,6 @@ const Quan_ly_ho_so = () => {
         }
 
         toast.success(response.data.message || "Cập nhật thành công!");
-        
-        // Reload để đồng bộ toàn bộ hệ thống
         setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -116,8 +108,6 @@ const Quan_ly_ho_so = () => {
         console.error("Lỗi cập nhật:", error);
 
         const errorData = error.response?.data;
-
-        // Nếu backend trả object errors
         if (errorData?.errors) {
           Object.values(errorData.errors).forEach((messages) => {
             if (Array.isArray(messages)) {
@@ -127,13 +117,9 @@ const Quan_ly_ho_so = () => {
             }
           });
         }
-
-        // Nếu backend trả message thường
         else if (errorData?.message) {
           toast.error(errorData.message);
         }
-
-        // Fallback
         else {
           toast.error("Cập nhật thất bại. Vui lòng thử lại.");
         }

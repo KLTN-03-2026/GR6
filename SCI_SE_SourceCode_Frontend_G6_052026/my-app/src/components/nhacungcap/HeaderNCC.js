@@ -8,7 +8,7 @@ const HeaderNCC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [role, setRole] = useState(null); // 'admin' hoặc 'ncc'
+  const [role, setRole] = useState(null); 
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,10 +21,6 @@ const HeaderNCC = () => {
       setIsLoggedIn(true);
       try {
         const parsed = JSON.parse(userAuthRaw);
-        
-        // GIẢ ĐỊNH: API của bạn trả về field 'role' hoặc 'role_id'
-        // Bạn hãy thay đổi điều kiện này phù hợp với dữ liệu thực tế của bạn
-        // Ví dụ: parsed.role === 1 là Admin, 2 là NCC
         const userRole = parsed.role === "admin" ? "admin" : "nha_cung_cap";
         setRole(userRole);
 
@@ -47,7 +43,6 @@ const HeaderNCC = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token');
-      // Gọi đúng endpoint dựa trên role đã xác định
       const logoutUrl = role === 'admin' ? '/admin/dang-xuat' : '/nha-cung-cap/dang-xuat';
         
       await api.post(logoutUrl, {}, {

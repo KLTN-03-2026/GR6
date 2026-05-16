@@ -11,8 +11,6 @@ import {
 
 const MenuAd = ({ onLogout }) => {
   const location = useLocation();
-
-  // Hàm kiểm tra xem đường dẫn hiện tại có khớp với menu không để đổi màu icon/chữ
   const isActive = (path) => location.pathname === path;
 
   const menuItems = [

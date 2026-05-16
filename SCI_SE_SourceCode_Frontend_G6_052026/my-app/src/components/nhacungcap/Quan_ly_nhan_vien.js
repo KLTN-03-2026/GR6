@@ -15,12 +15,8 @@ const Quan_ly_nhan_vien = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
-  
-  // State mới cho việc xóa
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  
-  // Khởi tạo form
   const initialForm = {
     id: '', 
     id_thuong_hieu: '', 
@@ -117,27 +113,20 @@ const Quan_ly_nhan_vien = () => {
   const errorData = err.response?.data?.message;
 
   if (Array.isArray(errorData)) {
-    // Nếu server trả về mảng: ["Email đã tồn tại", "Mật khẩu quá ngắn"]
     const combinedMessage = errorData.join(" / "); 
     toast.error(combinedMessage);
   } else if (typeof errorData === 'object') {
-    // Nếu server trả về object: {email: "Sai định dạng", phone: "Phải là số"}
     const messages = Object.values(errorData).join(" / ");
     toast.error(messages);
   } else {
-    // Trường hợp còn lại (string hoặc lỗi lạ)
     toast.error(errorData || "Đã có lỗi xảy ra!");
   }
 }
   };
-
-  // Cập nhật hàm handleDelete để mở Modal
   const handleDelete = (id) => {
     setDeleteId(id);
     setIsDeleteModalOpen(true);
   };
-
-  // Hàm thực hiện xóa thực tế
   const confirmDelete = async () => {
     try {
       const res = await api.post(`thuong-hieu/nhan-vien/delete/${deleteId}`);
@@ -201,9 +190,9 @@ const Quan_ly_nhan_vien = () => {
                 {loading ? (
                   <tr><td colSpan="3" className="py-20 text-center text-slate-400">Đang tải danh sách...</td></tr>
                 ) : employees.filter(emp => emp.ten_nhan_vien).length > 0 ? (
-  employees
-    .filter(emp => emp.ten_nhan_vien)
-    .map((emp) => (
+                  employees
+                    .filter(emp => emp.ten_nhan_vien)
+                    .map((emp) => (
                   <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-4">
@@ -236,13 +225,13 @@ const Quan_ly_nhan_vien = () => {
                     </td>
                   </tr>
                 ))
-) : (
-  <tr>
-    <td colSpan="3" className="py-20 text-center text-slate-400">
-      Chưa có nhân viên nào
-    </td>
-  </tr>
-)}
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="py-20 text-center text-slate-400">
+                      Chưa có nhân viên nào
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

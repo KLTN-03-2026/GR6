@@ -108,12 +108,8 @@ const changeStatus = async (id) => {
     setIsModalOpen(true);
   };
   
-
-  // --- TỐI ƯU HÀM SỬA: Lấy ảnh trực tiếp từ dữ liệu list ---
   const handleOpenEdit = (service) => {
     setCurrentService(service);
-    
-    // Lấy danh sách URL ảnh từ mảng hinh_anh của service (theo ảnh bạn chụp)
     const urlAnhCu = service.hinh_anh ? service.hinh_anh.map(img => img.hinh_anh) : [];
 
     setFormData({
@@ -128,10 +124,10 @@ const changeStatus = async (id) => {
       kieu_phuc_vu: service.kieu_phuc_vu || '1',
       so_luong_lich_toi_da: service.so_luong_lich_toi_da,
       trang_thai: service.trang_thai,
-      hinh_anh: urlAnhCu // Nạp ảnh cũ vào formData
+      hinh_anh: urlAnhCu 
     });
 
-    setPreviewImages(urlAnhCu); // Hiển thị ảnh cũ lên UI
+    setPreviewImages(urlAnhCu);
     setIsModalOpen(true);
   };
 
@@ -144,27 +140,20 @@ const changeStatus = async (id) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    
-    // 1. Append các thông tin text/number
     Object.keys(formData).forEach(key => {
       if (key !== 'hinh_anh') {
         let value = formData[key];
-        // Đảm bảo các giá trị số được ép kiểu đúng
         if (['don_gia', 'thoi_gian_du_kien', 'so_luong_lich_toi_da', 'id_thuong_hieu', 'id_danh_muc_dich_vu'].includes(key)) {
           value = value !== '' ? Math.floor(Number(value)) : 0;
         }
         data.append(key, value);
       }
     });
-    
-    // 2. GỘP CHUNG: Cả File object và String URL (http://...) đều đẩy vào 'hinh_anh[]'
-    // Lưu ý: Key phải có dấu [] để backend nhận diện là một mảng
     formData.hinh_anh.forEach((item) => {
       data.append('hinh_anh[]', item);
     });
 
     try {
-      // Gọi API (giữ nguyên logic serviceApi của bạn)
       let res = currentService ? await serviceApi.update(data) : await serviceApi.create(data);
       
       if (res.data.status) {
